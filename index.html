@@ -709,9 +709,10 @@ function setupRoomPanels(){
 function setRoomTab(tab){const p=tab==='profile';document.getElementById('roomChatPanel').classList.toggle('active',!p);document.getElementById('roomProfilePanel').classList.toggle('active',p);document.getElementById('roomChatTab').classList.toggle('active',!p);document.getElementById('roomProfileTab').classList.toggle('active',p)}
 async function openStudyRoom(room,initialTab='chat'){
  if(!room)return;
+ setupRoomPanels();
  activeStudyRoom=room;
  if(studyRoomChannel){await supabaseClient.removeChannel(studyRoomChannel);studyRoomChannel=null}
- renderStudyRoomDetail();setPage('studyroomdetail');window.scrollTo({top:0,behavior:'smooth'});
+ renderStudyRoomDetail();setRoomTab(initialTab);setPage('studyroomdetail');window.scrollTo({top:0,behavior:'smooth'});
  await Promise.all([loadStudyRoomContent(),loadRoomFeatures()]);
  studyRoomChannel=supabaseClient.channel('study-room-'+room.id).on('postgres_changes',{event:'INSERT',schema:'public',table:'study_room_messages',filter:'room_id=eq.'+room.id},payload=>appendStudyRoomMessage(payload.new)).on('postgres_changes',{event:'*',schema:'public',table:'study_room_member_timers',filter:'room_id=eq.'+room.id},()=>loadRoomFeatures()).on('postgres_changes',{event:'INSERT',schema:'public',table:'study_room_study_logs',filter:'room_id=eq.'+room.id},async()=>{await loadRoomFeatures();await loadStudyRoomContent()}).on('postgres_changes',{event:'INSERT',schema:'public',table:'study_room_challenges',filter:'room_id=eq.'+room.id},()=>loadRoomFeatures()).subscribe();
 }
