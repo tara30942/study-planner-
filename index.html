@@ -454,8 +454,16 @@ async function handleAuthSession(user){
   updateAuthUI(user);
   setPage('dashboard');
  }catch(err){
-  cloudSyncReady=false;
-  setCloudMessage('حساب وارد شده، اما همگام‌سازی ابری برقرار نشد. اطلاعات محلی دست‌نخورده باقی مانده است. خطا: '+(err.message||'ارتباط ناموفق'),'#a45b55');
+  const scopedKey='studyPlannerAdvanced:'+user.id;
+  const localScoped=localStorage.getItem(scopedKey);
+  if(localScoped){try{db=normalizePlannerData(JSON.parse(localScoped))}catch(e){}}
+  cloudSyncUserId=user.id;
+  cloudSyncReady=true;
+  localStorage.setItem('studyPlannerAdvanced',JSON.stringify(db));
+  localStorage.setItem(scopedKey,JSON.stringify(db));
+  setCloudMessage('اتصال ابری فعلاً در دسترس نیست؛ اطلاعات روی دستگاه ذخیره می‌شوند و پس از اتصال دوباره ارسال خواهند شد.','#a45b55');
+  renderAfterCloudLoad();
+  setPage('dashboard');
  }
 }
 function save(){
@@ -674,7 +682,7 @@ document.getElementById('testDate').value=todayStr;document.getElementById('stud
 renderCalendar();renderTasks();renderAll();initReportControls();renderReminders();renderCountdowns();renderProfile();
 if(supabaseClient){supabaseClient.auth.onAuthStateChange((_event,session)=>{const user=session?.user||null;setTimeout(()=>handleAuthSession(user),0)});}
 const offlineNotice=document.getElementById('offlineNotice');
-function updateNetworkStatus(){const offline=!navigator.onLine;offlineNotice.hidden=!offline;if(!offline&&supabaseClient){supabaseClient.auth.getSession().then(({data,error})=>{if(!error&&data?.session?.user)handleAuthSession(data.session.user);if(cloudSyncReady)scheduleCloudSave()}).catch(()=>{});}}
+function updateNetworkStatus(){const offline=!navigator.onLine;offlineNotice.hidden=!offline;if(!offline&&supabaseClient){supabaseClient.auth.getSession().then(async({data,error})=>{if(!error&&data?.session?.user)await handleAuthSession(data.session.user);if(cloudSyncReady)scheduleCloudSave()}).catch(()=>{});}}
 window.addEventListener('online',updateNetworkStatus);
 window.addEventListener('offline',updateNetworkStatus);
 updateNetworkStatus();
