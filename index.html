@@ -217,6 +217,10 @@ th{font-weight:bold;color:#77758b}
 @media(max-width:560px){.fancy-icon-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.fancy-pop>summary{min-height:130px;padding:13px;border-radius:17px}.fancy-hub{padding:14px;border-radius:21px}.fancy-float-window{padding:16px;border-radius:20px;max-height:86vh}.fancy-orbit{width:54px;height:54px;flex-basis:54px}}
 @media(prefers-reduced-motion:reduce){.fancy-float-window{animation:none}.fancy-pop>summary{transition:none}}
 </style>
+
+<style>
+.leaderboard-table{width:100%;min-width:520px;border-collapse:separate;border-spacing:0 7px}.leaderboard-table thead th{font-size:12px;color:#827a99;padding:10px;background:#f8f6fd}.leaderboard-table tbody tr{background:#fff;box-shadow:0 4px 14px #30235d0b}.leaderboard-table tbody td{padding:12px 10px;border-top:1px solid #f0edf6;border-bottom:1px solid #f0edf6}.leaderboard-table tbody td:first-child{border-radius:0 13px 13px 0;border-right:1px solid #f0edf6}.leaderboard-table tbody td:last-child{border-radius:13px 0 0 13px;border-left:1px solid #f0edf6}.leaderboard-user{display:flex;align-items:center;gap:9px;min-width:130px}.leaderboard-avatar{width:38px;height:38px;flex:0 0 38px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(140deg,#e9e3ff,#ffe4ef);color:#6756a8;font-weight:900;font-size:17px;box-shadow:inset 0 0 0 1px #fff,0 3px 10px #8a79bd22}.leaderboard-rank{white-space:nowrap;font-weight:800;color:#65558f}
+</style>
 </head>
 <body>
 <div id="offlineNotice" role="status" aria-live="polite" hidden>حالت آفلاین: تغییرات روی همین دستگاه ذخیره می‌شوند و پس از اتصال اینترنت همگام‌سازی خواهند شد.</div>
@@ -663,8 +667,8 @@ async function renderStudyCompare(){
   if(error)throw error;
   const rows=Array.isArray(data)?data:[];
   if(!rows.length){status.textContent='هنوز ساعت مطالعه‌ای ثبت نشده است. پس از ثبت جلسه‌های مطالعه، رتبه‌بندی نمایش داده می‌شود.';return}
-  status.textContent='تعداد کاربران در جدول: '+fa(rows.length)+' · امکان خروج از رتبه‌بندی در تنظیمات پروفایل وجود دارد.';
-  target.innerHTML='<table><thead><tr><th>رتبه</th><th>نام مستعار</th><th>مجموع مطالعه</th><th>جلسه‌ها</th></tr></thead><tbody>'+rows.map((x,i)=>'<tr><td>'+fa(i+1)+'</td><td>'+esc(x.display_name||'کاربر')+'</td><td><b>'+fa(Number(x.total_hours||0).toFixed(2))+' ساعت</b></td><td>'+fa(x.session_count||0)+'</td></tr>').join('')+'</tbody></table>';
+  status.textContent='تعداد کاربران در جدول: '+fa(rows.length)+' · نام کاربری و نشان اختصاصی هر نفر برای تشخیص آسان‌تر نمایش داده می‌شود.';
+  target.innerHTML='<table class="leaderboard-table"><thead><tr><th>رتبه</th><th>پروفایل کاربر</th><th>نام مستعار</th><th>مجموع مطالعه</th><th>جلسه‌ها</th></tr></thead><tbody>'+rows.map((x,i)=>{const name=String(x.display_name||'کاربر'),alias=String(x.compare_name||'');const initial=esc([...name.trim()][0]||'✦');const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':'✦';return '<tr><td><span class="leaderboard-rank">'+medal+' '+fa(i+1)+'</span></td><td><div class="leaderboard-user"><span class="leaderboard-avatar">'+initial+'</span><b>'+esc(name)+'</b></div></td><td>'+esc(alias||'—')+'</td><td><b>'+fa(Number(x.total_hours||0).toFixed(2))+' ساعت</b></td><td>'+fa(x.session_count||0)+'</td></tr>'}).join('')+'</tbody></table>';
  }catch(err){status.textContent='دریافت جدول انجام نشد. ابتدا باید دستور SQL بخش مقایسه را در Supabase اجرا کنی. جزئیات: '+(err.message||'خطای ارتباط')}
 }
 document.getElementById('openMenu').onclick=openDrawer;document.getElementById('drawerBackdrop').onclick=closeDrawer;document.getElementById('openStudyRoom').onclick=()=>{setPage('studyroom');closeDrawer();window.scrollTo({top:0,behavior:'smooth'})};
