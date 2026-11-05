@@ -291,8 +291,8 @@ const SUPABASE_URL="https://hpttxsyfyszpftzxpzwv.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY="sb_publishable_loW6b9Jy18GiXWD6o4feGg_BXZYND7Z";
 const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
 let currentAuthUser=null;
-function updateAuthUI(user){currentAuthUser=user||null;const b=document.getElementById("openAuth");b.textContent=user?(user.user_metadata?.display_name||"حساب کاربری"):"ورود / ثبت‌نام";document.getElementById("authTabs").hidden=!!user;document.getElementById("authForm").hidden=!!user;document.getElementById("authSignOut").hidden=!user;document.getElementById("authTitle").textContent=user?"حساب کاربری":"ورود به حساب";document.getElementById("authNote").textContent=user?("وارد حساب شده‌اید: "+user.email+" · اطلاعات پلنر هنوز روی همین دستگاه است و همگام‌سازی ابری در مرحله بعد انجام می‌شود."):"ورود و ثبت‌نام با Supabase فعال است. برای ثبت‌نام ممکن است لازم باشد ایمیل خود را تأیید کنید. اطلاعات پلنر فعلاً روی همین دستگاه ذخیره می‌شود."}
-supabaseClient.auth.onAuthStateChange((_event,session)=>updateAuthUI(session?.user||null));
+function updateAuthUI(user){currentAuthUser=user||null;const b=document.getElementById("openAuth");b.textContent=user?(user.user_metadata?.display_name||"حساب کاربری"):"ورود / ثبت‌نام";document.getElementById("authTabs").hidden=!!user;document.getElementById("authForm").hidden=!!user;document.getElementById("authSignOut").hidden=!user;document.getElementById("authTitle").textContent=user?"حساب کاربری":"ورود به حساب";if(!user)document.getElementById("authNote").textContent="ورود و ثبت‌نام با Supabase فعال است. برای ثبت‌نام ممکن است لازم باشد ایمیل خود را تأیید کنید."}
+
 const fmt=new Intl.DateTimeFormat('en-US-u-ca-persian-nu-latn',{year:'numeric',month:'numeric',day:'numeric',timeZone:'UTC'});
 const parts=d=>{let o={};fmt.formatToParts(d).forEach(x=>{if(x.type!=='literal')o[x.type]=+x.value});return o};
 const fa=n=>String(n).replace(/\d/g,x=>'۰۱۲۳۴۵۶۷۸۹'[+x]);
@@ -306,7 +306,115 @@ let db;try{db=JSON.parse(localStorage.getItem('studyPlannerAdvanced')||'{"tasks"
 if(!Array.isArray(db.reminders))db.reminders=[];if(!Array.isArray(db.todoLists))db.todoLists=[];if(!db.todoLists.length)db.todoLists=[{id:'todo-default',name:'کارهای من',items:[]}];db.todoLists.forEach(l=>{if(!Array.isArray(l.items))l.items=[]});db.topics.forEach(t=>{if(!t.id)t.id='topic-'+Math.random().toString(36).slice(2);if(!t.nextReviewDate)t.nextReviewDate=t.status==='نیاز به مرور'?todayStr:addJalaliDays(todayStr,1);if(!Array.isArray(t.reviewHistory))t.reviewHistory=[];if(typeof t.reviewStage!=='number')t.reviewStage=0});if(!Array.isArray(db.countdowns))db.countdowns=[];if(!db.profile)db.profile={name:"",goal:5,konkurDate:""};
 let vy=today.year,vm=today.month,selected=todayStr;
 const colors=['#7968d8','#ee8fac','#54b99b','#6b9ce8','#e9ad61','#9b83c9','#58aeb5','#d77e73'];
-function save(){localStorage.setItem('studyPlannerAdvanced',JSON.stringify(db))}
+let cloudSyncReady=false,cloudSyncUserId=null,cloudSyncTimer=null,cloudSyncBusy=false,cloudSyncPending=false;
+function emptyPlannerData(){return {tasks:{},tests:[],study:[],topics:[],reminders:[],todoLists:[{id:'todo-default',name:'کارهای من',items:[]}],countdowns:[],profile:{name:"",goal:5,konkurDate:""}}}
+function normalizePlannerData(value){
+ let d=value&&typeof value==='object'&&!Array.isArray(value)?value:emptyPlannerData();
+ if(!d.tasks||typeof d.tasks!=='object'||Array.isArray(d.tasks))d.tasks={};
+ if(!Array.isArray(d.tests))d.tests=[];
+ if(!Array.isArray(d.study))d.study=[];
+ if(!Array.isArray(d.topics))d.topics=[];
+ if(!Array.isArray(d.reminders))d.reminders=[];
+ if(!Array.isArray(d.todoLists))d.todoLists=[];
+ if(!d.todoLists.length)d.todoLists=[{id:'todo-default',name:'کارهای من',items:[]}];
+ d.todoLists.forEach(l=>{if(!Array.isArray(l.items))l.items=[]});
+ d.topics.forEach(t=>{if(!t.id)t.id='topic-'+Math.random().toString(36).slice(2);if(!t.nextReviewDate)t.nextReviewDate=t.status==='نیاز به مرور'?todayStr:addJalaliDays(todayStr,1);if(!Array.isArray(t.reviewHistory))t.reviewHistory=[];if(typeof t.reviewStage!=='number')t.reviewStage=0});
+ if(!Array.isArray(d.countdowns))d.countdowns=[];
+ if(!d.profile)d.profile={name:"",goal:5,konkurDate:""};
+ return d;
+}
+function setCloudMessage(message,color){
+ const n=document.getElementById('authNote');
+ if(n){n.textContent=message;if(color)n.style.color=color}
+}
+function renderAfterCloudLoad(){
+ renderCalendar();renderTasks();renderAll();initReportControls();renderReminders();renderCountdowns();renderProfile();
+}
+function scheduleCloudSave(){
+ if(!cloudSyncReady||!cloudSyncUserId)return;
+ clearTimeout(cloudSyncTimer);
+ cloudSyncTimer=setTimeout(()=>pushCloudData(),900);
+}
+async function pushCloudData(){
+ if(!cloudSyncReady||!cloudSyncUserId)return;
+ if(cloudSyncBusy){cloudSyncPending=true;return}
+ cloudSyncBusy=true;cloudSyncPending=false;
+ try{
+  const payload={user_id:cloudSyncUserId,data:db,updated_at:new Date().toISOString()};
+  const {error}=await supabaseClient.from('user_planner_data').upsert(payload,{onConflict:'user_id'});
+  if(error)throw error;
+  localStorage.setItem('studyPlannerAdvanced:'+cloudSyncUserId,JSON.stringify(db));
+  localStorage.setItem('studyPlannerCloudSynced:'+cloudSyncUserId,String(Date.now()));
+  setCloudMessage('همگام‌سازی ابری فعال است · اطلاعات این حساب در فضای ابری ذخیره می‌شود.','');
+ }catch(err){
+  setCloudMessage('ذخیره ابری انجام نشد؛ اطلاعات فعلی همچنان روی دستگاه باقی است. خطا: '+(err.message||'ارتباط ناموفق'),'#a45b55');
+ }finally{
+  cloudSyncBusy=false;
+  if(cloudSyncPending)scheduleCloudSave();
+ }
+}
+async function handleAuthSession(user){
+ if(!user){
+  if(cloudSyncUserId){
+   clearTimeout(cloudSyncTimer);
+   localStorage.setItem('studyPlannerAdvanced:'+cloudSyncUserId,JSON.stringify(db));
+   cloudSyncReady=false;cloudSyncUserId=null;db=normalizePlannerData(emptyPlannerData());
+   localStorage.setItem('studyPlannerAdvanced',JSON.stringify(db));
+   renderAfterCloudLoad();
+  }
+  updateAuthUI(null);return;
+ }
+ updateAuthUI(user);
+ if(cloudSyncReady&&cloudSyncUserId===user.id)return;
+ const previousUser=cloudSyncUserId;
+ if(previousUser&&previousUser!==user.id){
+  localStorage.setItem('studyPlannerAdvanced:'+previousUser,JSON.stringify(db));
+  cloudSyncReady=false;cloudSyncUserId=null;db=normalizePlannerData(emptyPlannerData());
+  localStorage.setItem('studyPlannerAdvanced',JSON.stringify(db));
+  renderAfterCloudLoad();
+ }
+ cloudSyncReady=false;
+ try{
+  const {data:row,error}=await supabaseClient.from('user_planner_data').select('data,updated_at').eq('user_id',user.id).maybeSingle();
+  if(error)throw error;
+  const scopedKey='studyPlannerAdvanced:'+user.id;
+  const localScoped=localStorage.getItem(scopedKey);
+  if(row&&row.data){
+   const legacy=localStorage.getItem('studyPlannerAdvanced');
+   if(legacy&&!localStorage.getItem('studyPlannerBackup:'+user.id))localStorage.setItem('studyPlannerBackup:'+user.id,legacy);
+   if(localScoped&&!localStorage.getItem('studyPlannerBackupScoped:'+user.id))localStorage.setItem('studyPlannerBackupScoped:'+user.id,localScoped);
+   db=normalizePlannerData(row.data);
+  }else{
+   const migrated=localStorage.getItem('studyPlannerLegacyMigrated');
+   if(!migrated){
+    const legacy=localStorage.getItem('studyPlannerAdvanced');
+    if(legacy&&!localStorage.getItem('studyPlannerBackup:'+user.id))localStorage.setItem('studyPlannerBackup:'+user.id,legacy);
+   }else{
+    db=normalizePlannerData(emptyPlannerData());
+   }
+  }
+  cloudSyncUserId=user.id;
+  db=normalizePlannerData(db);
+  localStorage.setItem('studyPlannerAdvanced',JSON.stringify(db));
+  localStorage.setItem(scopedKey,JSON.stringify(db));
+  cloudSyncReady=true;
+  const {error:writeError}=await supabaseClient.from('user_planner_data').upsert({user_id:user.id,data:db,updated_at:new Date().toISOString()},{onConflict:'user_id'});
+  if(writeError)throw writeError;
+  localStorage.setItem('studyPlannerLegacyMigrated','1');
+  localStorage.setItem('studyPlannerCloudSynced:'+user.id,String(Date.now()));
+  setCloudMessage('وارد حساب شده‌اید: '+user.email+' · همگام‌سازی ابری فعال است.','#27845f');
+  renderAfterCloudLoad();
+ }catch(err){
+  cloudSyncReady=false;
+  setCloudMessage('حساب وارد شده، اما همگام‌سازی ابری برقرار نشد. اطلاعات محلی دست‌نخورده باقی مانده است. خطا: '+(err.message||'ارتباط ناموفق'),'#a45b55');
+ }
+}
+function save(){
+ const raw=JSON.stringify(db);
+ localStorage.setItem('studyPlannerAdvanced',raw);
+ if(cloudSyncUserId)localStorage.setItem('studyPlannerAdvanced:'+cloudSyncUserId,raw);
+ if(cloudSyncReady)scheduleCloudSave();
+}
 
 function jPartsKey(k){let a=String(k||'').split('/').map(Number);return a.length===3?a:[today.year,today.month,today.day]}
 function jKeyFromDate(d){let p=parts(d);return dateKey(p.year,p.month,p.day)}
@@ -492,4 +600,5 @@ document.getElementById('copyProfileStats').onclick=()=>{let msg='خلاصه ع�
 window.addEventListener('resize',()=>{if(document.querySelector('.page.active').id==='dashboard'||document.querySelector('.page.active').id==='analytics')drawAll()});
 document.getElementById('testDate').value=todayStr;document.getElementById('studyDate').value=todayStr;
 renderCalendar();renderTasks();renderAll();initReportControls();renderReminders();renderCountdowns();renderProfile();
+supabaseClient.auth.onAuthStateChange((_event,session)=>{handleAuthSession(session?.user||null)});
 </script></body></html>
