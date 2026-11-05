@@ -81,16 +81,29 @@ create policy "Members can read room memberships"
 on public.study_room_members for select to authenticated
 using (public.is_study_room_member(room_id));
 
+create or replace function public.is_study_room_owner(p_room_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $
+  select exists (
+    select 1 from public.study_rooms r
+    where r.id = p_room_id and r.owner_id = auth.uid()
+  );
+$;
+
+revoke all on function public.is_study_room_owner(uuid) from public;
+grant execute on function public.is_study_room_owner(uuid) to authenticated;
+
 drop policy if exists "Room owners can add themselves" on public.study_room_members;
 create policy "Room owners can add themselves"
 on public.study_room_members for insert to authenticated
 with check (
   user_id = auth.uid()
   and role = 'owner'
-  and exists (
-    select 1 from public.study_rooms r
-    where r.id = room_id and r.owner_id = auth.uid()
-  )
+  and public.is_study_room_owner(room_id)
 );
 
 drop policy if exists "Members can leave or owners can remove members" on public.study_room_members;
