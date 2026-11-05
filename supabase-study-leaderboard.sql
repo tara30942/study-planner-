@@ -1,6 +1,7 @@
--- Study Planner: privacy-respecting public study-time leaderboard
--- Run this script once in Supabase SQL Editor after the user_planner_data table exists.
--- Users appear only after explicitly enabling profile.compareOptIn in their planner profile.
+-- Study Planner: study-time leaderboard
+-- By default all registered users are included. A user can opt out by setting
+-- profile.compareOptIn to false in their saved planner data.
+-- Run this updated script in Supabase SQL Editor.
 
 create or replace function public.get_public_study_leaderboard()
 returns table (
@@ -16,6 +17,7 @@ as $$
   select
     coalesce(
       nullif(left(btrim(p.data->'profile'->>'compareName'), 24), ''),
+      nullif(left(btrim(p.data->'profile'->>'name'), 24), ''),
       'کاربر'
     ) as display_name,
     coalesce(sum(
@@ -36,8 +38,8 @@ as $$
       else '[]'::jsonb
     end
   ) as entry(value) on true
-  where p.data->'profile'->>'compareOptIn' = 'true'
-  group by p.user_id, p.data->'profile'->>'compareName'
+  where coalesce(p.data->'profile'->>'compareOptIn', 'true') <> 'false'
+  group by p.user_id, p.data->'profile'->>'compareName', p.data->'profile'->>'name'
   order by total_hours desc, display_name asc;
 $$;
 
