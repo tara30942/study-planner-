@@ -58,7 +58,7 @@ grant execute on function public.is_study_room_member(uuid) to authenticated;
 drop policy if exists "Members can read their rooms" on public.study_rooms;
 create policy "Members can read their rooms"
 on public.study_rooms for select to authenticated
-using (public.is_study_room_member(id));
+using (owner_id = auth.uid() or public.is_study_room_member(id));
 
 drop policy if exists "Users can create rooms as owner" on public.study_rooms;
 create policy "Users can create rooms as owner"
