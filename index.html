@@ -41,7 +41,73 @@ body:has(#smart.active)::before{content:"";position:fixed;inset:0;background:rgb
 
 .top-actions{position:fixed;top:16px;left:16px;z-index:85;display:flex;align-items:center;gap:8px;direction:ltr}.menu-fab{position:static;width:44px;height:44px;border-radius:15px;background:#fff;color:#594bb4;border:1px solid var(--line);box-shadow:var(--shadow);font-size:27px;line-height:1}.account-fab{height:44px;padding:0 15px;border-radius:14px;background:linear-gradient(135deg,#7666d5,#9a88e7);color:#fff;box-shadow:var(--shadow);font-size:12px;font-weight:bold;white-space:nowrap}.auth-backdrop{display:none;position:fixed;inset:0;z-index:110;background:#211b3c88;backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:16px}.auth-backdrop.open{display:flex}.auth-modal{width:min(420px,100%);background:#fff;border:1px solid #eeeaf7;border-radius:22px;padding:22px;box-shadow:0 24px 80px #17122c55;direction:rtl}.auth-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px}.auth-head h3{margin:0;font-size:17px}.auth-close{width:34px;height:34px;border-radius:10px;background:#f3f0fb;color:#5b4db1;font-size:20px}.auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:7px;background:#f5f3fa;border-radius:13px;padding:5px;margin-bottom:16px}.auth-tabs button{padding:10px;border-radius:10px;background:transparent;color:#77738b;font-size:12px}.auth-tabs button.active{background:#fff;color:#594bb4;box-shadow:0 2px 8px #30265b12;font-weight:bold}.auth-form{display:grid;gap:11px}.auth-note{background:#f8f6ff;border:1px solid #eee9fb;border-radius:12px;padding:11px;color:#77718e;font-size:11px;line-height:1.9;margin-top:14px}.auth-message{font-size:11px;color:#a45b55;line-height:1.8;min-height:18px;margin-top:8px}.drawer-backdrop{display:none;position:fixed;inset:0;background:#1f193755;backdrop-filter:blur(2px);z-index:95}.drawer-backdrop.open{display:block}.sidebar{transition:transform .25s ease}.sidebar.drawer{position:fixed;z-index:96;top:0;right:0;bottom:0;width:min(310px,86vw);height:100dvh;overflow:auto;border-radius:0 0 0 22px;transform:translateX(110%);box-shadow:0 15px 60px #1c173b33}.sidebar.drawer.open{transform:translateX(0)}.sidebar.drawer .nav{grid-template-columns:1fr}.drawer-close{display:flex;justify-content:space-between;align-items:center;margin:0 0 10px}.countdown-card{background:linear-gradient(130deg,#eeeaff,#e7f6ef);border:1px solid #e6e0f6;border-radius:18px;padding:16px}.countdown-number{font-size:32px;font-weight:bold;color:#594bb4;margin-top:8px}.profile-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.profile-stat{background:#f7f5ff;padding:13px;border-radius:14px}.profile-stat b{display:block;font-size:21px;margin-top:6px}@media(max-width:560px){.profile-summary{grid-template-columns:1fr 1fr}.top-actions{top:10px;left:10px;gap:6px}.account-fab{height:40px;padding:0 11px;font-size:11px}.menu-fab{width:40px;height:40px}}
 .report-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.report-metric{background:#f7f5ff;border:1px solid #ece8fb;border-radius:14px;padding:13px}.report-metric span{display:block;font-size:11px;color:var(--muted)}.report-metric b{display:block;font-size:22px;margin-top:8px}.reminder-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--line);font-size:12px}.reminder-row small{display:block;color:var(--muted);margin-top:5px}@media(max-width:560px){.report-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
-.room-rank-empty{font-size:12px;color:var(--muted);line-height:2;min-height:82px;display:flex;align-items:center}.room-features{display:flex;gap:9px;flex-wrap:wrap}.room-features span{background:#f6f4fc;border:1px solid #eeebf6;border-radius:12px;padding:10px 12px;font-size:12px}.room-preview-box{background:linear-gradient(130deg,#eeeaff,#e8f7f0);border:1px solid #e9e4f6;border-radius:16px;padding:15px}.room-preview-box b{font-size:16px}.room-preview-box .muted{margin-top:7px;line-height:1.8}\n.room-fab{position:fixed;top:68px;left:16px;z-index:85;width:44px;height:44px;border-radius:15px;background:linear-gradient(135deg,#e9e5ff,#f9e8f0);color:#594bb4;border:1px solid #e3def4;box-shadow:var(--shadow);font-size:20px;display:grid;place-items:center;transition:transform .18s ease,filter .18s ease}.room-fab:hover{transform:translateY(-2px);filter:brightness(1.03)}@media(max-width:560px){.room-fab{top:58px;left:10px;width:40px;height:40px;border-radius:13px}}\n</style></head>
+.room-rank-empty{font-size:12px;color:var(--muted);line-height:2;min-height:82px;display:flex;align-items:center}.room-features{display:flex;gap:9px;flex-wrap:wrap}.room-features span{background:#f6f4fc;border:1px solid #eeebf6;border-radius:12px;padding:10px 12px;font-size:12px}.room-preview-box{background:linear-gradient(130deg,#eeeaff,#e8f7f0);border:1px solid #e9e4f6;border-radius:16px;padding:15px}.room-preview-box b{font-size:16px}.room-preview-box .muted{margin-top:7px;line-height:1.8}\n.room-fab{position:fixed;top:68px;left:16px;z-index:85;width:44px;height:44px;border-radius:15px;background:linear-gradient(135deg,#e9e5ff,#f9e8f0);color:#594bb4;border:1px solid #e3def4;box-shadow:var(--shadow);font-size:20px;display:grid;place-items:center;transition:transform .18s ease,filter .18s ease}.room-fab:hover{transform:translateY(-2px);filter:brightness(1.03)}@media(max-width:560px){.room-fab{top:58px;left:10px;width:40px;height:40px;border-radius:13px}}\n
+/* بازطراحی رابط: خلوت، یکپارچه و واکنش‌گرا */
+:root{--bg:#f5f6fb;--ink:#25243a;--muted:#85869a;--line:#e9eaf2;--purple:#6e63c9;--shadow:0 8px 28px rgba(35,32,75,.055)}
+body{background:radial-gradient(ellipse at 8% 0%,#efedff 0,transparent 32%),var(--bg);color:var(--ink);line-height:1.65}
+.hero{max-width:1280px;margin:22px auto 0;border:1px solid #e9e5f7;border-radius:25px;padding:23px clamp(18px,3vw,34px);background:linear-gradient(115deg,#eeebff 0%,#fbf0f5 55%,#eaf7f1 100%);box-shadow:var(--shadow)}
+.hero h1{font-size:clamp(21px,2.5vw,27px);letter-spacing:-.5px}.hero p{line-height:1.9}
+.hero-tag{border:1px solid #ffffffc9;background:#ffffffa8;color:#625d7d;border-radius:14px;padding:9px 13px}
+.layout{max-width:1280px;margin:20px auto 42px;gap:20px}
+.content{min-width:0}
+.pagehead{margin:4px 2px 20px;padding:4px 0 14px;border-bottom:1px solid #e9e9f1}
+.pagehead h2{font-size:clamp(18px,2vw,22px);letter-spacing:-.3px}
+.sub{line-height:1.8}
+.card{border:1px solid #e9eaf2;border-radius:20px;padding:clamp(15px,2vw,21px);box-shadow:0 5px 22px rgba(35,32,75,.035);transition:box-shadow .2s ease,border-color .2s ease}
+.card:hover{border-color:#dfdcf1;box-shadow:0 10px 28px rgba(35,32,75,.065)}
+.card h3{font-size:14px;line-height:1.8}
+.kpis{gap:12px}.kpi{min-height:130px}.kpi strong{font-size:clamp(23px,2.5vw,29px)}
+.grid{gap:13px}.two,.three{margin-top:13px}
+.btn{border:1px solid transparent;transition:transform .15s ease,filter .15s ease,box-shadow .15s ease}
+.btn:hover{filter:brightness(.98);transform:translateY(-1px);box-shadow:0 5px 12px #30265b12}
+input,select{border-color:#e6e7ef;border-radius:12px;min-height:42px}
+input:focus,select:focus{border-color:#a69de0;box-shadow:0 0 0 3px #7666d51a}
+.top-actions{top:24px;left:max(16px,calc((100vw - 1280px)/2));gap:9px}
+.menu-fab{width:46px;height:46px;border-radius:15px;font-size:25px}
+.account-fab{height:46px;border-radius:14px}
+.room-fab{top:79px;left:max(16px,calc((100vw - 1280px)/2));width:46px;height:46px;border-radius:15px}
+.sidebar.drawer{background:#fff;border:0;border-left:1px solid #eceaf4;padding:22px 17px;box-shadow:0 18px 60px #201a4430}
+.brand{font-size:16px;padding:12px 10px 20px}
+.nav{display:flex;flex-direction:column;gap:5px}
+.nav-label{padding:13px 11px 4px;color:#a09db1;font-size:10px;font-weight:bold;letter-spacing:.35px}
+.nav button{display:flex;align-items:center;gap:11px;width:100%;min-height:43px;padding:10px 12px;border-radius:12px;font-size:12px;color:#66657b;transition:background .16s ease,color .16s ease,transform .16s ease}
+.nav button .nav-icon{width:25px;height:25px;display:grid;place-items:center;flex:none;border-radius:8px;background:#f4f2fb;color:#766acb;font-size:14px}
+.nav button:hover{background:#f7f6fc;transform:translateX(-2px)}
+.nav button.active{background:linear-gradient(100deg,#f0edff,#f7f4ff);color:#584eb0}
+.nav button.active .nav-icon{background:#e3defb;color:#5549b2}
+.drawer-close{padding-bottom:10px}
+.tablewrap{border-radius:12px}
+th{font-weight:bold;color:#77758b}
+.task{line-height:1.8}
+.smart-item{line-height:1.9;border-color:#eceaf4;background:#fff}
+.room-features span{line-height:1.7}
+.empty{line-height:2}
+@media(max-width:900px){
+ .hero{margin:64px 14px 0}
+ .layout{margin:16px auto 32px;padding:0 14px}
+ .top-actions{top:12px;left:14px}
+ .room-fab{top:64px;left:14px}
+ .sidebar.drawer{width:min(330px,88vw)}
+}
+@media(max-width:560px){
+ .hero{padding:17px;margin:62px 10px 0;border-radius:19px;gap:10px}
+ .hero h1{font-size:20px}
+ .hero-tag{font-size:10px;padding:7px 9px}
+ .layout{padding:0 10px;margin-top:13px;gap:12px}
+ .pagehead{margin-bottom:14px;padding-bottom:11px}
+ .kpis{gap:9px}
+ .kpi{min-height:112px;padding:13px}
+ .kpi .label{font-size:11px}
+ .kpi strong{margin-top:7px}
+ .two,.three{gap:10px;margin-top:10px}
+ .card{border-radius:17px;padding:13px}
+ .top-actions{top:10px;left:10px}
+ .menu-fab{width:40px;height:40px}
+ .account-fab{height:40px}
+ .room-fab{top:57px;left:10px;width:40px;height:40px}
+ .nav-label{padding-top:12px}
+}
+</style></head>
 <body>
 <button class="smart-fab" id="openSmartPanel" type="button">✦ دستیار هوشمند</button>
 <div class="top-actions"><button class="menu-fab" id="openMenu" type="button" aria-label="باز کردن منو">⋯</button><button class="account-fab" id="openAuth" type="button">ورود / ثبت‌نام</button></div><div class="drawer-backdrop" id="drawerBackdrop"></div><button class="room-fab" id="openStudyRoom" type="button" aria-label="رفتن به اتاق مطالعه" title="اتاق مطالعه گروهی">👥</button>
@@ -49,17 +115,21 @@ body:has(#smart.active)::before{content:"";position:fixed;inset:0;background:rgb
 <header class="hero"><div><h1>پلنر درسی من ✦</h1><p>برنامه‌ریزی هوشمند، ثبت مطالعه و تحلیل پیشرفت با تقویم شمسی</p></div><div class="hero-tag">☀️ سال تحصیلی · تقویم جلالی</div></header>
 <div class="layout">
 <aside class="sidebar"><div class="brand">✦ <span>Study Planner</span></div><nav class="nav">
-<button class="active" data-page="dashboard">▦　داشبورد اصلی</button>
-<button data-page="calendar">▣　تقویم و برنامه</button>
-<button data-page="tests">◉　ثبت تست‌ها</button>
-<button data-page="study">◷　ساعت مطالعه</button>
-<button data-page="topics">▤　مباحث و کتاب‌ها</button>
-<button data-page="analytics">⌁　نمودارها و مقایسه</button>
-<button data-page="reports">▥　گزارش هفتگی و ماهانه</button>
-<button data-page="reminders">♧　یادآوری مطالعه</button>
-<button data-page="countdowns">◷　روزشمارها</button>
-<button data-page="profile">♙　پروفایل و مقایسه</button>
-<button data-page="smart">✦　دستیار هوشمند</button>
+<div class="nav-label">خانه و برنامه‌ریزی</div>
+<button class="active" data-page="dashboard"><span class="nav-icon">▦</span>داشبورد اصلی</button>
+<button data-page="calendar"><span class="nav-icon">▣</span>تقویم و برنامه</button>
+<div class="nav-label">ثبت فعالیت‌ها</div>
+<button data-page="tests"><span class="nav-icon">◉</span>ثبت تست‌ها</button>
+<button data-page="study"><span class="nav-icon">◷</span>ساعت مطالعه</button>
+<button data-page="topics"><span class="nav-icon">▤</span>مباحث و کتاب‌ها</button>
+<div class="nav-label">تحلیل و پیشرفت</div>
+<button data-page="analytics"><span class="nav-icon">⌁</span>نمودارها و مقایسه</button>
+<button data-page="reports"><span class="nav-icon">▥</span>گزارش هفتگی و ماهانه</button>
+<div class="nav-label">ابزارهای کمکی</div>
+<button data-page="reminders"><span class="nav-icon">♧</span>یادآوری مطالعه</button>
+<button data-page="countdowns"><span class="nav-icon">◷</span>روزشمارها</button>
+<button data-page="profile"><span class="nav-icon">♙</span>پروفایل و مقایسه</button>
+<button data-page="smart"><span class="nav-icon">✦</span>دستیار هوشمند</button>
 </nav><p class="muted" style="padding:12px 8px 0;line-height:2">اطلاعاتت به‌صورت خودکار در همین مرورگر ذخیره می‌شود.</p></aside>
 <main class="content">
 <section class="page active" id="dashboard"><div class="pagehead"><div><h2>داشبورد عملکرد</h2><div class="sub">خلاصه‌ای از روند مطالعه و تست‌هایت</div></div><span class="hero-tag" id="todayLabel"></span></div>
