@@ -684,8 +684,10 @@ function smartBuild(){
  alloc.forEach(x=>items.push({text:`${x.subject}: ${fa(x.tests)} تست + بررسی پاسخ‌ها`,done:false,smart:true}));
  let dueTopics=getDueReviewTopics().slice(0,Math.max(1,Math.min(4,Math.floor(hours/2))));
  dueTopics.forEach(x=>items.push({text:`مرور ${x.subject} ـ ${x.name} (۲۰ دقیقه)`,done:false,smart:true}));
- let focusMinutes=hours*60,reviewMinutes=dueTopics.length*20,prereqMinutes=prerequisiteItems.slice(0,Math.max(1,Math.min(4,Math.floor(hours/2)))).length*35,subjectMinutes=Math.max(0,focusMinutes-reviewMinutes-prereqMinutes);
+ let focusMinutes=hours*60,reviewMinutes=dueTopics.length*20,prereqMinutes=prerequisiteItems.slice(0,Math.max(1,Math.min(4,Math.floor(hours/2)))).length*35,dailyTaskMinutes=(daily.goal?25:0)+dailyPriorities.length*25,subjectMinutes=Math.max(0,focusMinutes-reviewMinutes-prereqMinutes-dailyTaskMinutes);
  let sessions=[];
+ if(daily.goal)sessions.push({title:'تمرکز روی هدف روز: '+daily.goal,minutes:25,kind:'هدف روزانه'});
+ dailyPriorities.forEach(x=>sessions.push({title:'انجام اولویت روز: '+x,minutes:25,kind:'اولویت'}));
  prerequisiteItems.slice(0,Math.max(1,Math.min(4,Math.floor(hours/2)))).forEach(x=>sessions.push({title:`یادگیری پیش‌نیاز: ${x}`,minutes:35,kind:'آموزش'}));
  dueTopics.forEach(x=>sessions.push({title:`مرور: ${x.subject} ـ ${x.name}`,minutes:20,kind:'مرور'}));
  let blocks=Math.ceil(subjectMinutes/50),left=subjectMinutes;
