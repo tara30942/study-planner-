@@ -242,10 +242,10 @@ th{font-weight:bold;color:#77758b}
 <div class="field full"><label for="roomName">نام اتاق</label><input id="roomName" maxlength="40" placeholder="مثلاً گروه کنکوری‌ها"></div>
 <div class="field"><label for="roomGoal">هدف هفتگی گروه (ساعت)</label><input id="roomGoal" type="number" min="1" max="500" value="30"></div>
 <div class="field"><label for="roomVisibility">حریم خصوصی</label><select id="roomVisibility"><option value="private">خصوصی؛ فقط با دعوت</option><option value="invite">فقط با کد دعوت</option></select></div>
-</div><button class="btn primary" id="saveRoomDraft" style="margin-top:12px">ذخیره طرح اتاق</button><div class="toast" id="roomToast"></div><p class="muted" style="line-height:1.9">فعلاً می‌توانی تنظیمات اتاقت را روی همین دستگاه نگه داری. ساخت اتاق مشترک و صدور کد دعوت واقعی پس از اتصال حساب کاربری و پایگاه داده فعال می‌شود.</p></div>
-<div class="card"><h3>پیوستن به اتاق دوستان</h3><div class="field"><label for="roomInviteCode">کد دعوت</label><input id="roomInviteCode" placeholder="کد دعوتی که دوستت فرستاده"></div><button class="btn light" id="joinRoom" style="margin-top:12px">پیوستن به اتاق</button><div class="muted" id="joinRoomMessage" style="margin-top:10px;line-height:1.9">ورود به اتاق‌های دیگران بعد از راه‌اندازی سیستم آنلاین امکان‌پذیر می‌شود.</div></div>
+</div><button class="btn primary" id="saveRoomDraft" style="margin-top:12px">ساخت اتاق آنلاین</button><div class="toast" id="roomToast"></div><p class="muted" style="line-height:1.9">برای ساخت اتاق آنلاین باید وارد حساب کاربری باشی و تنظیمات پایگاه داده اتاق‌ها در Supabase اجرا شده باشد.</p></div>
+<div class="card"><h3>پیوستن به اتاق دوستان</h3><div class="field"><label for="roomInviteCode">کد دعوت</label><input id="roomInviteCode" placeholder="کد دعوتی که دوستت فرستاده"></div><button class="btn light" id="joinRoom" style="margin-top:12px">پیوستن به اتاق</button><div class="muted" id="joinRoomMessage" style="margin-top:10px;line-height:1.9">با کد دعوتی که سازنده اتاق در اختیارت گذاشته وارد شو.</div></div>
 </div>
-<div class="card" style="margin-top:14px"><div class="cardhead"><h3>اتاق من</h3><span class="badge" style="background:#f3f0ff;color:#6657b8;padding:6px 10px;border-radius:20px;font-size:11px">پیش‌نمایش محلی</span></div><div id="roomPreview" class="empty">هنوز طرح اتاقی ذخیره نکرده‌ای.</div></div>
+<div class="card" style="margin-top:14px"><div class="cardhead"><h3>اتاق‌های من</h3><span class="badge">آنلاین</span></div><div id="roomPreview" class="empty">در حال دریافت اتاق‌ها…</div></div>
 <div class="grid three">
 <div class="card"><h3>🕒 رتبه‌بندی زمان مطالعه</h3><div id="roomStudyRank" class="room-rank-empty">پس از عضویت دوستان و اتصال آنلاین، رتبه‌بندی اینجا نمایش داده می‌شود.</div></div>
 <div class="card"><h3>📝 رتبه‌بندی تعداد تست</h3><div id="roomTestRank" class="room-rank-empty">پس از عضویت دوستان و اتصال آنلاین، رتبه‌بندی اینجا نمایش داده می‌شود.</div></div>
@@ -255,8 +255,11 @@ th{font-weight:bold;color:#77758b}
 </section>
 <section class="page" id="studyroomdetail">
  <div class="pagehead"><div><h2 id="roomDetailTitle">اتاق مطالعه</h2><div class="sub">فضای اختصاصی اعضای اتاق</div></div><button class="btn light" id="roomDetailBack">← بازگشت به اتاق‌ها</button></div>
- <div class="card"><div class="cardhead"><h3>اطلاعات اتاق</h3></div><div id="roomDetailInfo" class="muted">برای مشاهده اطلاعات، ابتدا یک اتاق را انتخاب کن.</div></div>
- <div class="grid two" style="margin-top:14px"><div class="card"><h3>💬 گفت‌وگوی گروهی</h3><div class="empty">گفت‌وگوی آنلاین پس از راه‌اندازی جداول اتاق‌ها در Supabase فعال می‌شود.</div></div><div class="card"><h3>👥 اعضای اتاق</h3><div class="empty">فهرست اعضا پس از اتصال بخش آنلاین نمایش داده می‌شود.</div></div></div>
+ <div class="card"><div class="cardhead"><h3>اطلاعات اتاق</h3></div><div id="roomDetailInfo" class="muted"></div></div>
+ <div class="grid two" style="margin-top:14px">
+  <div class="card"><h3>💬 گفت‌وگوی گروهی</h3><div id="roomMessages" class="stack" style="max-height:420px;overflow:auto;margin:12px 0"><div class="empty">پیامی وجود ندارد.</div></div><form id="roomMessageForm"><div class="field"><label for="roomMessageInput">پیام جدید</label><textarea id="roomMessageInput" rows="2" maxlength="1000" placeholder="پیامت را بنویس…"></textarea></div><button class="btn primary" type="submit" style="margin-top:8px">ارسال پیام</button><div class="toast" id="roomMessageToast"></div></form></div>
+  <div class="card"><h3>👥 اعضای اتاق</h3><div id="roomMembers" class="stack"><div class="empty">در حال دریافت اعضا…</div></div></div>
+ </div>
 </section>
 <section class="page" id="userhome">
 <div class="pagehead"><div><h2>صفحه کاربری من</h2><div class="sub">اطلاعات حساب و خلاصه فعالیت‌های شخصی تو</div></div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="hero-tag" id="userHomeCloud">در حال بررسی اتصال…</span><button class="btn primary" id="userHomeBack">⌂ بازگشت به صفحه اصلی</button></div></div>
@@ -638,25 +641,93 @@ function renderSmartCountdowns(){let all=[];if(db.profile.konkurDate)all.push({t
 function renderCountdowns(){let kd=db.profile.konkurDate||'';document.getElementById('konkurDate').value=kd;if(kd){let d=daysUntil(normDate(kd));document.getElementById('konkurCountdown').textContent=d>0?fa(d):d===0?'امروز!':'برگزار شده';}else document.getElementById('konkurCountdown').textContent='تاریخ تعیین نشده';let el=document.getElementById('countdownList');el.innerHTML=db.countdowns.length?db.countdowns.map((x,i)=>{let d=daysUntil(x.date);return '<div class="reminder-row"><div><b>'+esc(x.title)+'</b><small>'+fa(x.date)+' · '+(d>0?' '+fa(d)+' روز باقی‌مانده':d===0?'امروز':'گذشته')+'</small></div><button class="btn danger" data-delcount="'+i+'">حذف</button></div>'}).join(''):'<div class="empty">هنوز روزشمار دلخواهی نساخته‌ای.</div>';document.querySelectorAll('[data-delcount]').forEach(b=>b.onclick=()=>{db.countdowns.splice(+b.dataset.delcount,1);save();renderCountdowns()})}
 document.getElementById('saveKonkurDate').onclick=()=>{let v=document.getElementById('konkurDate').value.trim();if(!v){document.getElementById('konkurCountdown').textContent='لطفاً تاریخ را وارد کن';return}db.profile.konkurDate=normDate(v);save();renderCountdowns()};
 document.getElementById('addCountdown').onclick=()=>{let title=document.getElementById('countdownTitle').value.trim(),date=document.getElementById('countdownDate').value.trim();if(!title||!date)return;db.countdowns.push({title,date:normDate(date)});save();document.getElementById('countdownTitle').value='';document.getElementById('countdownDate').value='';renderCountdowns()};
-function renderStudyRoom(){
- const room=db.studyRoomDraft;const el=document.getElementById('roomPreview');if(!el)return;
- if(!room){el.className='empty';el.textContent='هنوز اتاقی ایجاد نکرده‌ای.';return}
- el.className='room-preview-box';
- el.innerHTML='<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><button type="button" class="btn light" id="openRoomCard" aria-label="ورود به اتاق" style="font-size:24px;min-width:54px">📚</button><div style="flex:1;min-width:160px"><b>'+esc(room.name)+'</b><div class="muted">هدف هفتگی گروه: '+fa(room.goal)+' ساعت · '+(room.visibility==='private'?'خصوصی؛ فقط با دعوت':'ورود با کد دعوت')+'</div></div><button type="button" class="btn primary" id="openRoomText">ورود به اتاق ←</button></div><div class="muted" style="margin-top:10px">برای ورود به صفحه اختصاصی اتاق، روی آیکون یا دکمه ورود بزن.</div>';
- const open=()=>{renderStudyRoomDetail();setPage('studyroomdetail');window.scrollTo({top:0,behavior:'smooth'})};document.getElementById('openRoomCard').onclick=open;document.getElementById('openRoomText').onclick=open;
+let activeStudyRoom=null,studyRoomChannel=null;
+function roomErrorMessage(err){const m=err?.message||'';if(/relation .* does not exist|could not find the table/i.test(m))return 'جدول‌های اتاق هنوز در Supabase ساخته نشده‌اند. فایل supabase-study-rooms.sql را اجرا کن.';if(/permission denied|row-level security|violates row-level security/i.test(m))return 'دسترسی پایگاه داده اجازه این کار را نداد. اجرای نسخه به‌روز فایل SQL را بررسی کن.';return m||'خطای نامشخص در ارتباط با اتاق‌ها.'}
+async function renderStudyRoom(){
+ const el=document.getElementById('roomPreview');if(!el)return;
+ if(!currentAuthUser){el.className='empty';el.textContent='برای ساختن یا دیدن اتاق‌ها ابتدا وارد حساب کاربری شو.';return}
+ if(!supabaseClient||!navigator.onLine){el.className='empty';el.textContent='برای استفاده از اتاق مطالعه اتصال اینترنت لازم است.';return}
+ el.className='empty';el.textContent='در حال دریافت اتاق‌ها…';
+ const {data,error}=await supabaseClient.from('study_room_members').select('room_id,role,study_rooms(id,name,invite_code,goal_hours,visibility,owner_id)').eq('user_id',currentAuthUser.id).order('joined_at',{ascending:false});
+ if(error){el.textContent=roomErrorMessage(error);return}
+ const rooms=(data||[]).map(x=>({...x.study_rooms,memberRole:x.role})).filter(Boolean);
+ if(!rooms.length){el.className='empty';el.textContent='هنوز عضو هیچ اتاقی نیستی. می‌توانی اتاق جدید بسازی یا با کد دعوت وارد شوی.';return}
+ el.className='stack';
+ el.innerHTML=rooms.map(room=>'<div class="room-preview-box" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap"><button type="button" class="btn light room-open-icon" data-room="'+esc(room.id)+'" style="font-size:23px;min-width:54px">📚</button><div style="flex:1;min-width:150px"><b>'+esc(room.name)+'</b><div class="muted">هدف هفتگی: '+fa(room.goal_hours)+' ساعت · '+(room.memberRole==='owner'?'سازنده اتاق':'عضو اتاق')+'</div></div><button type="button" class="btn primary room-open-btn" data-room="'+esc(room.id)+'">ورود به اتاق ←</button></div>').join('');
+ el.querySelectorAll('[data-room]').forEach(b=>b.addEventListener('click',()=>openStudyRoom(rooms.find(x=>x.id===b.dataset.room))));
 }
-function renderStudyRoomDetail(){const room=db.studyRoomDraft;document.getElementById('roomDetailTitle').textContent=room?'📚 '+room.name:'اتاق مطالعه';document.getElementById('roomDetailInfo').innerHTML=room?'<b>'+esc(room.name)+'</b><div style="margin-top:8px">هدف هفتگی گروه: '+fa(room.goal)+' ساعت</div><div>نوع دسترسی: '+(room.visibility==='private'?'خصوصی؛ فقط با دعوت':'ورود با کد دعوت')+'</div><div class="muted" style="margin-top:10px">این نسخه فعلاً پیش‌نمایش محلی اتاق است؛ برای چت و عضویت واقعی باید اتصال آنلاین اتاق‌ها تکمیل شود.</div>':'هنوز اتاقی ایجاد نکرده‌ای.';}
-document.getElementById('roomDetailBack').onclick=()=>setPage('studyroom');
-document.getElementById('saveRoomDraft').onclick=()=>{
- const name=document.getElementById('roomName').value.trim(),goal=Math.max(1,Math.min(500,+document.getElementById('roomGoal').value||30)),visibility=document.getElementById('roomVisibility').value;
- if(!name){document.getElementById('roomToast').textContent='اول برای اتاقت یک نام انتخاب کن.';return}
- db.studyRoomDraft={name,goal,visibility};save();renderStudyRoom();
- document.getElementById('roomToast').textContent='طرح اتاق روی همین دستگاه ذخیره شد؛ برای دعوت دوستان باید بخش آنلاین راه‌اندازی شود.';
+async function createStudyRoom(){
+ const name=document.getElementById('roomName').value.trim(),goal=Math.max(1,Math.min(500,+document.getElementById('roomGoal').value||30)),visibility=document.getElementById('roomVisibility').value,msg=document.getElementById('roomToast'),btn=document.getElementById('saveRoomDraft');
+ if(!currentAuthUser){msg.textContent='ابتدا وارد حساب کاربری شو.';return}
+ if(!name){msg.textContent='اول برای اتاقت یک نام انتخاب کن.';return}
+ if(!navigator.onLine){msg.textContent='برای ساخت اتاق به اینترنت وصل شو.';return}
+ btn.disabled=true;btn.textContent='در حال ساخت…';
+ try{
+  const alphabet='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let code='';
+  const bytes=new Uint8Array(8);crypto.getRandomValues(bytes);for(const b of bytes)code+=alphabet[b%alphabet.length];
+  const {data:room,error}=await supabaseClient.from('study_rooms').insert({name,goal_hours:goal,visibility,invite_code:code,owner_id:currentAuthUser.id}).select('id,name,invite_code,goal_hours,visibility,owner_id').single();
+  if(error)throw error;
+  const {error:memberError}=await supabaseClient.from('study_room_members').insert({room_id:room.id,user_id:currentAuthUser.id,role:'owner'});
+  if(memberError){await supabaseClient.from('study_rooms').delete().eq('id',room.id);throw memberError}
+  msg.textContent='اتاق ساخته شد! کد دعوت: '+room.invite_code;
+  document.getElementById('roomName').value='';
+  await renderStudyRoom();await openStudyRoom(room);
+ }catch(err){msg.textContent=roomErrorMessage(err)}finally{btn.disabled=false;btn.textContent='ساخت اتاق آنلاین'}
+}
+async function joinStudyRoom(){
+ const code=document.getElementById('roomInviteCode').value.trim(),msg=document.getElementById('joinRoomMessage'),btn=document.getElementById('joinRoom');
+ if(!currentAuthUser){msg.textContent='برای پیوستن ابتدا وارد حساب کاربری شو.';return}
+ if(!code){msg.textContent='لطفاً کد دعوت را وارد کن.';return}
+ if(!navigator.onLine){msg.textContent='برای پیوستن به اتاق به اینترنت وصل شو.';return}
+ btn.disabled=true;btn.textContent='در حال بررسی…';
+ try{const {data,error}=await supabaseClient.rpc('join_study_room',{p_code:code});if(error)throw error;const roomData=Array.isArray(data)?data[0]:data;if(!roomData?.room_id)throw new Error('اتاقی با این کد پیدا نشد.');document.getElementById('roomInviteCode').value='';msg.textContent='با موفقیت به اتاق پیوستی.';await renderStudyRoom();await openStudyRoom({id:roomData.room_id,name:roomData.room_name,goal_hours:roomData.goal_hours});}
+ catch(err){msg.textContent=roomErrorMessage(err)}finally{btn.disabled=false;btn.textContent='پیوستن به اتاق'}
+}
+async function openStudyRoom(room){
+ if(!room)return;
+ activeStudyRoom=room;
+ if(studyRoomChannel){await supabaseClient.removeChannel(studyRoomChannel);studyRoomChannel=null}
+ renderStudyRoomDetail();setPage('studyroomdetail');window.scrollTo({top:0,behavior:'smooth'});
+ await loadStudyRoomContent();
+ studyRoomChannel=supabaseClient.channel('study-room-'+room.id).on('postgres_changes',{event:'INSERT',schema:'public',table:'study_room_messages',filter:'room_id=eq.'+room.id},payload=>appendStudyRoomMessage(payload.new)).subscribe();
+}
+function renderStudyRoomDetail(){
+ const room=activeStudyRoom;if(!room)return;
+ document.getElementById('roomDetailTitle').textContent='📚 '+room.name;
+ document.getElementById('roomDetailInfo').innerHTML='<b>'+esc(room.name)+'</b><div style="margin-top:8px">هدف هفتگی: '+fa(room.goal_hours||30)+' ساعت</div><div style="margin-top:8px">کد دعوت: <b style="letter-spacing:1px">'+esc(room.invite_code||'برای اعضا محفوظ')+'</b> <button type="button" class="btn light" id="copyRoomCode" style="margin-inline-start:8px">کپی کد</button></div>';
+ const copy=document.getElementById('copyRoomCode');if(copy)copy.onclick=()=>{navigator.clipboard?.writeText(room.invite_code||'').then(()=>{copy.textContent='کپی شد'})};
+}
+async function loadStudyRoomContent(){
+ if(!activeStudyRoom)return;
+ const roomId=activeStudyRoom.id;
+ const messagesEl=document.getElementById('roomMessages'),membersEl=document.getElementById('roomMembers');
+ messagesEl.innerHTML='<div class="empty">در حال دریافت پیام‌ها…</div>';membersEl.innerHTML='<div class="empty">در حال دریافت اعضا…</div>';
+ const [messages,members]=await Promise.all([
+  supabaseClient.from('study_room_messages').select('id,user_id,sender_name,body,created_at').eq('room_id',roomId).order('created_at',{ascending:true}).limit(100),
+  supabaseClient.from('study_room_members').select('user_id,role,joined_at').eq('room_id',roomId).order('joined_at',{ascending:true})
+ ]);
+ if(messages.error)messagesEl.innerHTML='<div class="empty">'+esc(roomErrorMessage(messages.error))+'</div>';
+ else{messagesEl.innerHTML='';(messages.data||[]).forEach(appendStudyRoomMessage);if(!messages.data?.length)messagesEl.innerHTML='<div class="empty">هنوز پیامی ارسال نشده است. اولین پیام را تو بفرست!</div>'}
+ if(members.error)membersEl.innerHTML='<div class="empty">'+esc(roomErrorMessage(members.error))+'</div>';
+ else membersEl.innerHTML=(members.data||[]).map(m=>'<div class="task"><span>👤</span><span>'+esc(m.user_id===currentAuthUser.id?(db.profile.name||currentAuthUser.user_metadata?.display_name||'شما'):'عضو اتاق')+'</span><span class="muted">'+(m.role==='owner'?'سازنده':'عضو')+'</span></div>').join('')||'<div class="empty">عضوی پیدا نشد.</div>';
+}
+function appendStudyRoomMessage(message){
+ const el=document.getElementById('roomMessages');if(!el||!message||document.getElementById('room-msg-'+message.id))return;
+ const empty=el.querySelector('.empty');if(empty)empty.remove();
+ const mine=message.user_id===currentAuthUser?.id,when=new Date(message.created_at).toLocaleString('fa-IR',{dateStyle:'short',timeStyle:'short'});
+ const item=document.createElement('div');item.className='task';item.id='room-msg-'+message.id;item.style.display='block';item.style.padding='10px 12px';item.style.marginBottom='8px';item.innerHTML='<div style="display:flex;justify-content:space-between;gap:8px"><b>'+esc(mine?'شما':message.sender_name)+'</b><small class="muted">'+esc(when)+'</small></div><div style="white-space:pre-wrap;overflow-wrap:anywhere;margin-top:6px">'+esc(message.body)+'</div>';
+ el.appendChild(item);el.scrollTop=el.scrollHeight;
+}
+document.getElementById('roomMessageForm').onsubmit=async e=>{
+ e.preventDefault();const input=document.getElementById('roomMessageInput'),toast=document.getElementById('roomMessageToast'),body=input.value.trim();if(!body||!activeStudyRoom)return;
+ const senderName=(db.profile.name||currentAuthUser?.user_metadata?.display_name||'کاربر').slice(0,40);
+ const btn=e.submitter;if(btn){btn.disabled=true;btn.textContent='در حال ارسال…'}
+ try{const {error}=await supabaseClient.from('study_room_messages').insert({room_id:activeStudyRoom.id,user_id:currentAuthUser.id,sender_name:senderName,body});if(error)throw error;input.value='';toast.textContent='پیام ارسال شد.'}
+ catch(err){toast.textContent=roomErrorMessage(err)}finally{if(btn){btn.disabled=false;btn.textContent='ارسال پیام'}}
 };
-document.getElementById('joinRoom').onclick=()=>{
- const code=document.getElementById('roomInviteCode').value.trim();
- document.getElementById('joinRoomMessage').textContent=code?'کد وارد شد، اما بررسی و عضویت واقعی پس از اتصال سامانه آنلاین فعال می‌شود.':'لطفاً ابتدا کد دعوت دوستت را وارد کن.';
-};
+document.getElementById('roomDetailBack').onclick=async()=>{if(studyRoomChannel){await supabaseClient.removeChannel(studyRoomChannel);studyRoomChannel=null}activeStudyRoom=null;setPage('studyroom')};
+document.getElementById('saveRoomDraft').onclick=createStudyRoom;
+document.getElementById('joinRoom').onclick=joinStudyRoom;
 function renderUserHome(){
  if(!currentAuthUser)return;
  const user=currentAuthUser, email=user.email||'';
