@@ -107,6 +107,53 @@ th{font-weight:bold;color:#77758b}
  .room-fab{top:57px;left:10px;width:40px;height:40px}
  .nav-label{padding-top:12px}
 }
+
+/* بهینه‌سازی چیدمان دسکتاپ و لپ‌تاپ */
+.layout{grid-template-columns:minmax(0,1fr);max-width:1480px;width:100%;padding-left:clamp(22px,3vw,48px);padding-right:clamp(22px,3vw,48px);gap:22px}
+.content{width:100%;min-width:0}
+.hero{padding-left:clamp(24px,4vw,64px);padding-right:clamp(24px,4vw,64px);min-height:118px}
+.pagehead h2{font-size:22px}
+.card{padding:20px}
+.grid{gap:18px}
+.two,.three{margin-top:18px}
+.kpis{gap:16px}
+.kpi{min-height:142px;padding:20px}
+.kpi strong{font-size:30px}
+.sidebar.drawer{width:min(360px,88vw);padding:22px}
+.sidebar.drawer .nav button{padding:14px;font-size:14px}
+.tablewrap{max-width:100%;overscroll-behavior-x:contain}
+#todo .task{gap:12px}
+@media(min-width:1500px){
+ .layout{max-width:1600px}
+ .content{max-width:1500px;margin-inline:auto}
+ .hero h1{font-size:28px}
+ .card{padding:22px}
+ .chartbox{height:285px}
+}
+@media(min-width:701px) and (max-width:1100px){
+ .layout{padding-left:22px;padding-right:22px}
+ .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .three{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .report-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .card{padding:17px}
+}
+@media(max-width:700px){
+ .layout{grid-template-columns:minmax(0,1fr);padding-left:12px;padding-right:12px}
+ .hero{margin-top:62px}
+ .card{padding:14px}
+ .grid{gap:11px}
+ .two,.three{grid-template-columns:minmax(0,1fr);margin-top:12px}
+ .formgrid{grid-template-columns:minmax(0,1fr)}
+ .report-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .profile-summary{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .pagehead h2{font-size:19px}
+}
+@media(max-width:390px){
+ .kpis{grid-template-columns:minmax(0,1fr)}
+ .profile-summary,.report-metrics{grid-template-columns:minmax(0,1fr)}
+ .nav{grid-template-columns:minmax(0,1fr)}
+}
+
 </style></head>
 <body>
 <button class="smart-fab" id="openSmartPanel" type="button">✦ دستیار هوشمند</button>
