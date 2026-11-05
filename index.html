@@ -355,9 +355,9 @@ async function pushCloudData(){
 }
 async function handleAuthSession(user){
  if(!user){
-  if(cloudSyncUserId){
+  if(cloudSyncUserId||currentAuthUser){
    clearTimeout(cloudSyncTimer);
-   localStorage.setItem('studyPlannerAdvanced:'+cloudSyncUserId,JSON.stringify(db));
+   if(cloudSyncUserId)localStorage.setItem('studyPlannerAdvanced:'+cloudSyncUserId,JSON.stringify(db));
    cloudSyncReady=false;cloudSyncUserId=null;db=normalizePlannerData(emptyPlannerData());
    localStorage.setItem('studyPlannerAdvanced',JSON.stringify(db));
    renderAfterCloudLoad();
@@ -600,5 +600,5 @@ document.getElementById('copyProfileStats').onclick=()=>{let msg='خلاصه ع�
 window.addEventListener('resize',()=>{if(document.querySelector('.page.active').id==='dashboard'||document.querySelector('.page.active').id==='analytics')drawAll()});
 document.getElementById('testDate').value=todayStr;document.getElementById('studyDate').value=todayStr;
 renderCalendar();renderTasks();renderAll();initReportControls();renderReminders();renderCountdowns();renderProfile();
-supabaseClient.auth.onAuthStateChange((_event,session)=>{handleAuthSession(session?.user||null)});
+supabaseClient.auth.onAuthStateChange((_event,session)=>{const user=session?.user||null;setTimeout(()=>handleAuthSession(user),0)});
 </script></body></html>
