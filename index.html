@@ -485,7 +485,7 @@ th{font-weight:bold;color:#77758b}
  <div class="smart-chat-intro"><span class="smart-chat-avatar">✦</span><div><b>مشاور برنامه‌ریزی تو</b><small>با هم شرایطت را بررسی می‌کنیم و بعد یک برنامه قابل‌اجرا می‌چینیم.</small></div><span class="smart-chat-state">گفت‌وگوی مرحله‌ای</span></div>
  <div id="smartConsultMessages" class="smart-chat-messages" role="log" aria-live="polite"></div>
  <div class="smart-chat-compose"><textarea id="smartConsultInput" rows="2" placeholder="پاسخت را بنویس… برای سؤال مستقل، حالت «پرسش آزاد» را فعال کن."></textarea><button class="btn primary" id="smartConsultSend" type="button">ارسال</button></div>
- <div class="smart-chat-actions"><button class="btn" id="smartConsultFree" type="button" aria-pressed="true">💡 پرسش آزاد: روشن</button><button class="btn light" id="smartConsultSkip" type="button">فعلاً رد شو</button><button class="btn light" id="smartConsultRestart" type="button">شروع گفت‌وگوی تازه</button><span id="smartPrefsStatus" class="muted">پاسخ‌ها برای پیشنهاد برنامه ذخیره می‌شوند.</span></div>
+ <div class="smart-chat-actions"><button class="btn" id="smartConsultFree" type="button" aria-pressed="true">💡 پرسش آزاد: روشن</button><button class="btn primary" id="smartConsultMakePlan" type="button">📅 ساخت برنامه روزانه از توضیحاتم</button><button class="btn light" id="smartConsultSkip" type="button">فعلاً رد شو</button><button class="btn light" id="smartConsultRestart" type="button">شروع گفت‌وگوی تازه</button><span id="smartPrefsStatus" class="muted">شرایطت را بنویس و برای دریافت برنامه زمان‌بندی‌شده، دکمه ساخت برنامه را بزن.</span></div><div id="smartConsultPlanPreview" class="smart-item" hidden style="margin-top:12px;padding:14px"><b>پیش‌نمایش برنامه پیشنهادی</b><div id="smartConsultPlanItems" style="margin-top:8px"></div><div class="toolbar" style="margin-top:10px"><button class="btn primary" id="smartConsultApplyPlan" type="button">ثبت برنامه در تقویم و چک‌لیست</button><span id="smartConsultPlanStatus" class="muted"></span></div></div>
  <p class="smart-chat-note">در حالت پرسش آزاد، مشاور آنلاین با توجه به اطلاعات برنامه‌ریزی و پیشرفت ثبت‌شده پاسخ می‌دهد. برای استفاده باید وارد حساب کاربری شده باشی و مدیر سایت اتصال امن را در Supabase فعال کرده باشد.</p>
 </div>
 <div class="smart-hidden-prefs" aria-hidden="true">
@@ -855,6 +855,51 @@ function smartConsultAdvice(question){
  out.push('این پیشنهاد بر اساس پاسخ‌ها و داده‌های ذخیره‌شده در همین پلنر و قواعد برنامه‌ریزی ساخته شده، نه پاسخ زنده یک مدل آنلاین. اگر جزئیات بیشتری بدهی، دقیق‌ترش می‌کنم.');
  return out.join('\n\n');
 }
+let smartConsultGeneratedPlan=null;
+function smartConsultRenderPlan(){
+ const wrap=document.getElementById('smartConsultPlanPreview'),list=document.getElementById('smartConsultPlanItems');
+ if(!wrap||!list)return;
+ if(!smartConsultGeneratedPlan){wrap.hidden=true;return}
+ wrap.hidden=false;
+ list.innerHTML='<div class="muted">تاریخ برنامه: '+esc(smartConsultGeneratedPlan.date)+'</div>'+smartConsultGeneratedPlan.items.map(x=>'<div class="reminder-row" style="justify-content:space-between;gap:8px"><b>'+esc(x.start)+' تا '+esc(x.end)+'</b><span>'+esc(x.title)+'</span></div>').join('')+(smartConsultGeneratedPlan.summary?'<p class="muted">'+esc(smartConsultGeneratedPlan.summary)+'</p>':'');
+}
+async function smartConsultGeneratePlan(){
+ const input=document.getElementById('smartConsultInput'),answer=input.value.trim(),status=document.getElementById('smartPrefsStatus'),send=document.getElementById('smartConsultMakePlan');
+ if(!answer){status.textContent='اول برنامه و شرایطت را در کادر گفت‌وگو توضیح بده.';input.focus();return}
+ if(smartConsultOnlineBusy)return;
+ if(!supabaseClient){status.textContent='اتصال حساب کاربری در دسترس نیست.';return}
+ const {data,error}=await supabaseClient.auth.getSession(),session=data?.session;
+ if(error||!session){status.textContent='برای ساخت برنامه آنلاین، ابتدا وارد حساب کاربری شو.';return}
+ const st=smartConsultState();st.messages.push({role:'user',text:answer});smartConsultRender();input.value='';
+ smartConsultOnlineBusy=true;send.disabled=true;send.textContent='در حال تنظیم برنامه…';status.textContent='مشاور در حال تبدیل توضیحاتت به برنامه زمان‌بندی‌شده است…';
+ try{
+  const prefs=readSmartPrefs(),date=smartDailyKey(),daily=db.profile.smartDailyPrefs?.[date]||{};
+  const context={preferences:prefs,dailyGoal:{date,goal:daily.goal||'',prerequisites:daily.prerequisites||'',priorities:daily.priority||'',steps:daily.steps||''},progress:{todayStudyHours:sum(db.study.filter(x=>x.date===todayStr),x=>x.hours),todayTasks:(db.tasks[todayStr]||[]).map(t=>({text:t.text,done:!!t.done}))},upcomingTopics:db.topics.slice(-12).map(t=>({subject:t.subject,name:t.name,examDate:t.examDate||'',mastery:t.mastery||''}))};
+  const messages=st.messages.slice(-10).map(m=>({role:m.role==='user'?'user':'assistant',content:String(m.text||'').slice(0,2500)}));
+  const response=await fetch(SUPABASE_URL+'/functions/v1/study-advisor',{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_PUBLISHABLE_KEY,'Authorization':'Bearer '+session.access_token},body:JSON.stringify({mode:'daily_plan',messages,context})});
+  const payload=await response.json().catch(()=>({}));if(!response.ok)throw new Error(payload.error||'پاسخ از سرویس دریافت نشد.');
+  let raw=String(payload.answer||'').trim().replace(/^\u0060\u0060\u0060(?:json)?\s*/i,'').replace(/\s*\u0060\u0060\u0060$/,'');
+  const plan=JSON.parse(raw);
+  if(plan.needs_clarification){st.messages.push({role:'assistant',text:plan.needs_clarification});status.textContent='برای برنامه دقیق‌تر، این مورد را مشخص کن.';save();smartConsultRender();return}
+  if(!Array.isArray(plan.items)||!plan.items.length||plan.items.length>18)throw new Error('ساختار برنامه کامل یا قابل‌ثبت نیست.');
+  const valid=plan.items.map(x=>({start:String(x.start||''),end:String(x.end||''),title:String(x.title||'').trim()})).filter(x=>/^([01]\d|2[0-3]):[0-5]\d$/.test(x.start)&&/^([01]\d|2[0-3]):[0-5]\d$/.test(x.end)&&x.title&&x.end>x.start);
+  if(!valid.length)throw new Error('ساعت‌های برنامه معتبر نیستند؛ دوباره درخواست بده.');
+  smartConsultGeneratedPlan={date,summary:String(plan.summary||''),items:valid};
+  st.messages.push({role:'assistant',text:'برنامه روزانه‌ات آماده شد. زمان‌های مطالعه، استراحت و کارهای ثابت را بررسی کن؛ اگر مناسب بود، آن را در تقویم ثبت کن.'});
+  smartConsultRender();smartConsultRenderPlan();status.textContent='پیش‌نمایش آماده است؛ هنوز چیزی به تقویمت اضافه نشده.';
+ }catch(err){st.messages.push({role:'assistant',text:'نتوانستم برنامه را به شکل قابل‌ثبت دریافت کنم. '+(err.message||'لطفاً توضیحات را کوتاه‌تر و روشن‌تر بنویس.')});save();smartConsultRender();status.textContent='ساخت برنامه ناموفق بود؛ اتصال مشاور یا تنظیمات Supabase را بررسی کن.'}
+ finally{smartConsultOnlineBusy=false;send.disabled=false;send.textContent='📅 ساخت برنامه روزانه از توضیحاتم';save()}
+}
+document.getElementById('smartConsultMakePlan').onclick=smartConsultGeneratePlan;
+document.getElementById('smartConsultApplyPlan').onclick=()=>{
+ if(!smartConsultGeneratedPlan)return;
+ const date=smartConsultGeneratedPlan.date,old=db.tasks[date]||[];
+ const additions=smartConsultGeneratedPlan.items.map(x=>({text:x.start+'–'+x.end+' | '+x.title,done:false,smart:true}));
+ db.tasks[date]=old.filter(t=>!t.smart).concat(additions);save();selected=date;
+ const parts=date.split('/').map(Number);vy=parts[0];vm=parts[1];renderCalendar();renderTasks();renderDash();
+ document.getElementById('smartConsultPlanStatus').textContent='برنامه در تقویم و چک‌لیست ثبت شد.';
+ document.getElementById('smartPrefsStatus').textContent='برنامه روزانه ثبت شد؛ هر زمان خواستی می‌توانی آن را اصلاح کنی.';
+};
 let smartConsultOnlineBusy=false;
 async function smartConsultFreeReply(value){
  const answer=value.trim();if(!answer||smartConsultOnlineBusy)return;
