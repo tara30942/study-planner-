@@ -386,7 +386,9 @@ async function handleAuthSession(user){
    db=normalizePlannerData(row.data);
   }else{
    const migrated=localStorage.getItem('studyPlannerLegacyMigrated');
-   if(!migrated){
+   if(localScoped){
+    try{db=normalizePlannerData(JSON.parse(localScoped))}catch(e){db=normalizePlannerData(emptyPlannerData())}
+   }else if(!migrated){
     const legacy=localStorage.getItem('studyPlannerAdvanced');
     if(legacy&&!localStorage.getItem('studyPlannerBackup:'+user.id))localStorage.setItem('studyPlannerBackup:'+user.id,legacy);
    }else{
