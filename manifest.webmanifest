@@ -1,0 +1,17 @@
+{
+  "id": "/study-planner-/",
+  "name": "پلنر درسی",
+  "short_name": "پلنر درسی",
+  "description": "برنامه‌ریز و پیگیری مطالعه با تقویم شمسی",
+  "lang": "fa",
+  "dir": "rtl",
+  "start_url": "/study-planner-/?source=app",
+  "scope": "/study-planner-/",
+  "display": "standalone",
+  "background_color": "#f7f6fc",
+  "theme_color": "#7666d5",
+  "orientation": "any",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
