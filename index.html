@@ -185,7 +185,6 @@ th{font-weight:bold;color:#77758b}
 <div class="nav-label">ابزارهای کمکی</div>
 <button data-page="reminders"><span class="nav-icon">♧</span>یادآوری مطالعه</button>
 <button data-page="countdowns"><span class="nav-icon">◷</span>روزشمارها</button>
-<button data-page="userhome" id="userHomeNav" hidden><span class="nav-icon">♙</span>صفحه کاربری من</button>
 <button data-page="profile"><span class="nav-icon">♙</span>پروفایل و مقایسه</button>
 <button data-page="smart"><span class="nav-icon">✦</span>دستیار هوشمند</button>
 </nav><p class="muted" style="padding:12px 8px 0;line-height:2">اطلاعاتت به‌صورت خودکار در همین مرورگر ذخیره می‌شود.</p></aside>
@@ -251,7 +250,7 @@ th{font-weight:bold;color:#77758b}
 <div class="card" style="margin-top:14px"><h3>قابلیت‌های اتاق</h3><div class="room-features"><span>💬 گفت‌وگوی اعضا</span><span>⏱️ تایمر مطالعه مشترک</span><span>🏆 چالش هفتگی</span><span>📈 نمودار پیشرفت گروه</span><span>🔐 کنترل نمایش آمار</span></div><p class="muted" style="margin-top:12px">این امکانات در مرحله طراحی هستند و پس از راه‌اندازی بخش آنلاین فعال می‌شوند.</p></div>
 </section>
 <section class="page" id="userhome">
-<div class="pagehead"><div><h2>صفحه کاربری من</h2><div class="sub">اطلاعات حساب و خلاصه فعالیت‌های شخصی تو</div></div><span class="hero-tag" id="userHomeCloud">در حال بررسی اتصال…</span></div>
+<div class="pagehead"><div><h2>صفحه کاربری من</h2><div class="sub">اطلاعات حساب و خلاصه فعالیت‌های شخصی تو</div></div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="hero-tag" id="userHomeCloud">در حال بررسی اتصال…</span><button class="btn primary" id="userHomeBack">⌂ بازگشت به صفحه اصلی</button></div></div>
 <div class="card" style="margin-bottom:14px">
  <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
   <div style="width:66px;height:66px;border-radius:22px;background:linear-gradient(135deg,#7968d8,#ee8fac);display:grid;place-items:center;color:white;font-size:28px;font-weight:900" id="userHomeAvatar">✦</div>
@@ -449,7 +448,7 @@ async function handleAuthSession(user){
   setCloudMessage('وارد حساب شده‌اید: '+user.email+' · همگام‌سازی ابری فعال است.','#27845f');
   renderAfterCloudLoad();
   updateAuthUI(user);
-  setPage('userhome');
+  setPage('dashboard');
  }catch(err){
   cloudSyncReady=false;
   setCloudMessage('حساب وارد شده، اما همگام‌سازی ابری برقرار نشد. اطلاعات محلی دست‌نخورده باقی مانده است. خطا: '+(err.message||'ارتباط ناموفق'),'#a45b55');
@@ -657,6 +656,7 @@ function renderUserHome(){
  document.getElementById('userHomeCloud').textContent=cloudSyncReady?'همگام‌سازی ابری فعال است':'اتصال ابری در حال بررسی';
  document.getElementById('userHomeTodayTasks').innerHTML=todayTasks.length?todayTasks.map(t=>'<div class="task"><span>'+ (t.done?'✓':'○') +'</span><span style="'+(t.done?'text-decoration:line-through;opacity:.55':'')+'">'+esc(t.text)+'</span></div>').join(''):'<div class="empty">برای امروز هنوز برنامه‌ای ثبت نکرده‌ای.</div>';
 }
+document.getElementById('userHomeBack').onclick=()=>setPage('dashboard');
 document.getElementById('userHomeEdit').onclick=()=>setPage('profile');
 document.getElementById('userHomeSignOut').onclick=async()=>{const {error}=await supabaseClient.auth.signOut();if(error)alert('خروج انجام نشد: '+error.message)};
 document.querySelectorAll('[data-userhome-page]').forEach(b=>b.onclick=()=>setPage(b.dataset.userhomePage));
