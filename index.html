@@ -249,7 +249,38 @@ th{font-weight:bold;color:#77758b}
 </div>
 <div class="card" style="margin-top:14px"><h3>قابلیت‌های اتاق</h3><div class="room-features"><span>💬 گفت‌وگوی اعضا</span><span>⏱️ تایمر مطالعه مشترک</span><span>🏆 چالش هفتگی</span><span>📈 نمودار پیشرفت گروه</span><span>🔐 کنترل نمایش آمار</span></div><p class="muted" style="margin-top:12px">این امکانات در مرحله طراحی هستند و پس از راه‌اندازی بخش آنلاین فعال می‌شوند.</p></div>
 </section>
-<section class="page" id="profile"><div class="pagehead"><div><h2>پروفایل و مقایسه عملکرد</h2><div class="sub">نام نمایشی و خلاصه عملکردت را مدیریت کن.</div></div></div><div class="card"><h3>پروفایل کاربری</h3><div class="formgrid"><div class="field"><label>نام کاربری یا نام نمایشی</label><input id="profileName" placeholder="مثلاً StudyStar"></div><div class="field"><label>هدف روزانه مطالعه (ساعت)</label><input id="profileGoal" type="number" min="1" max="16" placeholder="مثلاً ۵"></div></div><button class="btn primary" id="saveProfile" style="margin-top:12px">ذخیره پروفایل</button><div class="toast" id="profileToast"></div></div><div class="card" style="margin-top:14px"><h3>عملکرد فعلی من</h3><div id="profileStats" class="profile-summary"></div><div class="toolbar" style="margin-top:14px"><button class="btn primary" id="copyProfileStats">کپی خلاصه عملکرد برای مقایسه</button></div><p class="muted" style="line-height:1.9;margin-top:12px">در حال حاضر اطلاعات فقط روی مرورگر خودت ذخیره می‌شود. برای رتبه‌بندی و مقایسه خودکار با کاربران دیگر، باید سیستم حساب کاربری و پایگاه داده آنلاین به سایت اضافه شود. نام کاربری به‌تنهایی باعث اشتراک‌گذاری اطلاعات نمی‌شود.</p></div></section>
+<section class="page" id="userhome">
+<div class="pagehead"><div><h2>صفحه کاربری من</h2><div class="sub">اطلاعات حساب و خلاصه فعالیت‌های شخصی تو</div></div><span class="hero-tag" id="userHomeCloud">در حال بررسی اتصال…</span></div>
+<div class="card" style="margin-bottom:14px">
+ <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+  <div style="width:66px;height:66px;border-radius:22px;background:linear-gradient(135deg,#7968d8,#ee8fac);display:grid;place-items:center;color:white;font-size:28px;font-weight:900" id="userHomeAvatar">✦</div>
+  <div style="flex:1;min-width:180px"><div class="muted">خوش آمدی</div><h2 id="userHomeName" style="margin:4px 0">کاربر پلنر</h2><div class="muted" id="userHomeEmail"></div></div>
+  <button class="btn" id="userHomeEdit">ویرایش پروفایل</button>
+  <button class="btn danger" id="userHomeSignOut">خروج از حساب</button>
+ </div>
+ <div class="profile-summary" style="margin-top:18px">
+  <div class="profile-stat"><span class="muted">هدف روزانه</span><b id="userHomeGoal">۵ ساعت</b></div>
+  <div class="profile-stat"><span class="muted">عضویت از</span><b id="userHomeJoined">—</b></div>
+  <div class="profile-stat"><span class="muted">وضعیت حساب</span><b>فعال</b></div>
+ </div>
+</div>
+<div class="grid kpis">
+ <div class="card kpi violet"><span class="label">مجموع ساعت مطالعه</span><strong id="userHomeHours">۰</strong><small>ثبت‌شده در حساب تو</small></div>
+ <div class="card kpi pink"><span class="label">مجموع تست‌ها</span><strong id="userHomeTests">۰</strong><small>تمام آزمون‌ها</small></div>
+ <div class="card kpi mint"><span class="label">مباحث خوانده‌شده</span><strong id="userHomeTopics">۰</strong><small>مباحث تکمیل‌شده</small></div>
+ <div class="card kpi blue"><span class="label">کارهای امروز</span><strong id="userHomeTasks">۰/۰</strong><small>کارهای انجام‌شده از کل</small></div>
+</div>
+<div class="grid two" style="margin-top:14px">
+ <div class="card"><h3>برنامه امروز من</h3><div id="userHomeTodayTasks" class="stack"><div class="empty">در حال بارگذاری…</div></div></div>
+ <div class="card"><h3>دسترسی سریع</h3><div class="stack">
+  <button class="btn" data-userhome-page="calendar">تقویم و برنامه روزانه</button>
+  <button class="btn" data-userhome-page="study">ثبت ساعت مطالعه</button>
+  <button class="btn" data-userhome-page="tests">ثبت تست‌ها</button>
+  <button class="btn" data-userhome-page="reports">گزارش پیشرفت من</button>
+ </div><p class="muted" style="line-height:1.9;margin-top:12px">این صفحه فقط اطلاعات حسابی را نشان می‌دهد که اکنون وارد آن شده‌ای. اطلاعات حساب‌های دیگر برای تو نمایش داده نمی‌شود.</p></div>
+</div>
+</section>
+<section class="page" id="profile"><div class="pagehead"><div><h2>پروفایل و مقایسه عملکرد</h2><div class="sub">نام نمایشی و خلاصه عملکردت را مدیریت کن.</div></div></div><div class="card"><h3>پروفایل کاربری</h3><div class="formgrid"><div class="field"><label>نام کاربری یا نام نمایشی</label><input id="profileName" placeholder="مثلاً StudyStar"></div><div class="field"><label>هدف روزانه مطالعه (ساعت)</label><input id="profileGoal" type="number" min="1" max="16" placeholder="مثلاً ۵"></div></div><button class="btn primary" id="saveProfile" style="margin-top:12px">ذخیره پروفایل</button><div class="toast" id="profileToast"></div></div><div class="card" style="margin-top:14px"><h3>عملکرد فعلی من</h3><div id="profileStats" class="profile-summary"></div><div class="toolbar" style="margin-top:14px"><button class="btn primary" id="copyProfileStats">کپی خلاصه عملکرد برای مقایسه</button></div><p class="muted" style="line-height:1.9;margin-top:12px">اطلاعات این پروفایل به حساب واردشده متصل است و با همگام‌سازی ابری ذخیره می‌شود. آمار شخصی تو به‌صورت عمومی برای کاربران دیگر نمایش داده نمی‌شود.</p></div></section>
 <section class="page" id="smart"><button type="button" class="smart-close" id="closeSmartPanel">✕ بستن پنل</button><div class="pagehead"><div><h2>دستیار هوشمند برنامه‌ریزی ✦</h2><div class="sub">پیشنهادها بر اساس ثبت تست‌ها، درصدها، ساعت مطالعه و کارهای انجام‌شده ساخته می‌شوند.</div></div><span class="hero-tag">تحلیل عملکرد و برنامه فردا</span></div>
 <div class="card" style="margin-bottom:14px"><div class="cardhead"><h3>روزشمارها</h3><span class="muted">شمارش معکوس داخل دستیار</span></div><div id="smartCountdowns" class="profile-summary"></div><p class="muted" style="margin:10px 0 0">برای تغییر تاریخ کنکور یا افزودن رویداد، از بخش روزشمارها استفاده کن.</p></div>
 <div class="grid two"><div class="card"><h3>تنظیم برنامه واقع‌بینانه</h3><div class="formgrid"><div class="field"><label>چند ساعت برای مطالعه فردا وقت داری؟</label><input id="smartHours" type="number" min="1" max="16" step="0.5" value="5"></div><div class="field"><label>هدف کل تست فردا</label><input id="smartTarget" type="number" min="5" max="300" step="5" value="60"></div><div class="field"><label>ساعت شروع مطالعه</label><input id="smartStartTime" type="time" value="09:00"></div><div class="field full"><label>تمرکز برنامه</label><select id="smartFocus"><option value="balanced">متعادل بین درس‌ها</option><option value="weak">توجه بیشتر به درس‌های ضعیف‌تر</option><option value="new">تمرکز بیشتر روی درس‌های کم‌تمرین</option></select></div></div><button class="btn primary" id="makeSmart" style="margin-top:12px">تحلیل عملکرد و ساخت برنامه فردا</button><p class="muted" style="line-height:1.9;margin-bottom:0">هرچه ثبت تست‌ها، درصدها و ساعت مطالعه‌ات دقیق‌تر باشد، پیشنهادها هدفمندتر می‌شوند. این نسخه از الگوریتم محلی استفاده می‌کند و اطلاعاتت از دستگاه خارج نمی‌شود.</p></div>
@@ -291,7 +322,16 @@ const SUPABASE_URL="https://hpttxsyfyszpftzxpzwv.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY="sb_publishable_loW6b9Jy18GiXWD6o4feGg_BXZYND7Z";
 const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
 let currentAuthUser=null;
-function updateAuthUI(user){currentAuthUser=user||null;const b=document.getElementById("openAuth");b.textContent=user?(user.user_metadata?.display_name||"حساب کاربری"):"ورود / ثبت‌نام";document.getElementById("authTabs").hidden=!!user;document.getElementById("authForm").hidden=!!user;document.getElementById("authSignOut").hidden=!user;document.getElementById("authTitle").textContent=user?"حساب کاربری":"ورود به حساب";if(!user)document.getElementById("authNote").textContent="ورود و ثبت‌نام با Supabase فعال است. برای ثبت‌نام ممکن است لازم باشد ایمیل خود را تأیید کنید."}
+function updateAuthUI(user){
+ currentAuthUser=user||null;
+ const b=document.getElementById("openAuth");
+ b.textContent=user?(db.profile?.name||user.user_metadata?.display_name||"صفحه من"):"ورود / ثبت‌نام";
+ document.getElementById("authTabs").hidden=!!user;
+ document.getElementById("authForm").hidden=!!user;
+ document.getElementById("authSignOut").hidden=!user;
+ document.getElementById("authTitle").textContent=user?"حساب کاربری":"ورود به حساب";
+ if(!user)document.getElementById("authNote").textContent="ورود و ثبت‌نام با Supabase فعال است. برای ثبت‌نام ممکن است لازم باشد ایمیل خود را تأیید کنید.";
+}
 
 const fmt=new Intl.DateTimeFormat('en-US-u-ca-persian-nu-latn',{year:'numeric',month:'numeric',day:'numeric',timeZone:'UTC'});
 const parts=d=>{let o={};fmt.formatToParts(d).forEach(x=>{if(x.type!=='literal')o[x.type]=+x.value});return o};
@@ -406,6 +446,8 @@ async function handleAuthSession(user){
   localStorage.setItem('studyPlannerCloudSynced:'+user.id,String(Date.now()));
   setCloudMessage('وارد حساب شده‌اید: '+user.email+' · همگام‌سازی ابری فعال است.','#27845f');
   renderAfterCloudLoad();
+  updateAuthUI(user);
+  setPage('userhome');
  }catch(err){
   cloudSyncReady=false;
   setCloudMessage('حساب وارد شده، اما همگام‌سازی ابری برقرار نشد. اطلاعات محلی دست‌نخورده باقی مانده است. خطا: '+(err.message||'ارتباط ناموفق'),'#a45b55');
@@ -439,7 +481,7 @@ function sum(a,f){return a.reduce((s,x)=>s+f(x),0)}
 function group(a,key,val){let o={};a.forEach(x=>{let k=x[key]||'بدون نام';o[k]=(o[k]||0)+val(x)});return o}
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function monthLabel(y,m){let names=['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];return `${names[m-1]} ${fa(y)}`}
-function setPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));if(id==='analytics'||id==='dashboard')drawAll();if(id==='reports')renderReports();if(id==='reminders')renderReminders();if(id==='countdowns')renderCountdowns();if(id==='profile')renderProfile();if(id==='studyroom')renderStudyRoom();if(id==='todo')renderTodo();if(id==='smart'){renderSmartCountdowns();renderReviewQueue()}}
+function setPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));if(id==='analytics'||id==='dashboard')drawAll();if(id==='reports')renderReports();if(id==='reminders')renderReminders();if(id==='countdowns')renderCountdowns();if(id==='profile')renderProfile();if(id==='userhome')renderUserHome();if(id==='studyroom')renderStudyRoom();if(id==='todo')renderTodo();if(id==='smart'){renderSmartCountdowns();renderReviewQueue()}}
 document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>{setPage(b.dataset.page);closeDrawer()});
 const drawer=document.querySelector('.sidebar');drawer.classList.add('drawer');
 function openDrawer(){drawer.classList.add('open');document.getElementById('drawerBackdrop').classList.add('open')}
@@ -595,8 +637,29 @@ document.getElementById('joinRoom').onclick=()=>{
  const code=document.getElementById('roomInviteCode').value.trim();
  document.getElementById('joinRoomMessage').textContent=code?'کد وارد شد، اما بررسی و عضویت واقعی پس از اتصال سامانه آنلاین فعال می‌شود.':'لطفاً ابتدا کد دعوت دوستت را وارد کن.';
 };
+function renderUserHome(){
+ if(!currentAuthUser)return;
+ const user=currentAuthUser, email=user.email||'';
+ const name=db.profile.name||user.user_metadata?.display_name||email.split('@')[0]||'کاربر پلنر';
+ const todayTasks=db.tasks[todayStr]||[],done=todayTasks.filter(x=>x.done).length;
+ const joined=user.created_at?new Intl.DateTimeFormat('fa-IR',{dateStyle:'medium'}).format(new Date(user.created_at)):'—';
+ document.getElementById('userHomeName').textContent=name;
+ document.getElementById('userHomeEmail').textContent=email;
+ document.getElementById('userHomeAvatar').textContent=(name.trim()[0]||'✦').toLocaleUpperCase('fa-IR');
+ document.getElementById('userHomeGoal').textContent=fa(db.profile.goal||5)+' ساعت';
+ document.getElementById('userHomeJoined').textContent=joined;
+ document.getElementById('userHomeHours').textContent=fa(sum(db.study,x=>x.hours));
+ document.getElementById('userHomeTests').textContent=fa(sum(db.tests,x=>x.qty));
+ document.getElementById('userHomeTopics').textContent=fa(db.topics.filter(x=>x.status==='خوانده‌شده').length);
+ document.getElementById('userHomeTasks').textContent=fa(done)+'/'+fa(todayTasks.length);
+ document.getElementById('userHomeCloud').textContent=cloudSyncReady?'همگام‌سازی ابری فعال است':'اتصال ابری در حال بررسی';
+ document.getElementById('userHomeTodayTasks').innerHTML=todayTasks.length?todayTasks.map(t=>'<div class="task"><span>'+ (t.done?'✓':'○') +'</span><span style="'+(t.done?'text-decoration:line-through;opacity:.55':'')+'">'+esc(t.text)+'</span></div>').join(''):'<div class="empty">برای امروز هنوز برنامه‌ای ثبت نکرده‌ای.</div>';
+}
+document.getElementById('userHomeEdit').onclick=()=>setPage('profile');
+document.getElementById('userHomeSignOut').onclick=async()=>{const {error}=await supabaseClient.auth.signOut();if(error)alert('خروج انجام نشد: '+error.message)};
+document.querySelectorAll('[data-userhome-page]').forEach(b=>b.onclick=()=>setPage(b.dataset.userhomePage));
 function renderProfile(){document.getElementById('profileName').value=db.profile.name||'';document.getElementById('profileGoal').value=db.profile.goal||5;document.getElementById('profileStats').innerHTML=[['ساعت مطالعه',fa(sum(db.study,x=>x.hours))],['تعداد تست',fa(sum(db.tests,x=>x.qty))],['مباحث خوانده‌شده',fa(db.topics.filter(x=>x.status==='خوانده‌شده').length)]].map(x=>'<div class="profile-stat"><span class="muted">'+x[0]+'</span><b>'+x[1]+'</b></div>').join('')}
-document.getElementById('saveProfile').onclick=()=>{db.profile.name=document.getElementById('profileName').value.trim();db.profile.goal=Math.max(1,Math.min(16,+document.getElementById('profileGoal').value||5));save();renderProfile();document.getElementById('profileToast').textContent='پروفایل ذخیره شد.'};
+document.getElementById('saveProfile').onclick=()=>{db.profile.name=document.getElementById('profileName').value.trim();db.profile.goal=Math.max(1,Math.min(16,+document.getElementById('profileGoal').value||5));save();renderProfile();renderUserHome();updateAuthUI(currentAuthUser);document.getElementById('profileToast').textContent='پروفایل ذخیره شد.'};
 document.getElementById('copyProfileStats').onclick=()=>{let msg='خلاصه عملکرد پلنر\\nنام: '+(db.profile.name||'بدون نام')+'\\nساعت مطالعه: '+sum(db.study,x=>x.hours)+'\\nتعداد تست: '+sum(db.tests,x=>x.qty)+'\\nمباحث خوانده‌شده: '+db.topics.filter(x=>x.status==='خوانده‌شده').length; if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(msg).then(()=>document.getElementById('profileToast').textContent='خلاصه کپی شد.').catch(()=>document.getElementById('profileToast').textContent=msg);else document.getElementById('profileToast').textContent=msg};
 
 window.addEventListener('resize',()=>{if(document.querySelector('.page.active').id==='dashboard'||document.querySelector('.page.active').id==='analytics')drawAll()});
