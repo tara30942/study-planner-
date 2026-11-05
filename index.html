@@ -253,6 +253,33 @@ th{font-weight:bold;color:#77758b}
 #studycompare .leaderboard-username{background:#eee8fb;color:#5e4a91;border:1px solid #e4daf7}
 @media(max-width:560px){#studycompare .leaderboard-podium{gap:7px}#studycompare .podium-card{padding:14px 5px;border-radius:15px}#studycompare .podium-avatar{width:43px;height:43px;border-radius:15px}#studycompare .podium-name{font-size:12px}#studycompare .podium-hours{font-size:11px}#studycompare .podium-label{font-size:9px;padding:4px 6px}}
 @media(prefers-reduced-motion:reduce){#studycompare .leaderboard-table tbody tr{transition:none}}
+
+/* Compact leaderboard so the full user list fits inside its floating window */
+#studycompare .fancy-float-window{width:min(720px,calc(100vw - 20px));padding:14px;max-height:88vh}
+#studycompare .fancy-pop .tablewrap{max-height:58vh;overflow-x:hidden;overflow-y:auto}
+#studycompare .leaderboard-table-wrap{overflow-x:hidden}
+#studycompare .leaderboard-table{width:100%;min-width:0!important;table-layout:fixed;border-spacing:0 4px;font-size:10px}
+#studycompare .leaderboard-table thead th{padding:7px 3px;font-size:10px;white-space:normal}
+#studycompare .leaderboard-table tbody td{padding:6px 3px;font-size:10px;overflow-wrap:anywhere}
+#studycompare .leaderboard-user{min-width:0;gap:5px}
+#studycompare .leaderboard-avatar{width:27px;height:27px;flex:0 0 27px;border-radius:9px;font-size:12px}
+#studycompare .leaderboard-username{font-size:9px;padding:3px 5px;white-space:normal;overflow-wrap:anywhere}
+#studycompare .leaderboard-rank{font-size:10px}
+#studycompare .leaderboard-podium{gap:7px;margin:10px 0 14px}
+#studycompare .podium-card{padding:11px 5px 9px;gap:5px;border-radius:14px}
+#studycompare .podium-avatar{width:38px;height:38px;border-radius:13px;font-size:17px}
+#studycompare .podium-crown{font-size:19px}
+#studycompare .podium-hours{font-size:11px}
+#studycompare .podium-handle{font-size:9px}
+#studycompare .fancy-window-head{padding-bottom:9px;margin-bottom:10px}
+@media(max-width:560px){
+ #studycompare .fancy-float-window{padding:10px;width:calc(100vw - 12px);max-height:90vh}
+ #studycompare .leaderboard-table thead th{font-size:9px;padding:6px 2px}
+ #studycompare .leaderboard-table tbody td{font-size:9px;padding:5px 2px}
+ #studycompare .leaderboard-avatar{width:23px;height:23px;flex-basis:23px;font-size:10px}
+ #studycompare .leaderboard-user{gap:3px}
+ #studycompare .leaderboard-username{font-size:8px;padding:2px 3px}
+}
 </style>
 </head>
 <body>
