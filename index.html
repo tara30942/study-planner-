@@ -658,7 +658,7 @@ function renderUserHome(){
  const joined=user.created_at?new Intl.DateTimeFormat('fa-IR',{dateStyle:'medium'}).format(new Date(user.created_at)):'—';
  document.getElementById('userHomeName').textContent=name;
  document.getElementById('userHomeEmail').textContent=email;
- document.getElementById('userHomeAvatar').textContent=(name.trim()[0]||'✦').toLocaleUpperCase('fa-IR');
+ document.getElementById('userHomeAvatar').textContent=(name.trim()[0]||'✦').toLocaleUpperCase('fa-IR');loadPersonalAppearance();
  document.getElementById('userHomeGoal').textContent=fa(db.profile.goal||5)+' ساعت';
  document.getElementById('userHomeJoined').textContent=joined;
  document.getElementById('userHomeHours').textContent=fa(sum(db.study,x=>x.hours));
