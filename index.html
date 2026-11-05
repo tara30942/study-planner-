@@ -688,11 +688,14 @@ window.addEventListener('offline',updateNetworkStatus);
 updateNetworkStatus();
 let deferredInstallPrompt=null;
 const installAppBtn=document.getElementById('installAppBtn');
+const isPlannerInstalled=()=>window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone===true;
+if(installAppBtn&&isPlannerInstalled())installAppBtn.hidden=true;
 window.addEventListener('beforeinstallprompt',event=>{
  event.preventDefault();deferredInstallPrompt=event;
- if(installAppBtn)installAppBtn.hidden=false;
+ if(installAppBtn&&!isPlannerInstalled())installAppBtn.hidden=false;
 });
 if(installAppBtn){installAppBtn.addEventListener('click',async()=>{
+ if(isPlannerInstalled()){installAppBtn.hidden=true;return;}
  if(!deferredInstallPrompt){alert('اگر گزینه نصب نمایش داده نمی‌شود، از منوی سه‌نقطه مرورگر گزینه «افزودن به صفحه اصلی» را بررسی کن.');return;}
  deferredInstallPrompt.prompt();
  await deferredInstallPrompt.userChoice;
