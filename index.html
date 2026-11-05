@@ -680,7 +680,7 @@ async function joinStudyRoom(){
  if(!code){msg.textContent='لطفاً کد دعوت را وارد کن.';return}
  if(!navigator.onLine){msg.textContent='برای پیوستن به اتاق به اینترنت وصل شو.';return}
  btn.disabled=true;btn.textContent='در حال بررسی…';
- try{const {data,error}=await supabaseClient.rpc('join_study_room',{p_code:code});if(error)throw error;const roomData=Array.isArray(data)?data[0]:data;if(!roomData?.room_id)throw new Error('اتاقی با این کد پیدا نشد.');document.getElementById('roomInviteCode').value='';msg.textContent='با موفقیت به اتاق پیوستی.';await renderStudyRoom();await openStudyRoom({id:roomData.room_id,name:roomData.room_name,goal_hours:roomData.goal_hours});}
+ try{const {data,error}=await supabaseClient.rpc('join_study_room',{p_code:code});if(error)throw error;const roomData=Array.isArray(data)?data[0]:data;if(!roomData?.room_id)throw new Error('اتاقی با این کد پیدا نشد.');const {data:fullRoom,error:roomFetchError}=await supabaseClient.from('study_rooms').select('id,name,invite_code,goal_hours,visibility,owner_id').eq('id',roomData.room_id).single();if(roomFetchError)throw roomFetchError;document.getElementById('roomInviteCode').value='';msg.textContent='با موفقیت به اتاق پیوستی.';await renderStudyRoom();await openStudyRoom(fullRoom);}
  catch(err){msg.textContent=roomErrorMessage(err)}finally{btn.disabled=false;btn.textContent='پیوستن به اتاق'}
 }
 async function openStudyRoom(room){
@@ -694,8 +694,23 @@ async function openStudyRoom(room){
 function renderStudyRoomDetail(){
  const room=activeStudyRoom;if(!room)return;
  document.getElementById('roomDetailTitle').textContent='📚 '+room.name;
- document.getElementById('roomDetailInfo').innerHTML='<b>'+esc(room.name)+'</b><div style="margin-top:8px">هدف هفتگی: '+fa(room.goal_hours||30)+' ساعت</div><div style="margin-top:8px">کد دعوت: <b style="letter-spacing:1px">'+esc(room.invite_code||'برای اعضا محفوظ')+'</b> <button type="button" class="btn light" id="copyRoomCode" style="margin-inline-start:8px">کپی کد</button></div>';
- const copy=document.getElementById('copyRoomCode');if(copy)copy.onclick=()=>{navigator.clipboard?.writeText(room.invite_code||'').then(()=>{copy.textContent='کپی شد'})};
+ const code=room.invite_code||'';
+ document.getElementById('roomDetailInfo').innerHTML=
+  '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">'+
+   '<div><b style="font-size:17px">'+esc(room.name)+'</b><div class="muted" style="margin-top:6px">هدف هفتگی گروه: '+fa(room.goal_hours||30)+' ساعت</div></div>'+
+   '<span class="badge">اتاق آنلاین</span>'+
+  '</div>'+
+  '<div style="margin-top:16px;padding:16px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(135deg,rgba(121,104,216,.10),rgba(238,143,172,.12))">'+
+   '<div style="font-weight:800;margin-bottom:6px">🔑 کد دعوت دوستان</div>'+
+   '<div class="muted" style="font-size:13px;margin-bottom:12px">این کد را برای دوستانت بفرست تا بتوانند به اتاق ملحق شوند.</div>'+
+   '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">'+
+    '<code id="roomInviteCodeDisplay" dir="ltr" style="font-size:23px;font-weight:900;letter-spacing:4px;padding:10px 14px;border-radius:12px;background:var(--card);border:1px dashed var(--accent)">'+(code?esc(code):'کد در دسترس نیست')+'</code>'+
+    (code?'<button type="button" class="btn primary" id="copyRoomCode">کپی کد</button><button type="button" class="btn light" id="shareRoomCode">اشتراک‌گذاری</button>':'')+
+   '</div><div id="roomCodeFeedback" class="muted" style="margin-top:9px;font-size:13px"></div>'+
+  '</div>';
+ const copy=document.getElementById('copyRoomCode'),share=document.getElementById('shareRoomCode'),feedback=document.getElementById('roomCodeFeedback');
+ if(copy)copy.onclick=async()=>{try{await navigator.clipboard.writeText(code);feedback.textContent='کد دعوت کپی شد؛ برای دوستانت بفرست.'}catch(e){feedback.textContent='کپی خودکار در این مرورگر در دسترس نیست؛ کد را انتخاب و کپی کن.'}};
+ if(share)share.onclick=async()=>{const payload={title:'دعوت به اتاق مطالعه '+room.name,text:'برای پیوستن به اتاق مطالعه «'+room.name+'» این کد دعوت را وارد کن: '+code};try{if(navigator.share)await navigator.share(payload);else{await navigator.clipboard.writeText(payload.text);feedback.textContent='متن دعوت کپی شد؛ آن را برای دوستانت بفرست.'}}catch(e){if(e?.name!=='AbortError')feedback.textContent='اشتراک‌گذاری انجام نشد؛ می‌توانی کد را با دکمه کپی بفرستی.'}};
 }
 async function loadStudyRoomContent(){
  if(!activeStudyRoom)return;
