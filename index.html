@@ -172,6 +172,26 @@ th{font-weight:bold;color:#77758b}
 
 
 .smart-intake textarea{min-height:72px;resize:vertical}.smart-intake .field label{font-weight:800}.smart-intake .smart-pill{white-space:nowrap}
+#smart{--smart-accent:#6557c8;--smart-soft:#f2efff}
+#smart>.pagehead{padding:22px 24px;border-radius:24px;background:radial-gradient(circle at 88% 15%,#ffffff8c 0 12%,transparent 13%),linear-gradient(120deg,#e9e5ff,#f9eaf2 58%,#e7f6ef);border:1px solid #fff;box-shadow:0 16px 38px #5545a018}
+#smart>.pagehead h2{font-size:23px;letter-spacing:-.4px}
+#smart .card{border-radius:22px;box-shadow:0 10px 30px #30265b0b;transition:transform .2s ease,box-shadow .2s ease}
+#smart .card:hover{box-shadow:0 15px 34px #30265b13}
+#smart .smart-intake,#smart .smart-daily-card{padding:20px;border:1px solid #e9e4fa;background:linear-gradient(145deg,#fff 0%,#faf9ff 58%,#f4f8ff 100%);position:relative;overflow:hidden}
+#smart .smart-intake:before,#smart .smart-daily-card:before{content:"";position:absolute;inset:0 0 auto;height:4px;background:linear-gradient(90deg,#7868d9,#d98fb0,#78c5a5)}
+#smart .smart-daily-card{background:linear-gradient(145deg,#f7f5ff,#fff 60%,#f1faf6)}
+#smart .smart-intake .field label,#smart .smart-daily-card .field label{font-weight:800;color:#625d7b;font-size:12px}
+#smart .smart-intake textarea,#smart .smart-daily-card textarea,#smart .smart-daily-card input{border:1px solid #e7e3f2;border-radius:14px;background:#ffffffd9;padding:12px;line-height:1.9;transition:border-color .18s,box-shadow .18s}
+#smart .smart-intake textarea:focus,#smart .smart-daily-card textarea:focus,#smart .smart-daily-card input:focus{border-color:#9b8de5;box-shadow:0 0 0 4px #8b7ce51a;outline:0}
+#smart .btn{border-radius:13px;font-weight:700;transition:transform .18s,filter .18s}
+#smart .btn:hover{transform:translateY(-1px);filter:brightness(1.02)}
+#smart .btn.primary{background:linear-gradient(120deg,#7162d2,#8878e2);box-shadow:0 7px 16px #7666d52b}
+#smart .smart-pill{background:#efedff;color:#5d50b5;padding:6px 11px;font-weight:800}
+#smart .smart-item{border-radius:15px;background:linear-gradient(110deg,#fbfaff,#fff);padding:13px 14px}
+#smart .cardhead h3{font-size:16px}
+@media(max-width:640px){#smart>.pagehead{padding:18px;border-radius:19px}#smart .smart-intake,#smart .smart-daily-card{padding:15px}#smart .formgrid{grid-template-columns:1fr}#smart .field.full{grid-column:auto}#smart .toolbar>*{max-width:100%}}
+@media(prefers-reduced-motion:reduce){#smart .card,#smart .btn{transition:none}}
+
 
 </style></head>
 <body>
@@ -307,9 +327,18 @@ th{font-weight:bold;color:#77758b}
 </div>
 </section>
 <section class="page" id="profile"><div class="pagehead"><div><h2>پروفایل و مقایسه عملکرد</h2><div class="sub">نام نمایشی و خلاصه عملکردت را مدیریت کن.</div></div></div><div class="card"><h3>پروفایل کاربری</h3><div class="profile-upload-row"><img id="profileAvatarPreview" class="personal-image-preview" alt="پیش‌نمایش تصویر پروفایل"><div class="field"><label for="profileAvatarFile">تصویر پروفایل دلخواه</label><input id="profileAvatarFile" type="file" accept="image/*"><small class="muted">تصویر روی همین دستگاه ذخیره می‌شود.</small></div></div><div class="formgrid" style="margin-top:14px"><div class="field"><label>نام کاربری یا نام نمایشی</label><input id="profileName" placeholder="مثلاً StudyStar"></div><div class="field"><label>هدف روزانه مطالعه (ساعت)</label><input id="profileGoal" type="number" min="1" max="16" placeholder="مثلاً ۵"></div></div><button class="btn primary" id="saveProfile" style="margin-top:12px">ذخیره پروفایل</button><div class="toast" id="profileToast"></div><div class="divider" style="margin:18px 0;border-top:1px solid var(--line)"></div><h3>پس‌زمینه دلخواه</h3><div class="field"><label for="profileBackgroundFile">انتخاب عکس از گالری گوشی یا رایانه</label><input id="profileBackgroundFile" type="file" accept="image/*"><small class="muted">عکس فقط برای حساب و دستگاه خودت اعمال می‌شود و در حساب دیگران تغییری ایجاد نمی‌کند.</small></div><div class="profile-actions"><button class="btn" id="clearProfileBackground" type="button">حذف پس‌زمینه و بازگشت به حالت پیش‌فرض</button><button class="btn" id="clearProfileAvatar" type="button">حذف تصویر پروفایل</button></div></div><div class="card" style="margin-top:14px"><h3>عملکرد فعلی من</h3><div id="profileStats" class="profile-summary"></div><div class="toolbar" style="margin-top:14px"><button class="btn primary" id="copyProfileStats">کپی خلاصه عملکرد برای مقایسه</button></div><p class="muted" style="line-height:1.9;margin-top:12px">اطلاعات این پروفایل به حساب واردشده متصل است و با همگام‌سازی ابری ذخیره می‌شود. آمار شخصی تو به‌صورت عمومی برای کاربران دیگر نمایش داده نمی‌شود.</p></div></section>
-<section class="page" id="smart"><button type="button" class="smart-close" id="closeSmartPanel">✕ بستن پنل</button><div class="pagehead"><div><h2>دستیار هوشمند برنامه‌ریزی ✦</h2><div class="sub">پیشنهادها بر اساس ثبت تست‌ها، درصدها، ساعت مطالعه و کارهای انجام‌شده ساخته می‌شوند.</div></div><span class="hero-tag">تحلیل عملکرد و برنامه فردا</span></div>
+<section class="page" id="smart"><button type="button" class="smart-close" id="closeSmartPanel">✕ بستن پنل</button><div class="pagehead"><div><h2>دستیار هوشمند برنامه‌ریزی ✦</h2><div class="sub">برای هر روز هدف و پیش‌نیاز جداگانه تعیین کن؛ دستیار آن را با عملکرد و زمانت هماهنگ می‌کند.</div></div><span class="hero-tag">تحلیل عملکرد و برنامه فردا</span></div>
 <div class="card" style="margin-bottom:14px"><div class="cardhead"><h3>روزشمارها</h3><span class="muted">شمارش معکوس داخل دستیار</span></div><div id="smartCountdowns" class="profile-summary"></div><p class="muted" style="margin:10px 0 0">برای تغییر تاریخ کنکور یا افزودن رویداد، از بخش روزشمارها استفاده کن.</p></div>
-<div class="card smart-intake" style="margin-bottom:14px;border:1px solid #ddd7f4;background:linear-gradient(135deg,#fbfaff,#f5f8ff)">
+<div class="card smart-daily-card" style="margin-bottom:14px">
+<div class="cardhead"><div><h3>🎯 هدف و پیش‌نیازهای روزانه</h3><div class="muted">برای هر روز هدف جداگانه تعیین کن؛ این بخش مستقل از شرایط کلی تو ذخیره می‌شود.</div></div><span class="smart-pill">برنامه روزبه‌روز</span></div>
+<div class="formgrid">
+<div class="field"><label for="smartDailyDate">📅 روزی که برایش برنامه می‌سازی</label><input id="smartDailyDate" placeholder="۱۴۰۵/۰۸/۱۵"></div>
+<div class="field"><label for="smartDailyGoal">🏁 هدف اصلی همان روز</label><input id="smartDailyGoal" placeholder="مثلاً یادگیری فصل دوم زیست"></div>
+<div class="field full"><label for="smartDailyPrerequisites">🧩 پیش‌نیازهای لازم برای هدف روز</label><textarea id="smartDailyPrerequisites" rows="2" placeholder="مثلاً قبل از تست فصل ۲، گفتار ۱ و ۲ را یاد بگیرم…"></textarea></div>
+<div class="field full"><label for="smartDailyPriority">⭐ کارهای ضروری و اولویت‌های همان روز</label><textarea id="smartDailyPriority" rows="2" placeholder="مثلاً حل تمرین‌های مشخص، مرور نکات یا آماده‌شدن برای آزمون…"></textarea></div>
+</div>
+<div class="toolbar" style="margin-top:12px;flex-wrap:wrap"><button class="btn primary" id="saveSmartDaily" type="button">ذخیره هدف این روز</button><button class="btn light" id="clearSmartDaily" type="button">پاک‌کردن فرم این روز</button><span class="muted" id="smartDailyStatus" aria-live="polite">هدف روزانه هنوز ذخیره نشده است.</span></div>
+</div><div class="card smart-intake" style="margin-bottom:14px;border:1px solid #ddd7f4;background:linear-gradient(135deg,#fbfaff,#f5f8ff)">
 <div class="cardhead"><div><h3>🧭 قبل از شروع، شرایطت را به دستیار بگو</h3><div class="muted">این اطلاعات کمک می‌کند برنامه با هدف، پیش‌نیازها و محدودیت‌های واقعی تو هماهنگ شود.</div></div><span class="smart-pill">مرحله اول</span></div>
 <div class="formgrid">
 <div class="field full"><label for="smartGoal">🎯 هدف اصلی تو چیست؟</label><textarea id="smartGoal" rows="2" placeholder="مثلاً آمادگی برای کنکور، امتحان نهایی، جمع‌بندی یا یادگیری یک درس…"></textarea></div>
@@ -575,6 +604,14 @@ monthSelSafe();function monthSelSafe(){document.getElementById('trendMonth').onc
 
 let smartDraft=null;
 
+function smartDailyKey(){const raw=document.getElementById('smartDailyDate')?.value.trim();return raw?normDate(raw):addJalaliDays(todayStr,1)}
+function loadSmartDaily(){const date=smartDailyKey(),p=db.profile.smartDailyPrefs?.[date]||{};document.getElementById('smartDailyGoal').value=p.goal||'';document.getElementById('smartDailyPrerequisites').value=p.prerequisites||'';document.getElementById('smartDailyPriority').value=p.priority||'';document.getElementById('smartDailyStatus').textContent=p.savedAt?'✓ هدف و پیش‌نیازهای این روز ذخیره شده‌اند.':'برای این روز هنوز هدفی ثبت نشده است.'}
+function saveSmartDaily(){const date=smartDailyKey(),goal=document.getElementById('smartDailyGoal').value.trim(),prerequisites=document.getElementById('smartDailyPrerequisites').value.trim(),priority=document.getElementById('smartDailyPriority').value.trim();if(!goal&&!prerequisites&&!priority){document.getElementById('smartDailyStatus').textContent='حداقل هدف روزانه یا یکی از موارد دیگر را وارد کن.';return false}if(!db.profile.smartDailyPrefs||typeof db.profile.smartDailyPrefs!=='object')db.profile.smartDailyPrefs={};db.profile.smartDailyPrefs[date]={goal,prerequisites,priority,savedAt:new Date().toISOString()};save();document.getElementById('smartDailyStatus').textContent='✓ اطلاعات روز '+date+' ذخیره شد.';document.getElementById('smartToast').textContent='هدف و پیش‌نیازهای روزانه ذخیره شدند.';return true}
+document.getElementById('smartDailyDate').value=addJalaliDays(todayStr,1);
+document.getElementById('smartDailyDate').addEventListener('change',loadSmartDaily);
+document.getElementById('saveSmartDaily').onclick=saveSmartDaily;
+document.getElementById('clearSmartDaily').onclick=()=>{document.getElementById('smartDailyGoal').value='';document.getElementById('smartDailyPrerequisites').value='';document.getElementById('smartDailyPriority').value='';document.getElementById('smartDailyStatus').textContent='فرم پاک شد؛ برای ذخیره تغییرات، دکمه ذخیره را بزن.'};
+loadSmartDaily();
 function readSmartPrefs(){
  const val=id=>(document.getElementById(id)?.value||'').trim();
  return {goal:val('smartGoal'),subjects:val('smartSubjects'),prerequisites:val('smartPrerequisites'),weakTopics:val('smartWeakTopics'),fixedTimes:val('smartFixedTimes'),availableDays:val('smartAvailableDays'),restStyle:document.getElementById('smartRestStyle').value,readiness:document.getElementById('smartReadiness').value,requests:val('smartRequests'),hours:+document.getElementById('smartHours').value||5,startTime:document.getElementById('smartStartTime').value||'09:00',endTime:document.getElementById('smartEndTime')?.value||'21:00',target:+document.getElementById('smartTarget').value||60};
@@ -627,19 +664,23 @@ function recordTopicReview(id,result){
 function smartBuild(){
  if(!db.profile.smartPrefs?.savedAt){document.getElementById('smartToast').textContent='اول شرایط، هدف و پیش‌نیازهایت را در بخش بالای صفحه ثبت و ذخیره کن.';document.getElementById('smartGoal').focus();return}
  const prefs=readSmartPrefs();db.profile.smartPrefs={...prefs,savedAt:db.profile.smartPrefs.savedAt};save();
+ const planDate=smartDailyKey(),daily=db.profile.smartDailyPrefs?.[planDate]||{goal:document.getElementById('smartDailyGoal').value.trim(),prerequisites:document.getElementById('smartDailyPrerequisites').value.trim(),priority:document.getElementById('smartDailyPriority').value.trim()};
+ const dailyPrerequisites=daily.prerequisites.split(/[،,؛;\n]/).map(x=>x.trim()).filter(Boolean),dailyPriorities=daily.priority.split(/[،,؛;\n]/).map(x=>x.trim()).filter(Boolean);
  const hours=Math.max(1,Math.min(16,+document.getElementById('smartHours').value||5));
  const target=Math.max(5,Math.min(300,+document.getElementById('smartTarget').value||60));
  const focus=document.getElementById('smartFocus').value;
  const preferredSubjects=prefs.subjects.split(/[،,\n؛;]/).map(x=>x.trim()).filter(Boolean);
- const prerequisiteItems=prefs.prerequisites.split(/[،;؛\n]/).map(x=>x.trim()).filter(Boolean);
- const weakItems=prefs.weakTopics.split(/[،;؛\n]/).map(x=>x.trim()).filter(Boolean);
+ const prerequisiteItems=[...prefs.prerequisites.split(/[،;؛\n]/),...dailyPrerequisites].map(x=>x.trim()).filter(Boolean);
+ const weakItems=[...prefs.weakTopics.split(/[،;؛\n]/),...dailyPriorities].map(x=>x.trim()).filter(Boolean);
  const todayTasks=db.tasks[todayStr]||[],done=todayTasks.filter(t=>t.done).length,missed=todayTasks.filter(t=>!t.done);
  const todayTests=db.tests.filter(x=>x.date===todayStr),todayQty=sum(todayTests,x=>x.qty),todayStudy=sum(db.study.filter(x=>x.date===todayStr),x=>x.hours);
  let subjects=[...new Set([...preferredSubjects,...db.tests.map(x=>x.subject),...db.study.map(x=>x.subject),...db.topics.map(x=>x.subject)])];
  if(!subjects.length)subjects=['زیست‌شناسی','شیمی','فیزیک','ریاضی'];
  let stats=subjects.map(subject=>{let arr=db.tests.filter(x=>x.subject===subject).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,12);let qty=sum(arr,x=>x.qty),avg=arr.length?sum(arr,x=>x.percent)/arr.length:65;let recent=sum(arr.slice(0,4),x=>x.qty);let isWeak=weakItems.some(t=>t.includes(subject)||subject.includes(t));let isPriority=preferredSubjects.some(t=>t===subject||t.includes(subject)||subject.includes(t));let topicRows=db.topics.filter(t=>t.subject===subject);let dated=topicRows.map(t=>({...t,daysLeft:jalaliDaysBetween(todayStr,t.examDate)})).filter(t=>t.daysLeft!==null&&t.daysLeft>=0).sort((a,b)=>a.daysLeft-b.daysLeft);let nearest=dated[0]||null;let volume=sum(topicRows,t=>Math.max(0,+t.volume||0));let masteryScore=topicRows.length?topicRows.reduce((n,t)=>n+(t.mastery==='low'?0:t.mastery==='high'?2:1),0)/topicRows.length:1;let examBoost=nearest?(nearest.daysLeft<=7?2.4:nearest.daysLeft<=21?1.6:nearest.daysLeft<=45?0.8:0.25):0;let volumeBoost=Math.min(1.2,Math.log1p(volume)/5);let masteryBoost=(2-masteryScore)*0.65;let weight=1+(100-avg)/65+(qty?0:0.8)+(recent<20?0.5:0)+(isWeak?1.5:0)+(isPriority?0.65:0)+examBoost+volumeBoost+masteryBoost;if(focus==='new'&&qty<30)weight*=1.8;if(focus==='weak'&&(avg<60||isWeak||masteryScore<0.8))weight*=1.7;return {subject,qty,avg,weight,recent,count:arr.length,nearest,volume,masteryScore,topicCount:topicRows.length}});
  let testTarget=prefs.readiness==='learn'?Math.max(5,Math.round(target*.35)):prefs.readiness==='practice'?target:Math.max(5,Math.round(target*.75));let wsum=sum(stats,x=>x.weight),alloc=stats.map(x=>({...x,tests:Math.max(5,Math.round(testTarget*x.weight/wsum/5)*5)}));let total=sum(alloc,x=>x.tests);while(total>testTarget+4){let idx=alloc.findIndex(x=>x.tests===Math.max(...alloc.map(y=>y.tests)));if(alloc[idx].tests<=5)break;alloc[idx].tests-=5;total-=5}while(total<testTarget-4){let idx=alloc.findIndex(x=>x.weight===Math.max(...alloc.map(y=>y.weight)));alloc[idx].tests+=5;total+=5}
- let tomorrow=addJalaliDays(todayStr,1),items=[];
+ let tomorrow=planDate,items=[];
+ if(daily.goal)items.push({text:'هدف روز: '+daily.goal,done:false,smart:true});
+ dailyPriorities.forEach(x=>items.push({text:'اولویت روز: '+x,done:false,smart:true}));
  alloc.forEach(x=>items.push({text:`${x.subject}: ${fa(x.tests)} تست + بررسی پاسخ‌ها`,done:false,smart:true}));
  let dueTopics=getDueReviewTopics().slice(0,Math.max(1,Math.min(4,Math.floor(hours/2))));
  dueTopics.forEach(x=>items.push({text:`مرور ${x.subject} ـ ${x.name} (۲۰ دقیقه)`,done:false,smart:true}));
@@ -657,13 +698,13 @@ function smartBuild(){
  let pendingTodos=(db.todoLists||[]).flatMap(l=>l.items.filter(t=>!t.done).map(t=>({title:t.title,list:l.name,due:t.due})));let catchup=[];if(pendingTodos.length)catchup.push('از فهرست کارها '+fa(pendingTodos.length)+' مورد انجام‌نشده داری؛ فقط موارد مهم و نزدیک به مهلت را وارد برنامه کن.');pendingTodos.filter(t=>t.due).slice(0,4).forEach(t=>catchup.push('کارِ «'+t.title+'» از فهرست «'+t.list+'» مهلت '+t.due+' دارد؛ برایش زمان مشخص کن.'));if(missed.length){let carry=Math.ceil(missed.length*.5);missed.slice(0,carry).forEach(t=>items.push({text:`جبران: ${t.text}`,done:false,smart:true}));if(missed.length>carry)catchup.push(` ${fa(missed.length-carry)} کار باقی‌مانده را به روز بعد از فردا منتقل کن؛ همه را یک‌جا روی فردا نریز.`);catchup.unshift(` ${fa(carry)} مورد از ${fa(missed.length)} کار انجام‌نشده، با اولویت مهم‌تر به فردا منتقل شد.`)}else catchup.push('امروز کار عقب‌افتاده‌ای در چک‌لیست ثبت نشده؛ برنامه فردا را طبق ظرفیتت اجرا کن.');
  let review= db.topics.filter(x=>x.status==='نیاز به مرور');if(review.length)items.push({text:`مرور ${review[0].subject}: ${review[0].name}`,done:false,smart:true});
  smartDraft={tomorrow,items,alloc,hours,target,missed:missed.length,todayQty,todayStudy,done,totalTasks:todayTasks.length,scheduled,dueTopics,prefs};
- document.getElementById('smartTomorrow').textContent='فردا: '+tomorrow.split('/').map(fa).join('/');
+ document.getElementById('smartTomorrow').textContent='برنامه روز: '+tomorrow.split('/').map(fa).join('/');
  document.getElementById('smartToday').innerHTML=`کارهای انجام‌شده: <b>${fa(done)} از ${fa(todayTasks.length)}</b><br>تست ثبت‌شده امروز: <b>${fa(todayQty)}</b><br>ساعت مطالعه ثبت‌شده: <b>${fa(todayStudy)}</b><br>کارهای باقی‌مانده برنامه روزانه: <b>${fa(missed.length)}</b><br>کارهای انجام‌نشده در فهرست‌ها: <b>${fa(pendingTodos.length)}</b><br>درصد انجام چک‌لیست: <b>${fa(todayTasks.length?Math.round(done/todayTasks.length*100):0)}٪</b>`;
  document.getElementById('smartPlan').innerHTML=scheduled.map((x,i)=>`<div class="smart-item" style="border-right:4px solid ${x.kind==='استراحت'?'#8fc8ad':x.kind==='مرور'?'#e6ad65':x.kind==='مشغول'?'#d2a45e':'#9b8be0'}"><span class="smart-pill">${fa(x.start).replace(/(\\d{2})(\\d{2})/,'$1:$2')}</span><b>${esc(x.title)}</b><span class="muted"> · ${fa(x.minutes)} دقیقه</span><div class="muted">${fa(String(Math.floor(x.start/60)).padStart(2,'0'))}:${fa(String(x.start%60).padStart(2,'0'))} تا ${fa(String(Math.floor(x.end/60)).padStart(2,'0'))}:${fa(String(x.end%60).padStart(2,'0'))}</div></div>`).join('')+`<p class="muted">زمان مفید: ${fa(hours)} ساعت · تست پیشنهادی: ${fa(sum(alloc,x=>x.tests))} · بین جلسه‌ها استراحت در نظر گرفته شده است.</p>`;
  renderReviewQueue();
  renderSmartCountdowns();
  document.getElementById('smartCatchup').innerHTML=catchup.map(x=>`<div class="smart-item">${esc(x)}</div>`).join('');
- let reasons='<b>هدف:</b> '+esc(prefs.goal)+'<br><b>روزهای در دسترس:</b> '+esc(prefs.availableDays||'طبق انتخاب روزانه')+'<br><b>زمان‌های ثابت:</b> '+esc(prefs.fixedTimes||'ثبت نشده')+'<br><b>آمادگی تست:</b> '+(prefs.readiness==='learn'?'اولویت با آموزش و یادگیری':prefs.readiness==='practice'?'اولویت با تمرین و تست':'ترکیبی')+'<br><b>درخواست‌ها:</b> '+esc(prefs.requests||'درخواستی ثبت نشده')+'<br><br>'+alloc.map(x=>`${x.subject}: ${x.count?`میانگین درصد ${Math.round(x.avg)} و ${x.qty} تست ثبت‌شده`:'سابقه تست کافی ثبت نشده'}${x.nearest?` · نزدیک‌ترین امتحان تا ${fa(x.nearest.daysLeft)} روز دیگر (${esc(x.nearest.name)})`:''}${x.volume?` · حجم ثبت‌شده ${fa(x.volume)} صفحه`:''}${x.topicCount?` · سطح تسلط میانگین ${x.masteryScore<0.8?'پایین':x.masteryScore>1.5?'خوب':'متوسط'}`:''}`).join('<br>');
+ let reasons='<b>هدف کلی:</b> '+esc(prefs.goal)+'<br><b>هدف این روز:</b> '+esc(daily.goal||'ثبت نشده')+'<br><b>پیش‌نیازهای روزانه:</b> '+esc(daily.prerequisites||'ثبت نشده')+'<br><b>اولویت‌های روزانه:</b> '+esc(daily.priority||'ثبت نشده')+'<br><b>روزهای در دسترس:</b> '+esc(prefs.availableDays||'طبق انتخاب روزانه')+'<br><b>زمان‌های ثابت:</b> '+esc(prefs.fixedTimes||'ثبت نشده')+'<br><b>آمادگی تست:</b> '+(prefs.readiness==='learn'?'اولویت با آموزش و یادگیری':prefs.readiness==='practice'?'اولویت با تمرین و تست':'ترکیبی')+'<br><b>درخواست‌ها:</b> '+esc(prefs.requests||'درخواستی ثبت نشده')+'<br><br>'+alloc.map(x=>`${x.subject}: ${x.count?`میانگین درصد ${Math.round(x.avg)} و ${x.qty} تست ثبت‌شده`:'سابقه تست کافی ثبت نشده'}${x.nearest?` · نزدیک‌ترین امتحان تا ${fa(x.nearest.daysLeft)} روز دیگر (${esc(x.nearest.name)})`:''}${x.volume?` · حجم ثبت‌شده ${fa(x.volume)} صفحه`:''}${x.topicCount?` · سطح تسلط میانگین ${x.masteryScore<0.8?'پایین':x.masteryScore>1.5?'خوب':'متوسط'}`:''}`).join('<br>');
  document.getElementById('smartWhy').innerHTML=reasons+`<br><br>اولویت‌ها بر اساس درصدهای ثبت‌شده، حجم تمرین، تاریخ امتحان، تعداد صفحات و میزان تسلط مباحث ثبت‌شده تنظیم شده‌اند. این پیشنهاد قطعی نیست؛ اگر مبحثی را بلد نیستی، زمان آموزش و یادگیری را قبل از تست‌زنی در نظر بگیر.`;
  document.getElementById('smartToast').textContent='برنامه پیشنهادی آماده شد؛ پیش از ثبت، ساعت‌ها و استراحت‌ها را بررسی کن.';
 }
