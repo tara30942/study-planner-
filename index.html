@@ -193,6 +193,8 @@ th{font-weight:bold;color:#77758b}
 @media(prefers-reduced-motion:reduce){#smart .card,#smart .btn{transition:none}}
 
 
+
+.smart-chat-shell{border:1px solid #e7e1f7;border-radius:20px;background:linear-gradient(145deg,#fbfaff,#f4f8ff);padding:14px}.smart-chat-intro{display:flex;align-items:center;gap:11px;padding:7px 5px 14px;border-bottom:1px solid #e9e4f4}.smart-chat-avatar{width:42px;height:42px;display:grid;place-items:center;border-radius:15px;background:linear-gradient(135deg,#7162d2,#d98fb0);color:#fff;font-size:22px}.smart-chat-intro small{display:block;color:#77718d;margin-top:4px}.smart-chat-state{margin-right:auto;font-size:11px;color:#6759bd;background:#eeebff;padding:6px 9px;border-radius:20px}.smart-chat-messages{height:310px;overflow:auto;padding:14px 3px;display:flex;flex-direction:column;gap:10px}.smart-chat-bubble{max-width:88%;padding:11px 14px;border-radius:16px;line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere}.smart-chat-bubble.assistant{align-self:flex-start;background:#fff;border:1px solid #ebe7f4;border-bottom-right-radius:5px;color:#38334b}.smart-chat-bubble.user{align-self:flex-end;background:linear-gradient(120deg,#7162d2,#8878e2);color:#fff;border-bottom-left-radius:5px}.smart-chat-compose{display:flex;gap:9px;align-items:stretch}.smart-chat-compose textarea{flex:1;min-width:0;border:1px solid #e4def2;border-radius:14px;padding:11px;background:#fff;resize:vertical;line-height:1.8}.smart-chat-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px}.smart-chat-note{font-size:11px;color:#77718d;line-height:1.8;margin:10px 2px 0}.smart-hidden-prefs{display:none!important}@media(max-width:600px){.smart-chat-messages{height:280px}.smart-chat-bubble{max-width:94%}.smart-chat-state{display:none}.smart-chat-compose{flex-direction:column}.smart-chat-compose .btn{width:100%}}
 </style></head>
 <body>
 <div id="offlineNotice" role="status" aria-live="polite" hidden>حالت آفلاین: تغییرات روی همین دستگاه ذخیره می‌شوند و پس از اتصال اینترنت همگام‌سازی خواهند شد.</div>
@@ -348,18 +350,27 @@ th{font-weight:bold;color:#77758b}
 </div>
 <div class="card smart-intake" style="margin-bottom:14px;border:1px solid #ddd7f4;background:linear-gradient(135deg,#fbfaff,#f5f8ff)">
 <div class="cardhead"><div><h3>🧭 قبل از شروع، شرایطت را به دستیار بگو</h3><div class="muted">این اطلاعات کمک می‌کند برنامه با هدف، پیش‌نیازها و محدودیت‌های واقعی تو هماهنگ شود.</div></div><span class="smart-pill">مرحله اول</span></div>
-<div class="formgrid">
-<div class="field full"><label for="smartGoal">🎯 هدف اصلی تو چیست؟</label><textarea id="smartGoal" rows="2" placeholder="مثلاً آمادگی برای کنکور، امتحان نهایی، جمع‌بندی یا یادگیری یک درس…"></textarea></div>
-<div class="field"><label for="smartSubjects">📚 درس‌ها و مباحث مهم</label><textarea id="smartSubjects" rows="3" placeholder="مثلاً زیست، شیمی، فصل‌های ۱ و ۲ فیزیک…"></textarea></div>
-<div class="field"><label for="smartPrerequisites">🧩 پیش‌نیازهایی که هنوز بلد نیستی</label><textarea id="smartPrerequisites" rows="3" placeholder="نام درس و مبحث‌هایی که باید اول یاد بگیرم…"></textarea></div>
-<div class="field"><label for="smartWeakTopics">⚠️ نقاط ضعف یا مباحث دشوار</label><textarea id="smartWeakTopics" rows="3" placeholder="مبحث‌هایی که فراموش کرده‌ام یا در آن‌ها اشتباه دارم…"></textarea></div>
-<div class="field"><label for="smartFixedTimes">🕒 کلاس‌ها و زمان‌های غیرقابل‌تغییر</label><textarea id="smartFixedTimes" rows="3" placeholder="بازه‌ها را به شکل 13:00-15:00, 17:00-18:00 بنویس؛ این زمان‌ها خالی می‌مانند…"></textarea></div>
-<div class="field"><label for="smartAvailableDays">📅 روزهای در دسترس</label><input id="smartAvailableDays" placeholder="مثلاً شنبه تا پنجشنبه"></div><div class="field"><label for="smartEndTime">🌙 پایان زمان مطالعه</label><input id="smartEndTime" type="time" value="21:00"></div>
-<div class="field"><label for="smartRestStyle">☕ استراحت دلخواه</label><select id="smartRestStyle"><option value="balanced">متعادل: استراحت کوتاه و بلند</option><option value="frequent">استراحت‌های کوتاه و بیشتر</option><option value="long">جلسه‌های طولانی‌تر و استراحت بلند</option></select></div>
-<div class="field"><label for="smartReadiness">📝 وضعیت آمادگی برای تست</label><select id="smartReadiness"><option value="mixed">ترکیبی؛ بعضی مباحث آماده‌اند</option><option value="learn">اول آموزش و یادگیری، بعد تست</option><option value="practice">بیشتر مباحث را بلدم؛ تمرین و تست بیشتر</option></select></div>
-<div class="field full"><label for="smartRequests">💬 درخواست‌ها و شرایط دیگری که باید رعایت شوند</label><textarea id="smartRequests" rows="3" placeholder="مثلاً برنامه فشرده نباشد، زمان غذا و استراحت داشته باشم، یک درس سخت پشت سر هم نیاید…"></textarea></div>
+<div class="smart-chat-shell">
+ <div class="smart-chat-intro"><span class="smart-chat-avatar">✦</span><div><b>مشاور برنامه‌ریزی تو</b><small>با هم شرایطت را بررسی می‌کنیم و بعد یک برنامه قابل‌اجرا می‌چینیم.</small></div><span class="smart-chat-state">گفت‌وگوی مرحله‌ای</span></div>
+ <div id="smartConsultMessages" class="smart-chat-messages" role="log" aria-live="polite"></div>
+ <div class="smart-chat-compose"><textarea id="smartConsultInput" rows="2" placeholder="پاسخت را اینجا بنویس…"></textarea><button class="btn primary" id="smartConsultSend" type="button">ارسال</button></div>
+ <div class="smart-chat-actions"><button class="btn light" id="smartConsultSkip" type="button">فعلاً رد شو</button><button class="btn light" id="smartConsultRestart" type="button">شروع گفت‌وگوی تازه</button><span id="smartPrefsStatus" class="muted">پاسخ‌ها پس از تکمیل گفت‌وگو برای ساخت برنامه ذخیره می‌شوند.</span></div>
+ <p class="smart-chat-note">این نسخه از گفت‌وگوی راهنمای مرحله‌ای و تحلیل محلی پلنر استفاده می‌کند؛ پاسخ‌هایت را ذخیره می‌کند و برای اولویت‌بندی برنامه به کار می‌برد.</p>
 </div>
-<div class="toolbar" style="margin-top:12px;align-items:center;flex-wrap:wrap"><button class="btn primary" id="saveSmartPrefs" type="button">ذخیره شرایط و پیش‌نیازها</button><span id="smartPrefsStatus" class="muted">هنوز شرایطت را ثبت نکرده‌ای.</span></div>
+<div class="smart-hidden-prefs" aria-hidden="true">
+ <div class="formgrid">
+ <div class="field full"><label for="smartGoal">هدف اصلی</label><textarea id="smartGoal"></textarea></div>
+ <div class="field"><label for="smartSubjects">درس‌ها</label><textarea id="smartSubjects"></textarea></div>
+ <div class="field"><label for="smartPrerequisites">پیش‌نیازها</label><textarea id="smartPrerequisites"></textarea></div>
+ <div class="field"><label for="smartWeakTopics">نقاط ضعف</label><textarea id="smartWeakTopics"></textarea></div>
+ <div class="field"><label for="smartFixedTimes">زمان‌های ثابت</label><textarea id="smartFixedTimes"></textarea></div>
+ <div class="field"><label for="smartAvailableDays">روزهای در دسترس</label><input id="smartAvailableDays"></div>
+ <div class="field"><label for="smartEndTime">پایان مطالعه</label><input id="smartEndTime" type="time" value="21:00"></div>
+ <div class="field"><label for="smartRestStyle">استراحت</label><select id="smartRestStyle"><option value="balanced">متعادل</option><option value="frequent">کوتاه و بیشتر</option><option value="long">طولانی‌تر</option></select></div>
+ <div class="field"><label for="smartReadiness">آمادگی تست</label><select id="smartReadiness"><option value="mixed">ترکیبی</option><option value="learn">اول آموزش</option><option value="practice">تمرین بیشتر</option></select></div>
+ <div class="field full"><label for="smartRequests">درخواست‌ها</label><textarea id="smartRequests"></textarea></div>
+ </div><button id="saveSmartPrefs" type="button">ذخیره</button>
+</div>
 </div>
 <div class="grid two"><div class="card"><h3>تنظیم برنامه واقع‌بینانه</h3><div class="formgrid"><div class="field"><label>چند ساعت برای مطالعه فردا وقت داری؟</label><input id="smartHours" type="number" min="1" max="16" step="0.5" value="5"></div><div class="field"><label>هدف کل تست فردا</label><input id="smartTarget" type="number" min="5" max="300" step="5" value="60"></div><div class="field"><label>ساعت شروع مطالعه</label><input id="smartStartTime" type="time" value="09:00"></div><div class="field full"><label>تمرکز برنامه</label><select id="smartFocus"><option value="balanced">متعادل بین درس‌ها</option><option value="weak">توجه بیشتر به درس‌های ضعیف‌تر</option><option value="new">تمرکز بیشتر روی درس‌های کم‌تمرین</option></select></div></div><button class="btn primary" id="makeSmart" style="margin-top:12px">تحلیل عملکرد و ساخت برنامه فردا</button><p class="muted" style="line-height:1.9;margin-bottom:0">هرچه ثبت تست‌ها، درصدها و ساعت مطالعه‌ات دقیق‌تر باشد، پیشنهادها هدفمندتر می‌شوند. این نسخه از الگوریتم محلی استفاده می‌کند و اطلاعاتت از دستگاه خارج نمی‌شود.</p></div>
 <div class="card"><h3>خلاصه عملکرد امروز</h3><div id="smartToday" class="muted" style="line-height:2.2">برای دیدن تحلیل، دکمه ساخت برنامه را بزن.</div></div></div>
@@ -649,6 +660,26 @@ function saveSmartPrefs(){
 }
 document.getElementById('saveSmartPrefs').onclick=saveSmartPrefs;
 loadSmartPrefs();
+
+const smartConsultStages=[
+ {key:'goal',field:'smartGoal',question:'اول از همه بگو هدفت از برنامه‌ریزی چیست؟ برای کنکور، امتحان، یادگیری یک درس یا هدف دیگری برنامه می‌خواهی؟',hint:'هدفت را با جزئیات دلخواهت توضیح بده.'},
+ {key:'subjects',field:'smartSubjects',question:'خوب، روی چه درس‌ها و فصل‌هایی باید کار کنیم؟ اگر امتحان یا آزمون مشخصی داری، اسم و تاریخش را هم بگو.',hint:'مثلاً زیست فصل ۲، شیمی فصل ۱ و ریاضی مبحث تابع.'},
+ {key:'prerequisites',field:'smartPrerequisites',question:'کدام پیش‌نیازها را هنوز کامل یاد نگرفته‌ای و قبل از مباحث اصلی باید یاد بگیری؟ اگر پیش‌نیازی نداری، بنویس «ندارم».',hint:'مبحث‌هایی را بگو که باید اول آموزش ببینی.'},
+ {key:'weakTopics',field:'smartWeakTopics',question:'در چه درس‌ها یا مباحثی بیشتر مشکل داری؟ کجاها فراموش می‌کنی یا در تمرین‌ها اشتباه می‌زنی؟',hint:'نقاط ضعف و مباحث سخت را بنویس.'},
+ {key:'fixedTimes',field:'smartFixedTimes',question:'چه ساعت‌هایی کلاس، مدرسه یا کار ثابت داری؟ بازه‌ها را مثل 13:00-15:00 بنویس. اگر زمان ثابتی نداری، بنویس «ندارم».',hint:'مثلاً 13:00-15:00, 17:00-18:00'},
+ {key:'availableDays',field:'smartAvailableDays',question:'در چه روزهایی فرصت مطالعه داری و معمولاً تا چه ساعتی می‌توانی درس بخوانی؟',hint:'مثلاً شنبه تا پنجشنبه، تا ساعت ۲۱'},
+ {key:'requests',field:'smartRequests',question:'در نهایت، چه شرایط یا ترجیحاتی را باید رعایت کنم؟ مثلاً استراحت کافی، برنامه سبک‌تر، تنوع درس‌ها یا اولویت دادن به یک آزمون.',hint:'هر نکته‌ای که برنامه را واقع‌بینانه‌تر می‌کند.'}
+];
+function smartConsultState(){if(!db.profile.smartConsultation)db.profile.smartConsultation={stage:0,messages:[]};return db.profile.smartConsultation}
+function smartConsultRender(){const st=smartConsultState(),box=document.getElementById('smartConsultMessages');if(!box)return;box.innerHTML=st.messages.map(m=>'<div class="smart-chat-bubble '+(m.role==='user'?'user':'assistant')+'">'+esc(m.text)+'</div>').join('');box.scrollTop=box.scrollHeight}
+function smartConsultSave(){save();smartConsultRender()}
+function smartConsultStart(){const st=smartConsultState();if(!st.messages.length){st.stage=0;st.messages.push({role:'assistant',text:'سلام! ✦ من مشاور برنامه‌ریزی پلنر هستم. می‌خواهم با چند سؤال کوتاه شرایطت را بشناسم تا برنامه‌ای متناسب با زمان، هدف و سطح آمادگی‌ات پیشنهاد بدهم. هرجا لازم بود می‌توانی جزئیات بیشتری بگویی یا سؤال را رد کنی.\n\n'+smartConsultStages[0].question});smartConsultSave()}}
+function smartConsultReply(value){const st=smartConsultState(),stage=smartConsultStages[st.stage];if(!stage)return;const answer=value.trim();if(!answer)return;st.messages.push({role:'user',text:answer});const field=document.getElementById(stage.field);if(field)field.value=answer;st.stage++;if(st.stage<smartConsultStages.length){st.messages.push({role:'assistant',text:'ممنون، این مورد را در نظر می‌گیرم.\n\n'+smartConsultStages[st.stage].question})}else{const saved=saveSmartPrefs();st.messages.push({role:'assistant',text:saved?'اطلاعات اولیه‌ات ذخیره شد. حالا می‌توانیم ساعت مطالعه، زمان شروع و هدف تست را تنظیم کنیم و بعد برنامه پیشنهادی را بسازیم. اگر چیزی را جا انداختی، می‌توانی گفت‌وگوی تازه‌ای شروع کنی و پاسخ‌ها را اصلاح کنی.':'تقریباً تمام شد؛ برای ساخت برنامه لازم است هدفت و دست‌کم یکی از درس‌ها یا پیش‌نیازها مشخص باشد. گفت‌وگوی تازه را شروع کن و این موارد را کامل‌تر بنویس.'})}save();smartConsultRender();document.getElementById('smartConsultInput').value=''}
+document.getElementById('smartConsultSend').onclick=()=>smartConsultReply(document.getElementById('smartConsultInput').value);
+document.getElementById('smartConsultInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();smartConsultReply(e.target.value)}});
+document.getElementById('smartConsultSkip').onclick=()=>{const st=smartConsultState();if(st.stage>=smartConsultStages.length)return;st.messages.push({role:'user',text:'فعلاً از این سؤال رد می‌شوم.'});st.stage++;st.messages.push({role:'assistant',text:st.stage<smartConsultStages.length?smartConsultStages[st.stage].question:'ممنون. گفت‌وگو کامل شد؛ برای ذخیره اطلاعات روی ساخت برنامه می‌توانی ادامه بدهی.'});if(st.stage>=smartConsultStages.length)saveSmartPrefs();save();smartConsultRender()};
+document.getElementById('smartConsultRestart').onclick=()=>{db.profile.smartConsultation={stage:0,messages:[]};smartConsultStart()};
+(function(){const st=smartConsultState();if(st.messages.length){smartConsultRender()}else smartConsultStart()})();
 
 function addJalaliDays(key,delta){let a=key.split('/').map(Number),d=new Date(jstart(a[0],a[1]).getTime()+(a[2]-1+delta)*86400000),q=parts(d);return dateKey(q.year,q.month,q.day)}
 function jalaliDaysBetween(fromKey,toKey){if(!fromKey||!toKey)return null;const a=fromKey.split('/').map(Number),b=toKey.split('/').map(Number);if(a.length!==3||b.length!==3||a.some(x=>!Number.isFinite(x))||b.some(x=>!Number.isFinite(x)))return null;return Math.round((jstart(b[0],b[1]).getTime()+(b[2]-1)*86400000-(jstart(a[0],a[1]).getTime()+(a[2]-1)*86400000))/86400000)}
