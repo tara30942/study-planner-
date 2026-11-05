@@ -774,17 +774,19 @@ document.getElementById('roomShowStats').onchange=async e=>{
 };
 async function loadStudyRoomContent(){
  if(!activeStudyRoom)return;
+ const myDisplayName=(db.profile.name||currentAuthUser?.user_metadata?.display_name||currentAuthUser?.email?.split('@')[0]||'کاربر').trim().slice(0,40);
+ await supabaseClient.from('study_room_members').update({display_name:myDisplayName}).eq('room_id',activeStudyRoom.id).eq('user_id',currentAuthUser.id);
  const roomId=activeStudyRoom.id,messagesEl=document.getElementById('roomMessages'),membersEl=document.getElementById('roomMembers');
  messagesEl.innerHTML='<div class="empty">در حال دریافت پیام‌ها…</div>';membersEl.innerHTML='<div class="empty">در حال دریافت اعضا…</div>';
  const [messages,members]=await Promise.all([
   supabaseClient.from('study_room_messages').select('id,user_id,sender_name,body,created_at').eq('room_id',roomId).order('created_at',{ascending:true}).limit(100),
-  supabaseClient.from('study_room_members').select('user_id,role,joined_at,show_stats').eq('room_id',roomId).order('joined_at',{ascending:true})
+  supabaseClient.from('study_room_members').select('user_id,role,joined_at,show_stats,display_name').eq('room_id',roomId).order('joined_at',{ascending:true})
  ]);
  if(messages.error)messagesEl.innerHTML='<div class="empty">'+esc(roomErrorMessage(messages.error))+'</div>';
  else{messagesEl.innerHTML='';(messages.data||[]).forEach(appendStudyRoomMessage);if(!messages.data?.length)messagesEl.innerHTML='<div class="empty">هنوز پیامی ارسال نشده است. اولین پیام را تو بفرست!</div>'}
  if(members.error)membersEl.innerHTML='<div class="empty">'+esc(roomErrorMessage(members.error))+'</div>';
  else{const {data:memberLogs}=await supabaseClient.from('study_room_study_logs').select('user_id,minutes,logged_at').eq('room_id',roomId).gte('logged_at',new Date(Date.now()-7*86400000).toISOString()),wk=roomWeekStart();
-  membersEl.innerHTML=(members.data||[]).map((m,i)=>{const visible=m.user_id===currentAuthUser.id||m.show_stats!==false,arr=visible?(memberLogs||[]).filter(x=>x.user_id===m.user_id&&roomWeekStart(new Date(x.logged_at))===wk):[],mins=arr.reduce((n,x)=>n+Number(x.minutes||0),0),name=m.user_id===currentAuthUser.id?(db.profile.name||currentAuthUser.user_metadata?.display_name||'شما'):'عضو '+fa(i+1);return '<div class="task" style="display:flex;align-items:center;gap:9px;flex-wrap:wrap"><span>👤</span><span style="flex:1;min-width:90px">'+esc(name)+'</span><span class="muted">'+(m.role==='owner'?'سازنده':'عضو')+'</span><small class="muted">'+(visible?fa((mins/60).toFixed(1))+' ساعت · '+fa(arr.length)+' جلسه این هفته':'آمار خصوصی است')+'</small></div>'}).join('')||'<div class="empty">عضوی پیدا نشد.</div>'}
+  membersEl.innerHTML=(members.data||[]).map((m,i)=>{const visible=m.user_id===currentAuthUser.id||m.show_stats!==false,arr=visible?(memberLogs||[]).filter(x=>x.user_id===m.user_id&&roomWeekStart(new Date(x.logged_at))===wk):[],mins=arr.reduce((n,x)=>n+Number(x.minutes||0),0),name=m.display_name||(m.user_id===currentAuthUser.id?(db.profile.name||currentAuthUser.user_metadata?.display_name||'شما'):'عضو '+fa(i+1));return '<div class="task" style="display:flex;align-items:center;gap:9px;flex-wrap:wrap"><span>👤</span><span style="flex:1;min-width:90px">'+esc(name)+'</span><span class="muted">'+(m.role==='owner'?'سازنده':'عضو')+'</span><small class="muted">'+(visible?fa((mins/60).toFixed(1))+' ساعت · '+fa(arr.length)+' جلسه این هفته':'آمار خصوصی است')+'</small></div>'}).join('')||'<div class="empty">عضوی پیدا نشد.</div>'}
 }
 function appendStudyRoomMessage(message){
  const el=document.getElementById('roomMessages');if(!el||!message||document.getElementById('room-msg-'+message.id))return;
