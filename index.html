@@ -355,9 +355,9 @@ th{font-weight:bold;color:#77758b}
 <div class="smart-chat-shell">
  <div class="smart-chat-intro"><span class="smart-chat-avatar">✦</span><div><b>مشاور برنامه‌ریزی تو</b><small>با هم شرایطت را بررسی می‌کنیم و بعد یک برنامه قابل‌اجرا می‌چینیم.</small></div><span class="smart-chat-state">گفت‌وگوی مرحله‌ای</span></div>
  <div id="smartConsultMessages" class="smart-chat-messages" role="log" aria-live="polite"></div>
- <div class="smart-chat-compose"><textarea id="smartConsultInput" rows="2" placeholder="پاسخت را اینجا بنویس…"></textarea><button class="btn primary" id="smartConsultSend" type="button">ارسال</button></div>
- <div class="smart-chat-actions"><button class="btn light" id="smartConsultSkip" type="button">فعلاً رد شو</button><button class="btn light" id="smartConsultRestart" type="button">شروع گفت‌وگوی تازه</button><span id="smartPrefsStatus" class="muted">پاسخ‌ها پس از تکمیل گفت‌وگو برای ساخت برنامه ذخیره می‌شوند.</span></div>
- <p class="smart-chat-note">این نسخه از گفت‌وگوی راهنمای مرحله‌ای و تحلیل محلی پلنر استفاده می‌کند؛ پاسخ‌هایت را ذخیره می‌کند و برای اولویت‌بندی برنامه به کار می‌برد.</p>
+ <div class="smart-chat-compose"><textarea id="smartConsultInput" rows="2" placeholder="پاسخت را بنویس… برای سؤال مستقل، حالت «پرسش آزاد» را فعال کن."></textarea><button class="btn primary" id="smartConsultSend" type="button">ارسال</button></div>
+ <div class="smart-chat-actions"><button class="btn" id="smartConsultFree" type="button" aria-pressed="false">💡 پرسش آزاد: خاموش</button><button class="btn light" id="smartConsultSkip" type="button">فعلاً رد شو</button><button class="btn light" id="smartConsultRestart" type="button">شروع گفت‌وگوی تازه</button><span id="smartPrefsStatus" class="muted">پاسخ‌ها برای پیشنهاد برنامه ذخیره می‌شوند.</span></div>
+ <p class="smart-chat-note">مشاور با اطلاعات ثبت‌شده و آمار پلنر، پیشنهادهای قاعده‌محور و شخصی‌سازی‌شده می‌دهد. برای پاسخ‌های آنلاین و مدل زبانی، اتصال امن به سرویس هوش مصنوعی لازم است.</p>
 </div>
 <div class="smart-hidden-prefs" aria-hidden="true">
  <div class="formgrid">
@@ -678,11 +678,56 @@ function smartConsultState(){if(!db.profile.smartConsultation)db.profile.smartCo
 function smartConsultRender(){const st=smartConsultState(),box=document.getElementById('smartConsultMessages');if(!box)return;box.innerHTML=st.messages.map(m=>'<div class="smart-chat-bubble '+(m.role==='user'?'user':'assistant')+'">'+esc(m.text)+'</div>').join('');box.scrollTop=box.scrollHeight}
 function smartConsultSave(){save();smartConsultRender()}
 function smartConsultStart(){const st=smartConsultState();if(!st.messages.length){st.stage=0;st.messages.push({role:'assistant',text:'سلام! ✦ من مشاور برنامه‌ریزی پلنر هستم. می‌خواهم با چند سؤال کوتاه شرایطت را بشناسم تا برنامه‌ای متناسب با زمان، هدف و سطح آمادگی‌ات پیشنهاد بدهم. هرجا لازم بود می‌توانی جزئیات بیشتری بگویی یا سؤال را رد کنی.\n\n'+smartConsultStages[0].question});smartConsultSave()}}
+let smartConsultFreeMode=false;
+function smartConsultAdvice(question){
+ const p=readSmartPrefs(),q=question.toLowerCase(),out=[];
+ const goal=(p.goal||'هدف ثبت‌شده‌ای نداری').trim(),subjects=(p.subjects||'درس‌ها هنوز مشخص نشده‌اند').trim(),weak=(p.weakTopics||'نقطه‌ضعف مشخصی ثبت نشده').trim(),pre=(p.prerequisites||'پیش‌نیازی ثبت نشده').trim();
+ const studyToday=sum(db.study.filter(x=>x.date===todayStr),x=>x.hours),tasks=db.tasks[todayStr]||[],unfinished=tasks.filter(x=>!x.done).length;
+ out.push('با توجه به اطلاعاتی که ثبت کرده‌ای: هدف «'+goal+'»، درس‌ها: '+subjects+'.');
+ if(/برنامه|زمان|وقت|ساعت|تقسیم/.test(q)){
+  out.push('پیشنهاد من این است که زمان آزاد را به ۲ تا ۳ بلوک اصلی تقسیم کنی؛ هر بلوک فقط یک درس و یک خروجی مشخص داشته باشد. بین بلوک‌ها استراحت واقعی بگذار و برای زمان‌های ثابتت برنامه نچین.');
+  if(p.fixedTimes)out.push('زمان‌های ثابتی که گفتی را در برنامه خالی نگه دار: '+p.fixedTimes+'.');
+  if(p.endTime)out.push('پایان مطالعه را طبق ترجیحت روی حدود '+p.endTime+' نگه دار و کارهای مهم‌تر را زودتر قرار بده.');
+ }else if(/خسته|疲|انرژی|بی.?حوصله|تمرکز|حواس/.test(q)){
+  out.push('فعلاً حجم کار را کم کن: یک استراحت کوتاه، سپس فقط یک کار کوچک ۲۰ تا ۲۵ دقیقه‌ای انتخاب کن. اگر تمرکز برنگشت، ادامه را سبک‌تر کن؛ جبران با بیدارماندن طولانی معمولاً برنامه را ناپایدار می‌کند.');
+ }else if(/تست|آزمون|درصد|اشتباه|غلط/.test(q)){
+  out.push(p.readiness==='learn'?'چون گفتی ابتدا به آموزش نیاز داری، قبل از تست زمان کوتاهی برای یادگیری و مثال حل‌شده بگذار؛ بعد چند سؤال آموزشی و در پایان تحلیل اشتباه‌ها.':'برای هر مبحث یک مجموعه کوچک سؤال زمان‌دار حل کن و از هر اشتباه، علت را ثبت کن: بلد نبودن مفهوم، فراموشی یا بی‌دقتی. تحلیل پاسخ‌ها از زیادکردن تعداد تست مهم‌تر است.');
+ }else if(/فراموش|مرور|یادم/.test(q)){
+  out.push('مرور را فعال انجام بده: کتاب را ببند و نکته‌ها را از حافظه توضیح بده، سپس فقط قسمت‌های فراموش‌شده را بررسی کن. مرورهای کوتاه را در فاصله‌های ۱، ۳ و ۷ روزه قرار بده.');
+ }else if(/عقب|نرس|حجم|زیاد|تلنبار/.test(q)){
+  out.push('همه عقب‌ماندگی را یک‌جا وارد برنامه نکن. سه مورد را جدا کن: ضروری برای آزمون نزدیک، پیش‌نیاز مباحث دیگر، و قابل‌انتقال. امروز فقط یک مورد ضروری و یک کار کوچک از عقب‌ماندگی را انجام بده.');
+ }else if(/پیش.?نیاز|از کجا|شروع/.test(q)){
+  out.push('از پیش‌نیازها شروع کن و برای هرکدام یک معیار پایان تعیین کن؛ مثلاً بتوانی مفهوم را بدون نگاه‌کردن توضیح بدهی و چند سؤال پایه را حل کنی. پیش‌نیازهای ثبت‌شده: '+pre+'.');
+ }else{
+  out.push('برای تصمیم بهتر، مسئله را به سه بخش بشکن: دقیقاً چه نتیجه‌ای می‌خواهی، چه چیزی مانع توست، و کوچک‌ترین قدم قابل‌انجام در ۲۰ دقیقه آینده چیست؟ پیشنهاد اولیه‌ام این است که فقط همان قدم را انجام بدهی و بعد برنامه را بازبینی کنیم.');
+ }
+ if(weak&&weak!=='')out.push('نقاط ضعفی که ثبت کرده‌ای («'+weak+'») بهتر است در ابتدای زمان مطالعه و در یک بلوک کوتاهِ متمرکز قرار بگیرند.');
+ if(pre&&pre!=='ندارم'&&pre!=='')out.push('پیش‌نیازها را قبل از تمرین سنگین مرور کن: '+pre+'.');
+ if(unfinished)out.push('در فهرست امروز '+fa(unfinished)+' کار ناتمام داری؛ فقط مهم‌ترین مورد را به برنامه بعدی منتقل کن، نه همه موارد را.');
+ if(studyToday>0)out.push('تا این لحظه '+fa(studyToday.toFixed(1))+' ساعت مطالعه برای امروز ثبت شده؛ پیشنهاد را با انرژی باقی‌مانده‌ات تنظیم کن.');
+ out.push('این پیشنهاد بر اساس پاسخ‌ها و داده‌های ذخیره‌شده در همین پلنر و قواعد برنامه‌ریزی ساخته شده، نه پاسخ زنده یک مدل آنلاین. اگر جزئیات بیشتری بدهی، دقیق‌ترش می‌کنم.');
+ return out.join('\n\n');
+}
+function smartConsultFreeReply(value){
+ const answer=value.trim();if(!answer)return;
+ const st=smartConsultState();st.messages.push({role:'user',text:'سؤال آزاد: '+answer});
+ st.messages.push({role:'assistant',text:smartConsultAdvice(answer)});
+ save();smartConsultRender();document.getElementById('smartConsultInput').value='';
+}
+document.getElementById('smartConsultFree').onclick=()=>{
+ smartConsultFreeMode=!smartConsultFreeMode;
+ const b=document.getElementById('smartConsultFree'),input=document.getElementById('smartConsultInput');
+ b.textContent=smartConsultFreeMode?'💡 پرسش آزاد: روشن':'💡 پرسش آزاد: خاموش';
+ b.setAttribute('aria-pressed',String(smartConsultFreeMode));
+ input.placeholder=smartConsultFreeMode?'سؤال یا مشکلت را آزادانه بنویس…':'پاسخت را بنویس… برای سؤال مستقل، حالت «پرسش آزاد» را فعال کن.';
+ document.getElementById('smartPrefsStatus').textContent=smartConsultFreeMode?'حالت پرسش آزاد فعال است؛ سؤال مستقل بپرس.':'به گفت‌وگوی مرحله‌ای برگشتی.';
+ input.focus();
+};
 function smartConsultReply(value){const st=smartConsultState(),stage=smartConsultStages[st.stage];if(!stage)return;const answer=value.trim();if(!answer)return;st.messages.push({role:'user',text:answer});const field=document.getElementById(stage.field);if(field){if(stage.key==='restStyle'){const v=answer.toLowerCase();field.value=/کوتاه|بیشتر/.test(v)?'frequent':/بلند|طولانی/.test(v)?'long':'balanced'}else if(stage.key==='readiness'){const v=answer.toLowerCase();field.value=/آموزش|یادگیری|بلد نیست/.test(v)?'learn':/تمرین|تست بیشتر|آماده/.test(v)?'practice':'mixed'}else field.value=answer}if(stage.key==='availableDays'){const tm=answer.match(/(?:^|\s)([01]?\d|2[0-3]):([0-5]\d)(?:\s|$)/);if(tm)document.getElementById('smartEndTime').value=tm[1].padStart(2,'0')+':'+tm[2]}st.stage++;if(st.stage<smartConsultStages.length){st.messages.push({role:'assistant',text:'ممنون، این مورد را در نظر می‌گیرم.\n\n'+smartConsultStages[st.stage].question})}else{const saved=saveSmartPrefs();st.messages.push({role:'assistant',text:saved?'اطلاعات اولیه‌ات ذخیره شد. حالا می‌توانیم ساعت مطالعه، زمان شروع و هدف تست را تنظیم کنیم و بعد برنامه پیشنهادی را بسازیم. اگر چیزی را جا انداختی، می‌توانی گفت‌وگوی تازه‌ای شروع کنی و پاسخ‌ها را اصلاح کنی.':'تقریباً تمام شد؛ برای ساخت برنامه لازم است هدفت و دست‌کم یکی از درس‌ها یا پیش‌نیازها مشخص باشد. گفت‌وگوی تازه را شروع کن و این موارد را کامل‌تر بنویس.'})}save();smartConsultRender();document.getElementById('smartConsultInput').value=''}
-document.getElementById('smartConsultSend').onclick=()=>smartConsultReply(document.getElementById('smartConsultInput').value);
-document.getElementById('smartConsultInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();smartConsultReply(e.target.value)}});
+document.getElementById('smartConsultSend').onclick=()=>smartConsultFreeMode?smartConsultFreeReply(document.getElementById('smartConsultInput').value):smartConsultReply(document.getElementById('smartConsultInput').value);
+document.getElementById('smartConsultInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();smartConsultFreeMode?smartConsultFreeReply(e.target.value):smartConsultReply(e.target.value)}});
 document.getElementById('smartConsultSkip').onclick=()=>{const st=smartConsultState();if(st.stage>=smartConsultStages.length)return;st.messages.push({role:'user',text:'فعلاً از این سؤال رد می‌شوم.'});st.stage++;st.messages.push({role:'assistant',text:st.stage<smartConsultStages.length?smartConsultStages[st.stage].question:'ممنون. گفت‌وگو کامل شد؛ برای ذخیره اطلاعات روی ساخت برنامه می‌توانی ادامه بدهی.'});if(st.stage>=smartConsultStages.length)saveSmartPrefs();save();smartConsultRender()};
-document.getElementById('smartConsultRestart').onclick=()=>{db.profile.smartConsultation={stage:0,messages:[]};smartConsultStart()};
+document.getElementById('smartConsultRestart').onclick=()=>{db.profile.smartConsultation={stage:0,messages:[]};smartConsultFreeMode=false;document.getElementById('smartConsultFree').textContent='💡 پرسش آزاد: خاموش';document.getElementById('smartConsultFree').setAttribute('aria-pressed','false');smartConsultStart()};
 (function(){const st=smartConsultState();if(st.messages.length){smartConsultRender()}else smartConsultStart()})();
 
 function addJalaliDays(key,delta){let a=key.split('/').map(Number),d=new Date(jstart(a[0],a[1]).getTime()+(a[2]-1+delta)*86400000),q=parts(d);return dateKey(q.year,q.month,q.day)}
