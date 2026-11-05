@@ -87,12 +87,12 @@ language sql
 stable
 security definer
 set search_path = public
-as $
+as $$
   select exists (
     select 1 from public.study_rooms r
     where r.id = p_room_id and r.owner_id = auth.uid()
   );
-$;
+$$;
 
 revoke all on function public.is_study_room_owner(uuid) from public;
 grant execute on function public.is_study_room_owner(uuid) to authenticated;
