@@ -2,6 +2,7 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="manifest" href="/study-planner-/manifest.webmanifest"><link rel="icon" href="/study-planner-/icon.svg" type="image/svg+xml"><meta name="theme-color" content="#7666d5">
 <title>پلنر درسی | نسخه پیشرفته شمسی</title>
 <style>
 :root{--bg:#f7f6fc;--ink:#292640;--muted:#85829a;--line:#eeecf5;--purple:#7666d5;--shadow:0 12px 34px #30265b0c}
@@ -162,8 +163,11 @@ th{font-weight:bold;color:#77758b}
 .todo-item .todo-title{font-weight:600;line-height:1.8}
 .todo-item input[type=checkbox]{width:18px;height:18px;accent-color:#7666d5}
 @media(max-width:700px){.todo-item{gap:8px!important}.todo-item button{font-size:10px;padding:8px 10px}}
+
+#offlineNotice{position:fixed;z-index:9999;top:12px;left:50%;transform:translateX(-50%);background:#30265b;color:#fff;padding:9px 14px;border-radius:24px;font-size:12px;box-shadow:0 6px 22px #0002;max-width:calc(100vw - 24px);text-align:center}#offlineNotice[hidden]{display:none}
 </style></head>
 <body>
+<div id="offlineNotice" role="status" aria-live="polite" hidden>حالت آفلاین: تغییرات روی همین دستگاه ذخیره می‌شوند و پس از اتصال اینترنت همگام‌سازی خواهند شد.</div>
 <button class="smart-fab" id="openSmartPanel" type="button">✦ دستیار هوشمند</button>
 <div class="top-actions"><button class="menu-fab" id="openMenu" type="button" aria-label="باز کردن منو">⋯</button><button class="account-fab" id="openAuth" type="button" aria-label="حساب کاربری" title="حساب کاربری"><span aria-hidden="true">♙</span></button></div><div class="drawer-backdrop" id="drawerBackdrop"></div><button class="room-fab" id="openStudyRoom" type="button" aria-label="رفتن به اتاق مطالعه" title="اتاق مطالعه گروهی">👥</button>
 <div class="auth-backdrop" id="authBackdrop"><section class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="authTitle"><div class="auth-head"><h3 id="authTitle">حساب کاربری</h3><button class="auth-close" id="closeAuth" type="button" aria-label="بستن">×</button></div><div class="auth-tabs" id="authTabs"><button type="button" class="active" data-auth-tab="login">ورود</button><button type="button" data-auth-tab="register">ثبت‌نام</button></div><form class="auth-form" id="authForm"><div class="field" id="authNameField" hidden><label for="authName">نام نمایشی</label><input id="authName" autocomplete="name" placeholder="نامی که در پلنر نمایش داده می‌شود"></div><div class="field"><label for="authEmail">ایمیل</label><input id="authEmail" type="email" autocomplete="email" placeholder="example@email.com" required></div><div class="field"><label for="authPassword">رمز عبور</label><input id="authPassword" type="password" autocomplete="current-password" minlength="8" placeholder="حداقل ۸ کاراکتر" required></div><button class="btn primary" id="authSubmit" type="submit">ورود</button></form><button class="btn" id="authSignOut" type="button" hidden style="width:100%;margin-top:10px">خروج از حساب</button><div class="auth-message" id="authMessage" aria-live="polite"></div><div class="auth-note" id="authNote">ورود و ثبت‌نام با Supabase فعال شده است. اطلاعات پلنر فعلاً روی همین دستگاه ذخیره می‌شود؛ همگام‌سازی ابری را در مرحله بعد راه‌اندازی می‌کنیم.</div></section></div>
@@ -320,7 +324,7 @@ th{font-weight:bold;color:#77758b}
 <script>
 const SUPABASE_URL="https://hpttxsyfyszpftzxpzwv.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY="sb_publishable_loW6b9Jy18GiXWD6o4feGg_BXZYND7Z";
-const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+const supabaseClient=window.supabase?.createClient ? window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY) : null;
 let currentAuthUser=null;
 function updateAuthUI(user){
  currentAuthUser=user||null;
@@ -495,8 +499,8 @@ document.getElementById('openAuth').onclick=()=>{if(currentAuthUser){setPage('us
 document.getElementById('closeAuth').onclick=closeAuth;
 document.getElementById('authBackdrop').onclick=e=>{if(e.target.id==='authBackdrop')closeAuth()};
 document.querySelectorAll('[data-auth-tab]').forEach(b=>b.onclick=()=>setAuthMode(b.dataset.authTab));
-document.getElementById('authForm').onsubmit=async e=>{e.preventDefault();const msg=document.getElementById('authMessage'),submit=document.getElementById('authSubmit'),email=document.getElementById('authEmail').value.trim(),password=document.getElementById('authPassword').value,name=document.getElementById('authName').value.trim();msg.style.color='#a45b55';submit.disabled=true;submit.textContent='لطفاً صبر کنید…';try{let result;if(authMode==='register'){if(!name){msg.textContent='لطفاً نام نمایشی را وارد کنید.';return}result=await supabaseClient.auth.signUp({email,password,options:{data:{display_name:name},emailRedirectTo:window.location.origin+window.location.pathname}});if(result.error)throw result.error;msg.style.color='#27845f';msg.textContent=result.data.session?'حساب ساخته شد و وارد شدید.':'حساب ساخته شد؛ برای فعال‌سازی، ایمیل تأیید را بررسی کنید.';if(result.data.session)closeAuth()}else{result=await supabaseClient.auth.signInWithPassword({email,password});if(result.error)throw result.error;msg.style.color='#27845f';msg.textContent='ورود موفق بود.';closeAuth()}}catch(err){msg.textContent=err.message==='Invalid login credentials'?'ایمیل یا رمز عبور درست نیست.':err.message==='User already registered'?'این ایمیل قبلاً ثبت‌نام کرده است.':'خطا در ارتباط یا احراز هویت: '+(err.message||'لطفاً دوباره تلاش کنید.')}finally{submit.disabled=false;submit.textContent=authMode==='login'?'ورود':'ساخت حساب کاربری'}};
-document.getElementById('authSignOut').onclick=async()=>{const {error}=await supabaseClient.auth.signOut();if(error)document.getElementById('authMessage').textContent='خطا در خروج: '+error.message;else{document.getElementById('authMessage').textContent='از حساب خارج شدید.';setAuthMode('login')}};
+document.getElementById('authForm').onsubmit=async e=>{e.preventDefault();const msg=document.getElementById('authMessage'),submit=document.getElementById('authSubmit'),email=document.getElementById('authEmail').value.trim(),password=document.getElementById('authPassword').value,name=document.getElementById('authName').value.trim();if(!supabaseClient){msg.textContent='برای ورود یا ثبت‌نام باید اینترنت وصل باشد. برنامه‌ریزی آفلاین همچنان قابل استفاده است.';return}msg.style.color='#a45b55';submit.disabled=true;submit.textContent='لطفاً صبر کنید…';try{let result;if(authMode==='register'){if(!name){msg.textContent='لطفاً نام نمایشی را وارد کنید.';return}result=await supabaseClient.auth.signUp({email,password,options:{data:{display_name:name},emailRedirectTo:window.location.origin+window.location.pathname}});if(result.error)throw result.error;msg.style.color='#27845f';msg.textContent=result.data.session?'حساب ساخته شد و وارد شدید.':'حساب ساخته شد؛ برای فعال‌سازی، ایمیل تأیید را بررسی کنید.';if(result.data.session)closeAuth()}else{result=await supabaseClient.auth.signInWithPassword({email,password});if(result.error)throw result.error;msg.style.color='#27845f';msg.textContent='ورود موفق بود.';closeAuth()}}catch(err){msg.textContent=err.message==='Invalid login credentials'?'ایمیل یا رمز عبور درست نیست.':err.message==='User already registered'?'این ایمیل قبلاً ثبت‌نام کرده است.':'خطا در ارتباط یا احراز هویت: '+(err.message||'لطفاً دوباره تلاش کنید.')}finally{submit.disabled=false;submit.textContent=authMode==='login'?'ورود':'ساخت حساب کاربری'}};
+document.getElementById('authSignOut').onclick=async()=>{if(!supabaseClient){document.getElementById('authMessage').textContent='برای خروج از حساب، اتصال اینترنت لازم است.';return}const {error}=await supabaseClient.auth.signOut();if(error)document.getElementById('authMessage').textContent='خطا در خروج: '+error.message;else{document.getElementById('authMessage').textContent='از حساب خارج شدید.';setAuthMode('login')}};
 
 let smartReturnPage='dashboard';
 document.getElementById('openSmartPanel').onclick=()=>{smartReturnPage=document.querySelector('.page.active')?.id||'dashboard';setPage('smart')};
@@ -659,7 +663,7 @@ function renderUserHome(){
 document.getElementById('userHomeBack').onclick=()=>setPage('dashboard');
 document.getElementById('userHomeEdit').onclick=()=>setPage('profile');
 document.getElementById('userHomeBack').onclick=()=>setPage('dashboard');
-document.getElementById('userHomeSignOut').onclick=async()=>{const {error}=await supabaseClient.auth.signOut();if(error)alert('خروج انجام نشد: '+error.message)};
+document.getElementById('userHomeSignOut').onclick=async()=>{if(!supabaseClient){alert('برای خروج از حساب، اتصال اینترنت لازم است.');return}const {error}=await supabaseClient.auth.signOut();if(error)alert('خروج انجام نشد: '+error.message)};
 document.querySelectorAll('[data-userhome-page]').forEach(b=>b.onclick=()=>setPage(b.dataset.userhomePage));
 function renderProfile(){document.getElementById('profileName').value=db.profile.name||'';document.getElementById('profileGoal').value=db.profile.goal||5;document.getElementById('profileStats').innerHTML=[['ساعت مطالعه',fa(sum(db.study,x=>x.hours))],['تعداد تست',fa(sum(db.tests,x=>x.qty))],['مباحث خوانده‌شده',fa(db.topics.filter(x=>x.status==='خوانده‌شده').length)]].map(x=>'<div class="profile-stat"><span class="muted">'+x[0]+'</span><b>'+x[1]+'</b></div>').join('')}
 document.getElementById('saveProfile').onclick=()=>{db.profile.name=document.getElementById('profileName').value.trim();db.profile.goal=Math.max(1,Math.min(16,+document.getElementById('profileGoal').value||5));save();renderProfile();renderUserHome();updateAuthUI(currentAuthUser);document.getElementById('profileToast').textContent='پروفایل ذخیره شد.'};
@@ -668,5 +672,13 @@ document.getElementById('copyProfileStats').onclick=()=>{let msg='خلاصه ع�
 window.addEventListener('resize',()=>{if(document.querySelector('.page.active').id==='dashboard'||document.querySelector('.page.active').id==='analytics')drawAll()});
 document.getElementById('testDate').value=todayStr;document.getElementById('studyDate').value=todayStr;
 renderCalendar();renderTasks();renderAll();initReportControls();renderReminders();renderCountdowns();renderProfile();
-supabaseClient.auth.onAuthStateChange((_event,session)=>{const user=session?.user||null;setTimeout(()=>handleAuthSession(user),0)});
+if(supabaseClient){supabaseClient.auth.onAuthStateChange((_event,session)=>{const user=session?.user||null;setTimeout(()=>handleAuthSession(user),0)});}
+const offlineNotice=document.getElementById('offlineNotice');
+function updateNetworkStatus(){const offline=!navigator.onLine;offlineNotice.hidden=!offline;if(!offline&&supabaseClient){supabaseClient.auth.getSession().then(({data,error})=>{if(!error&&data?.session?.user)handleAuthSession(data.session.user);if(cloudSyncReady)scheduleCloudSave()}).catch(()=>{});}}
+window.addEventListener('online',updateNetworkStatus);
+window.addEventListener('offline',updateNetworkStatus);
+updateNetworkStatus();
+if('serviceWorker' in navigator && location.protocol.startsWith('http')){
+ window.addEventListener('load',()=>navigator.serviceWorker.register('/study-planner-/sw.js',{scope:'/study-planner-/'}).catch(err=>console.warn('Service worker registration failed:',err)));
+}
 </script></body></html>
