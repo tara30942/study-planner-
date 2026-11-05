@@ -118,6 +118,8 @@ th{font-weight:bold;color:#77758b}
 <div class="nav-label">خانه و برنامه‌ریزی</div>
 <button class="active" data-page="dashboard"><span class="nav-icon">▦</span>داشبورد اصلی</button>
 <button data-page="calendar"><span class="nav-icon">▣</span>تقویم و برنامه</button>
+<div class="nav-label">مدیریت کارها</div>
+<button data-page="todo"><span class="nav-icon">☑</span>فهرست کارها (To‑Do)</button>
 <div class="nav-label">ثبت فعالیت‌ها</div>
 <button data-page="tests"><span class="nav-icon">◉</span>ثبت تست‌ها</button>
 <button data-page="study"><span class="nav-icon">◷</span>ساعت مطالعه</button>
@@ -199,6 +201,34 @@ th{font-weight:bold;color:#77758b}
 <div class="card"><h3>خلاصه عملکرد امروز</h3><div id="smartToday" class="muted" style="line-height:2.2">برای دیدن تحلیل، دکمه ساخت برنامه را بزن.</div></div></div>
 <div class="card" style="margin-top:14px"><div class="cardhead"><h3>برنامه زمانی پیشنهادی با استراحت</h3><span class="muted" id="smartTomorrow"></span></div><div id="smartPlan" class="muted" style="line-height:2">هنوز برنامه‌ای ساخته نشده است.</div><div class="card" style="margin-top:12px;background:#fbfaff"><h3>چرخه مرور فاصله‌دار</h3><p class="muted">پس از هر مرور، نتیجه را ثبت کن تا مرور بعدی با فاصله ۱، ۳، ۷، ۱۴ و ۳۰ روز تنظیم شود.</p><div id="smartReviewPlan" class="muted" style="line-height:2">بعد از تحلیل، مرورهای سررسیدشده اینجا نمایش داده می‌شوند.</div></div><div class="toolbar" style="margin-top:12px"><button class="btn primary" id="applySmart">ثبت برنامه در تقویم</button><button class="btn light" id="rebuildSmart">محاسبه دوباره</button></div><div class="toast" id="smartToast"></div></div>
 <div class="grid two"><div class="card"><h3>اگر از برنامه عقب افتادی</h3><div id="smartCatchup" class="muted" style="line-height:2">بعد از تحلیل روزانه، راهکار جبرانی اینجا نمایش داده می‌شود.</div></div><div class="card"><h3>چرا این پیشنهاد داده شده؟</h3><div id="smartWhy" class="muted" style="line-height:2">دستیار از روند تست و مطالعه‌ات برای اولویت‌بندی استفاده می‌کند.</div></div></div></section>
+
+<section class="page" id="todo">
+ <div class="pagehead"><div><h2>فهرست کارها ☑</h2><div class="sub">کارهای درسی و شخصی‌ات را در فهرست‌های جداگانه مدیریت کن.</div></div><span class="hero-tag">ذخیره خودکار روی همین دستگاه</span></div>
+ <div class="grid two" style="align-items:start">
+  <div class="card">
+   <div class="cardhead"><h3>فهرست‌های من</h3></div>
+   <div class="field"><label for="todoListSelect">انتخاب فهرست</label><select id="todoListSelect"></select></div>
+   <div class="formgrid" style="margin-top:12px"><div class="field"><label for="todoNewList">ساخت فهرست جدید</label><input id="todoNewList" maxlength="50" placeholder="مثلاً کارهای مدرسه"></div><button class="btn primary" id="todoCreateList" type="button">＋ ساخت فهرست</button></div>
+   <p class="muted" id="todoListMessage" style="margin:10px 0 0"></p>
+  </div>
+  <div class="card">
+   <div class="cardhead"><h3>افزودن کار جدید</h3></div>
+   <div class="field"><label for="todoTaskTitle">عنوان کار</label><input id="todoTaskTitle" maxlength="120" placeholder="مثلاً مرور فصل زیست"></div>
+   <div class="formgrid" style="margin-top:12px">
+    <div class="field"><label for="todoDue">مهلت انجام (اختیاری، شمسی)</label><input id="todoDue" placeholder="۱۴۰۵/۰۸/۱۵"></div>
+    <div class="field"><label for="todoPriority">اولویت</label><select id="todoPriority"><option value="medium">متوسط</option><option value="high">زیاد</option><option value="low">کم</option></select></div>
+   </div>
+   <button class="btn primary" id="todoAddTask" type="button" style="margin-top:12px">＋ افزودن به فهرست</button>
+   <p class="muted" id="todoTaskMessage" style="margin:10px 0 0"></p>
+  </div>
+ </div>
+ <div class="card" style="margin-top:16px">
+  <div class="cardhead"><h3 id="todoCurrentTitle">کارهای من</h3><span class="muted" id="todoProgress"></span></div>
+  <div class="formgrid" style="margin-bottom:14px"><div class="field"><label for="todoFilter">نمایش کارها</label><select id="todoFilter"><option value="all">همه کارها</option><option value="active">انجام‌نشده‌ها</option><option value="done">انجام‌شده‌ها</option></select></div><div style="display:flex;align-items:end"><button class="btn danger" id="todoDeleteList" type="button">حذف این فهرست</button></div></div>
+  <div id="todoTaskList" class="stack"><div class="empty">هنوز کاری اضافه نشده است.</div></div>
+ </div>
+ <p class="muted" style="line-height:1.9;margin-top:12px">این فهرست‌ها فعلاً فقط در مرورگر و دستگاه فعلی ذخیره می‌شوند. پس از اتصال حساب کاربری و پایگاه داده، می‌توانیم همگام‌سازی آنلاین را اضافه کنیم.</p>
+</section>
 </main></div>
 <script>
 const fmt=new Intl.DateTimeFormat('en-US-u-ca-persian-nu-latn',{year:'numeric',month:'numeric',day:'numeric',timeZone:'UTC'});
@@ -211,7 +241,7 @@ function jtoday(){return parts(new Date())}function dateKey(y,m,d){return `${y}/
 function normDate(s){let a=latin(s).replaceAll('-','/').split('/').map(Number);return a.length===3&&a.every(Boolean)?dateKey(a[0],a[1],a[2]):dateKey(today.year,today.month,today.day)}
 const today=jtoday(),todayStr=dateKey(today.year,today.month,today.day);
 let db;try{db=JSON.parse(localStorage.getItem('studyPlannerAdvanced')||'{"tasks":{},"tests":[],"study":[],"topics":[]}')}catch(e){db={tasks:{},tests:[],study:[],topics:[]}}
-if(!Array.isArray(db.reminders))db.reminders=[];db.topics.forEach(t=>{if(!t.id)t.id='topic-'+Math.random().toString(36).slice(2);if(!t.nextReviewDate)t.nextReviewDate=t.status==='نیاز به مرور'?todayStr:addJalaliDays(todayStr,1);if(!Array.isArray(t.reviewHistory))t.reviewHistory=[];if(typeof t.reviewStage!=='number')t.reviewStage=0});if(!Array.isArray(db.countdowns))db.countdowns=[];if(!db.profile)db.profile={name:"",goal:5,konkurDate:""};
+if(!Array.isArray(db.reminders))db.reminders=[];if(!Array.isArray(db.todoLists))db.todoLists=[];if(!db.todoLists.length)db.todoLists=[{id:'todo-default',name:'کارهای من',items:[]}];db.todoLists.forEach(l=>{if(!Array.isArray(l.items))l.items=[]});db.topics.forEach(t=>{if(!t.id)t.id='topic-'+Math.random().toString(36).slice(2);if(!t.nextReviewDate)t.nextReviewDate=t.status==='نیاز به مرور'?todayStr:addJalaliDays(todayStr,1);if(!Array.isArray(t.reviewHistory))t.reviewHistory=[];if(typeof t.reviewStage!=='number')t.reviewStage=0});if(!Array.isArray(db.countdowns))db.countdowns=[];if(!db.profile)db.profile={name:"",goal:5,konkurDate:""};
 let vy=today.year,vm=today.month,selected=todayStr;
 const colors=['#7968d8','#ee8fac','#54b99b','#6b9ce8','#e9ad61','#9b83c9','#58aeb5','#d77e73'];
 function save(){localStorage.setItem('studyPlannerAdvanced',JSON.stringify(db))}
@@ -237,7 +267,7 @@ function sum(a,f){return a.reduce((s,x)=>s+f(x),0)}
 function group(a,key,val){let o={};a.forEach(x=>{let k=x[key]||'بدون نام';o[k]=(o[k]||0)+val(x)});return o}
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function monthLabel(y,m){let names=['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];return `${names[m-1]} ${fa(y)}`}
-function setPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));if(id==='analytics'||id==='dashboard')drawAll();if(id==='reports')renderReports();if(id==='reminders')renderReminders();if(id==='countdowns')renderCountdowns();if(id==='profile')renderProfile();if(id==='studyroom')renderStudyRoom();if(id==='smart'){renderSmartCountdowns();renderReviewQueue()}}
+function setPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));if(id==='analytics'||id==='dashboard')drawAll();if(id==='reports')renderReports();if(id==='reminders')renderReminders();if(id==='countdowns')renderCountdowns();if(id==='profile')renderProfile();if(id==='studyroom')renderStudyRoom();if(id==='todo')renderTodo();if(id==='smart'){renderSmartCountdowns();renderReviewQueue()}}
 document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>{setPage(b.dataset.page);closeDrawer()});
 const drawer=document.querySelector('.sidebar');drawer.classList.add('drawer');
 function openDrawer(){drawer.classList.add('open');document.getElementById('drawerBackdrop').classList.add('open')}
@@ -336,6 +366,32 @@ function smartBuild(){
 }
 document.getElementById('makeSmart').onclick=smartBuild;document.getElementById('rebuildSmart').onclick=smartBuild;
 document.getElementById('applySmart').onclick=()=>{if(!smartDraft)smartBuild();if(!smartDraft)return;let old=db.tasks[smartDraft.tomorrow]||[];db.tasks[smartDraft.tomorrow]=old.filter(t=>!t.smart).concat(smartDraft.scheduled.map(x=>({text:`${String(Math.floor(x.start/60)).padStart(2,'0')}:${String(x.start%60).padStart(2,'0')}–${String(Math.floor(x.end/60)).padStart(2,'0')}:${String(x.end%60).padStart(2,'0')} | ${x.title}`,done:false,smart:true})));save();selected=smartDraft.tomorrow;let a=selected.split('/').map(Number);vy=a[0];vm=a[1];renderCalendar();renderTasks();renderDash();document.getElementById('smartToast').textContent='برنامه زمان‌بندی‌شده با استراحت‌ها در تقویم ثبت شد.'};
+
+
+function currentTodoList(){return db.todoLists.find(x=>x.id===document.getElementById('todoListSelect').value)||db.todoLists[0]}
+function renderTodo(){
+ const sel=document.getElementById('todoListSelect');if(!sel)return;
+ const previous=sel.value;
+ sel.innerHTML=db.todoLists.map(l=>'<option value="'+esc(l.id)+'">'+esc(l.name)+'</option>').join('');
+ if(db.todoLists.some(l=>l.id===previous))sel.value=previous;
+ const list=currentTodoList();if(!list)return;
+ document.getElementById('todoCurrentTitle').textContent=list.name;
+ const done=list.items.filter(x=>x.done).length;
+ document.getElementById('todoProgress').textContent=fa(done)+' از '+fa(list.items.length)+' کار انجام شده';
+ const filter=document.getElementById('todoFilter').value;
+ const items=list.items.filter(x=>filter==='all'||(filter==='done'?x.done:!x.done));
+ const labels={high:'زیاد',medium:'متوسط',low:'کم'};
+ const colors={high:'#f8e5e8',medium:'#f4f0df',low:'#e6f3ed'};
+ document.getElementById('todoTaskList').innerHTML=items.length?items.map(t=>'<div class="task" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px;border:1px solid var(--line);border-radius:14px;margin:8px 0"><input type="checkbox" data-todo-check="'+esc(t.id)+'" '+(t.done?'checked':'')+'><span style="flex:1;min-width:130px;'+(t.done?'text-decoration:line-through;opacity:.55':'')+'">'+esc(t.title)+'</span><small style="background:'+colors[t.priority]+';padding:5px 9px;border-radius:20px">'+labels[t.priority]+'</small>'+(t.due?'<small class="muted">مهلت: '+esc(t.due)+'</small>':'')+'<button class="btn" data-todo-edit="'+esc(t.id)+'" type="button">ویرایش</button><button class="btn danger" data-todo-remove="'+esc(t.id)+'" type="button">حذف</button></div>').join(''):'<div class="empty">در این فیلتر کاری وجود ندارد.</div>';
+ document.querySelectorAll('[data-todo-check]').forEach(el=>el.onchange=()=>{const t=list.items.find(x=>x.id===el.dataset.todoCheck);if(t)t.done=el.checked;save();renderTodo()});
+ document.querySelectorAll('[data-todo-remove]').forEach(el=>el.onclick=()=>{list.items=list.items.filter(x=>x.id!==el.dataset.todoRemove);save();renderTodo()});
+ document.querySelectorAll('[data-todo-edit]').forEach(el=>el.onclick=()=>{const t=list.items.find(x=>x.id===el.dataset.todoEdit);if(!t)return;const v=prompt('عنوان جدید کار:',t.title);if(v===null)return;if(!v.trim())return; t.title=v.trim().slice(0,120);save();renderTodo()});
+}
+document.getElementById('todoListSelect').onchange=renderTodo;
+document.getElementById('todoFilter').onchange=renderTodo;
+document.getElementById('todoCreateList').onclick=()=>{const input=document.getElementById('todoNewList'),name=input.value.trim();if(!name){document.getElementById('todoListMessage').textContent='نام فهرست را وارد کن.';return}if(db.todoLists.some(x=>x.name.toLowerCase()===name.toLowerCase())){document.getElementById('todoListMessage').textContent='این نام قبلاً استفاده شده است.';return}const id='list-'+Date.now().toString(36);db.todoLists.push({id,name:name.slice(0,50),items:[]});input.value='';save();renderTodo();document.getElementById('todoListSelect').value=id;renderTodo();document.getElementById('todoListMessage').textContent='فهرست جدید ساخته شد.'};
+document.getElementById('todoAddTask').onclick=()=>{const title=document.getElementById('todoTaskTitle').value.trim();if(!title){document.getElementById('todoTaskMessage').textContent='عنوان کار را وارد کن.';return}const list=currentTodoList();list.items.push({id:'task-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,6),title:title.slice(0,120),due:document.getElementById('todoDue').value.trim(),priority:document.getElementById('todoPriority').value,done:false});document.getElementById('todoTaskTitle').value='';document.getElementById('todoDue').value='';document.getElementById('todoTaskMessage').textContent='کار اضافه شد.';save();renderTodo()};
+document.getElementById('todoDeleteList').onclick=()=>{if(db.todoLists.length<=1){document.getElementById('todoListMessage').textContent='حداقل یک فهرست باید باقی بماند.';return}const list=currentTodoList();if(!confirm('فهرست «'+list.name+'» و همه کارهای داخل آن حذف شود؟'))return;db.todoLists=db.todoLists.filter(x=>x.id!==list.id);save();renderTodo()};
 
 function renderAll(){renderDash();renderTables();drawAll()}
 
