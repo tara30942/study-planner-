@@ -9,7 +9,7 @@
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Tahoma,Arial,sans-serif}
 button,input,select{font:inherit}button{cursor:pointer;border:0}
 .hero{padding:25px clamp(16px,4vw,48px);background:linear-gradient(115deg,#e8e4ff,#fce8f0 58%,#e3f6ee);display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}
-.hero h1{font-size:25px;margin:0 0 8px}.hero p{margin:0;color:#6d6982;font-size:13px}.hero-tag{border:1px solid #ffffffb5;background:#ffffff8a;border-radius:30px;padding:10px 14px;font-size:12px}
+.hero h1{font-size:25px;margin:0 0 8px}.hero p{margin:0;color:#6d6982;font-size:13px}.hero-tag{border:1px solid #ffffffb5;background:#ffffff8a;border-radius:30px;padding:10px 14px;font-size:12px}.install-app-btn{border:0;background:#7666d5;color:#fff;border-radius:30px;padding:10px 16px;font-size:12px;font-weight:bold;box-shadow:0 5px 14px #7666d533}.install-app-btn[hidden]{display:none}.hero-tools{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
 .layout{max-width:1280px;margin:22px auto;padding:0 16px;display:grid;grid-template-columns:225px minmax(0,1fr);gap:18px}
 .sidebar{background:#fff;border:1px solid var(--line);border-radius:22px;padding:14px;height:max-content;position:sticky;top:12px;box-shadow:var(--shadow)}
 .brand{padding:12px 10px 18px;font-weight:bold}.brand span{color:var(--purple)}.nav{display:grid;gap:7px}.nav button{background:transparent;text-align:right;padding:12px;border-radius:13px;color:#6f6c83;font-size:13px}.nav button.active{background:#efecff;color:#594bb4;font-weight:bold}.nav button:hover{background:#f6f4fc}
@@ -171,7 +171,7 @@ th{font-weight:bold;color:#77758b}
 <button class="smart-fab" id="openSmartPanel" type="button">✦ دستیار هوشمند</button>
 <div class="top-actions"><button class="menu-fab" id="openMenu" type="button" aria-label="باز کردن منو">⋯</button><button class="account-fab" id="openAuth" type="button" aria-label="حساب کاربری" title="حساب کاربری"><span aria-hidden="true">♙</span></button></div><div class="drawer-backdrop" id="drawerBackdrop"></div><button class="room-fab" id="openStudyRoom" type="button" aria-label="رفتن به اتاق مطالعه" title="اتاق مطالعه گروهی">👥</button>
 <div class="auth-backdrop" id="authBackdrop"><section class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="authTitle"><div class="auth-head"><h3 id="authTitle">حساب کاربری</h3><button class="auth-close" id="closeAuth" type="button" aria-label="بستن">×</button></div><div class="auth-tabs" id="authTabs"><button type="button" class="active" data-auth-tab="login">ورود</button><button type="button" data-auth-tab="register">ثبت‌نام</button></div><form class="auth-form" id="authForm"><div class="field" id="authNameField" hidden><label for="authName">نام نمایشی</label><input id="authName" autocomplete="name" placeholder="نامی که در پلنر نمایش داده می‌شود"></div><div class="field"><label for="authEmail">ایمیل</label><input id="authEmail" type="email" autocomplete="email" placeholder="example@email.com" required></div><div class="field"><label for="authPassword">رمز عبور</label><input id="authPassword" type="password" autocomplete="current-password" minlength="8" placeholder="حداقل ۸ کاراکتر" required></div><button class="btn primary" id="authSubmit" type="submit">ورود</button></form><button class="btn" id="authSignOut" type="button" hidden style="width:100%;margin-top:10px">خروج از حساب</button><div class="auth-message" id="authMessage" aria-live="polite"></div><div class="auth-note" id="authNote">ورود و ثبت‌نام با Supabase فعال شده است. اطلاعات پلنر فعلاً روی همین دستگاه ذخیره می‌شود؛ همگام‌سازی ابری را در مرحله بعد راه‌اندازی می‌کنیم.</div></section></div>
-<header class="hero"><div><h1>پلنر درسی من ✦</h1><p>برنامه‌ریزی هوشمند، ثبت مطالعه و تحلیل پیشرفت با تقویم شمسی</p></div><div class="hero-tag">☀️ سال تحصیلی · تقویم جلالی</div></header>
+<header class="hero"><div><h1>پلنر درسی من ✦</h1><p>برنامه‌ریزی هوشمند، ثبت مطالعه و تحلیل پیشرفت با تقویم شمسی</p></div><div class="hero-tools"><div class="hero-tag">☀️ سال تحصیلی · تقویم جلالی</div><button class="install-app-btn" id="installAppBtn" type="button" hidden>⬇ نصب برنامه</button></div></header>
 <div class="layout">
 <aside class="sidebar"><div class="brand">✦ <span>Study Planner</span></div><nav class="nav">
 <div class="nav-label">خانه و برنامه‌ریزی</div>
@@ -686,6 +686,19 @@ function updateNetworkStatus(){const offline=!navigator.onLine;offlineNotice.hid
 window.addEventListener('online',updateNetworkStatus);
 window.addEventListener('offline',updateNetworkStatus);
 updateNetworkStatus();
+let deferredInstallPrompt=null;
+const installAppBtn=document.getElementById('installAppBtn');
+window.addEventListener('beforeinstallprompt',event=>{
+ event.preventDefault();deferredInstallPrompt=event;
+ if(installAppBtn)installAppBtn.hidden=false;
+});
+if(installAppBtn){installAppBtn.addEventListener('click',async()=>{
+ if(!deferredInstallPrompt){alert('اگر گزینه نصب نمایش داده نمی‌شود، از منوی سه‌نقطه مرورگر گزینه «افزودن به صفحه اصلی» را بررسی کن.');return;}
+ deferredInstallPrompt.prompt();
+ await deferredInstallPrompt.userChoice;
+ deferredInstallPrompt=null;installAppBtn.hidden=true;
+ });}
+window.addEventListener('appinstalled',()=>{deferredInstallPrompt=null;if(installAppBtn)installAppBtn.hidden=true;});
 if('serviceWorker' in navigator && location.protocol.startsWith('http')){
  window.addEventListener('load',()=>navigator.serviceWorker.register('/study-planner-/sw.js',{scope:'/study-planner-/'}).catch(err=>console.warn('Service worker registration failed:',err)));
 }
