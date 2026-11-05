@@ -356,7 +356,7 @@ th{font-weight:bold;color:#77758b}
  <div class="smart-chat-intro"><span class="smart-chat-avatar">✦</span><div><b>مشاور برنامه‌ریزی تو</b><small>با هم شرایطت را بررسی می‌کنیم و بعد یک برنامه قابل‌اجرا می‌چینیم.</small></div><span class="smart-chat-state">گفت‌وگوی مرحله‌ای</span></div>
  <div id="smartConsultMessages" class="smart-chat-messages" role="log" aria-live="polite"></div>
  <div class="smart-chat-compose"><textarea id="smartConsultInput" rows="2" placeholder="پاسخت را بنویس… برای سؤال مستقل، حالت «پرسش آزاد» را فعال کن."></textarea><button class="btn primary" id="smartConsultSend" type="button">ارسال</button></div>
- <div class="smart-chat-actions"><button class="btn" id="smartConsultFree" type="button" aria-pressed="false">💡 پرسش آزاد: خاموش</button><button class="btn light" id="smartConsultSkip" type="button">فعلاً رد شو</button><button class="btn light" id="smartConsultRestart" type="button">شروع گفت‌وگوی تازه</button><span id="smartPrefsStatus" class="muted">پاسخ‌ها برای پیشنهاد برنامه ذخیره می‌شوند.</span></div>
+ <div class="smart-chat-actions"><button class="btn" id="smartConsultFree" type="button" aria-pressed="true">💡 پرسش آزاد: روشن</button><button class="btn light" id="smartConsultSkip" type="button">فعلاً رد شو</button><button class="btn light" id="smartConsultRestart" type="button">شروع گفت‌وگوی تازه</button><span id="smartPrefsStatus" class="muted">پاسخ‌ها برای پیشنهاد برنامه ذخیره می‌شوند.</span></div>
  <p class="smart-chat-note">در حالت پرسش آزاد، مشاور آنلاین با توجه به اطلاعات برنامه‌ریزی و پیشرفت ثبت‌شده پاسخ می‌دهد. برای استفاده باید وارد حساب کاربری شده باشی و مدیر سایت اتصال امن را در Supabase فعال کرده باشد.</p>
 </div>
 <div class="smart-hidden-prefs" aria-hidden="true">
@@ -678,7 +678,7 @@ function smartConsultState(){if(!db.profile.smartConsultation)db.profile.smartCo
 function smartConsultRender(){const st=smartConsultState(),box=document.getElementById('smartConsultMessages');if(!box)return;box.innerHTML=st.messages.map(m=>'<div class="smart-chat-bubble '+(m.role==='user'?'user':'assistant')+'">'+esc(m.text)+'</div>').join('');box.scrollTop=box.scrollHeight}
 function smartConsultSave(){save();smartConsultRender()}
 function smartConsultStart(){const st=smartConsultState();if(!st.messages.length){st.stage=0;st.messages.push({role:'assistant',text:'سلام! ✦ من مشاور برنامه‌ریزی پلنر هستم. می‌خواهم با چند سؤال کوتاه شرایطت را بشناسم تا برنامه‌ای متناسب با زمان، هدف و سطح آمادگی‌ات پیشنهاد بدهم. هرجا لازم بود می‌توانی جزئیات بیشتری بگویی یا سؤال را رد کنی.\n\n'+smartConsultStages[0].question});smartConsultSave()}}
-let smartConsultFreeMode=false;
+let smartConsultFreeMode=true;
 function smartConsultAdvice(question){
  const p=readSmartPrefs(),q=question.toLowerCase(),out=[];
  const goal=(p.goal||'هدف ثبت‌شده‌ای نداری').trim(),subjects=(p.subjects||'درس‌ها هنوز مشخص نشده‌اند').trim(),weak=(p.weakTopics||'نقطه‌ضعف مشخصی ثبت نشده').trim(),pre=(p.prerequisites||'پیش‌نیازی ثبت نشده').trim();
@@ -760,7 +760,7 @@ function smartConsultReply(value){const st=smartConsultState(),stage=smartConsul
 document.getElementById('smartConsultSend').onclick=()=>smartConsultFreeMode?smartConsultFreeReply(document.getElementById('smartConsultInput').value):smartConsultReply(document.getElementById('smartConsultInput').value);
 document.getElementById('smartConsultInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();smartConsultFreeMode?smartConsultFreeReply(e.target.value):smartConsultReply(e.target.value)}});
 document.getElementById('smartConsultSkip').onclick=()=>{const st=smartConsultState();if(st.stage>=smartConsultStages.length)return;st.messages.push({role:'user',text:'فعلاً از این سؤال رد می‌شوم.'});st.stage++;st.messages.push({role:'assistant',text:st.stage<smartConsultStages.length?smartConsultStages[st.stage].question:'ممنون. گفت‌وگو کامل شد؛ برای ذخیره اطلاعات روی ساخت برنامه می‌توانی ادامه بدهی.'});if(st.stage>=smartConsultStages.length)saveSmartPrefs();save();smartConsultRender()};
-document.getElementById('smartConsultRestart').onclick=()=>{db.profile.smartConsultation={stage:0,messages:[]};smartConsultFreeMode=false;document.getElementById('smartConsultFree').textContent='💡 پرسش آزاد: خاموش';document.getElementById('smartConsultFree').setAttribute('aria-pressed','false');smartConsultStart()};
+document.getElementById('smartConsultRestart').onclick=()=>{db.profile.smartConsultation={stage:0,messages:[]};smartConsultFreeMode=true;document.getElementById('smartConsultFree').textContent='💡 پرسش آزاد: روشن';document.getElementById('smartConsultFree').setAttribute('aria-pressed','true');smartConsultStart()};
 (function(){const st=smartConsultState();if(st.messages.length){smartConsultRender()}else smartConsultStart()})();
 
 function addJalaliDays(key,delta){let a=key.split('/').map(Number),d=new Date(jstart(a[0],a[1]).getTime()+(a[2]-1+delta)*86400000),q=parts(d);return dateKey(q.year,q.month,q.day)}
