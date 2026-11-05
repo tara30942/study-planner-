@@ -221,6 +221,39 @@ th{font-weight:bold;color:#77758b}
 <style>
 .leaderboard-table{width:100%;min-width:520px;border-collapse:separate;border-spacing:0 7px}.leaderboard-table thead th{font-size:12px;color:#827a99;padding:10px;background:#f8f6fd}.leaderboard-table tbody tr{background:#fff;box-shadow:0 4px 14px #30235d0b}.leaderboard-table tbody td{padding:12px 10px;border-top:1px solid #f0edf6;border-bottom:1px solid #f0edf6}.leaderboard-table tbody td:first-child{border-radius:0 13px 13px 0;border-right:1px solid #f0edf6}.leaderboard-table tbody td:last-child{border-radius:13px 0 0 13px;border-left:1px solid #f0edf6}.leaderboard-user{display:flex;align-items:center;gap:9px;min-width:130px}.leaderboard-avatar{width:38px;height:38px;flex:0 0 38px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(140deg,#e9e3ff,#ffe4ef);color:#6756a8;font-weight:900;font-size:17px;box-shadow:inset 0 0 0 1px #fff,0 3px 10px #8a79bd22}.leaderboard-username{display:inline-block;padding:5px 9px;border-radius:9px;background:#f2effb;color:#65558f;font-weight:800;font-size:12px;white-space:nowrap}.leaderboard-rank{white-space:nowrap;font-weight:800;color:#65558f}
 </style>
+ 
+<style>
+#studycompare .pagehead{position:relative;overflow:hidden;border-radius:24px;padding:22px;background:linear-gradient(130deg,#30205f,#7153b6 58%,#d18bb8);color:#fff;box-shadow:0 14px 35px #503b852e}
+#studycompare .pagehead h2,#studycompare .pagehead .sub{color:#fff}
+#studycompare .fancy-hub{background:linear-gradient(145deg,#fbf9ff,#f4efff);border:1px solid #e8e0fa}
+#studycompare .leaderboard-podium{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:end;margin:18px 0 22px}
+#studycompare .podium-card{position:relative;display:flex;flex-direction:column;align-items:center;gap:7px;min-width:0;padding:18px 10px 16px;border:1px solid #ece5fa;border-radius:20px;background:linear-gradient(160deg,#fff,#f7f3ff);box-shadow:0 10px 25px #4c347414;text-align:center;overflow:hidden}
+#studycompare .podium-card:before{content:"";position:absolute;inset:0 0 auto;height:5px;background:linear-gradient(90deg,#a78bfa,#f0abcf)}
+#studycompare .podium-1{transform:translateY(-9px);background:linear-gradient(160deg,#fffdf2,#fff4d7);border-color:#f2d78c;box-shadow:0 14px 30px #c99b3328}
+#studycompare .podium-1:before{background:linear-gradient(90deg,#e8b642,#ffe8a1)}
+#studycompare .podium-2:before{background:linear-gradient(90deg,#aab5c8,#e7ebf3)}
+#studycompare .podium-3:before{background:linear-gradient(90deg,#c98a65,#f2c5a6)}
+#studycompare .podium-crown{font-size:25px}
+#studycompare .podium-avatar{width:54px;height:54px;border-radius:19px;display:grid;place-items:center;background:linear-gradient(145deg,#e8ddff,#fbddeb);color:#65519c;font-size:23px;font-weight:900;border:3px solid #fff;box-shadow:0 5px 14px #67518b20}
+#studycompare .podium-1 .podium-avatar{background:linear-gradient(145deg,#ffe7a1,#fff6d7);color:#956300}
+#studycompare .podium-name{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#34274f}
+#studycompare .podium-handle{font-size:11px;color:#7d6c9f;max-width:100%;overflow-wrap:anywhere}
+#studycompare .podium-label{font-size:10px;font-weight:800;color:#8976ae;background:#f0eafd;border-radius:30px;padding:4px 9px}
+#studycompare .podium-1 .podium-label{background:#ffedb9;color:#906000}
+#studycompare .podium-hours{font-size:14px;color:#48356f}
+#studycompare .leaderboard-table-wrap{width:100%;overflow-x:auto;border-radius:17px;padding-bottom:4px}
+#studycompare .leaderboard-table{min-width:700px;border-spacing:0 9px}
+#studycompare .leaderboard-table thead th{background:#eee8fb;color:#67558f;padding:13px}
+#studycompare .leaderboard-table tbody tr{transition:transform .18s ease,box-shadow .18s ease}
+#studycompare .leaderboard-table tbody tr:hover{transform:translateY(-2px);box-shadow:0 9px 20px #30235d16}
+#studycompare .leaderboard-table tbody tr.leaderboard-top-row{background:linear-gradient(90deg,#fff,#faf7ff)}
+#studycompare .leaderboard-top-row:first-child td:first-child{border-right:3px solid #e7bd53}
+#studycompare .leaderboard-top-row:nth-child(2) td:first-child{border-right:3px solid #aab5c8}
+#studycompare .leaderboard-top-row:nth-child(3) td:first-child{border-right:3px solid #c98a65}
+#studycompare .leaderboard-username{background:#eee8fb;color:#5e4a91;border:1px solid #e4daf7}
+@media(max-width:560px){#studycompare .leaderboard-podium{gap:7px}#studycompare .podium-card{padding:14px 5px;border-radius:15px}#studycompare .podium-avatar{width:43px;height:43px;border-radius:15px}#studycompare .podium-name{font-size:12px}#studycompare .podium-hours{font-size:11px}#studycompare .podium-label{font-size:9px;padding:4px 6px}}
+@media(prefers-reduced-motion:reduce){#studycompare .leaderboard-table tbody tr{transition:none}}
+</style>
 </head>
 <body>
 <div id="offlineNotice" role="status" aria-live="polite" hidden>حالت آفلاین: تغییرات روی همین دستگاه ذخیره می‌شوند و پس از اتصال اینترنت همگام‌سازی خواهند شد.</div>
@@ -668,7 +701,9 @@ async function renderStudyCompare(){
   const rows=Array.isArray(data)?data:[];
   if(!rows.length){status.textContent='هنوز ساعت مطالعه‌ای ثبت نشده است. پس از ثبت جلسه‌های مطالعه، رتبه‌بندی نمایش داده می‌شود.';return}
   status.textContent='تعداد کاربران در جدول: '+fa(rows.length)+' · نام کاربری و نشان اختصاصی هر نفر برای تشخیص آسان‌تر نمایش داده می‌شود.';
-  target.innerHTML='<table class="leaderboard-table"><thead><tr><th>رتبه</th><th>پروفایل کاربر</th><th>نام کاربری</th><th>نام مستعار</th><th>مجموع مطالعه</th><th>جلسه‌ها</th></tr></thead><tbody>'+rows.map((x,i)=>{const name=String(x.display_name||'کاربر'),username=String(x.username||'تنظیم‌نشده'),alias=String(x.compare_name||'');const initial=esc([...name.trim()][0]||'✦');const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':'✦';return '<tr><td><span class="leaderboard-rank">'+medal+' '+fa(i+1)+'</span></td><td><div class="leaderboard-user"><span class="leaderboard-avatar">'+initial+'</span><b>'+esc(name)+'</b></div></td><td><span class="leaderboard-username" dir="ltr">@'+esc(username)+'</span></td><td>'+esc(alias||'—')+'</td><td><b>'+fa(Number(x.total_hours||0).toFixed(2))+' ساعت</b></td><td>'+fa(x.session_count||0)+'</td></tr>'}).join('')+'</tbody></table>';
+  const podium=rows.slice(0,3);
+  const podiumHtml=podium.length?'<div class="leaderboard-podium">'+podium.map((x,i)=>{const name=String(x.display_name||'کاربر'),username=String(x.username||'تنظیم‌نشده'),hours=Number(x.total_hours||0),medals=['🥇','🥈','🥉'],labels=['قهرمان مطالعه','رتبه دوم','رتبه سوم'];return '<div class="podium-card podium-'+(i+1)+'"><div class="podium-crown">'+medals[i]+'</div><div class="podium-avatar">'+esc([...name.trim()][0]||'✦')+'</div><b class="podium-name">'+esc(name)+'</b><span class="podium-handle" dir="ltr">@'+esc(username)+'</span><span class="podium-label">'+labels[i]+'</span><strong class="podium-hours">'+fa(hours.toFixed(2))+' ساعت</strong></div>'}).join('')+'</div>':'';
+  target.innerHTML=podiumHtml+'<div class="leaderboard-table-wrap"><table class="leaderboard-table"><thead><tr><th>رتبه</th><th>پروفایل کاربر</th><th>نام کاربری</th><th>نام مستعار</th><th>مجموع مطالعه</th><th>جلسه‌ها</th></tr></thead><tbody>'+rows.map((x,i)=>{const name=String(x.display_name||'کاربر'),username=String(x.username||'تنظیم‌نشده'),alias=String(x.compare_name||'');const initial=esc([...name.trim()][0]||'✦');const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':'✦';return '<tr class="'+(i<3?'leaderboard-top-row':'')+'"><td><span class="leaderboard-rank">'+medal+' '+fa(i+1)+'</span></td><td><div class="leaderboard-user"><span class="leaderboard-avatar">'+initial+'</span><b>'+esc(name)+'</b></div></td><td><span class="leaderboard-username" dir="ltr">@'+esc(username)+'</span></td><td>'+esc(alias||'—')+'</td><td><b>'+fa(Number(x.total_hours||0).toFixed(2))+' ساعت</b></td><td>'+fa(x.session_count||0)+'</td></tr>'}).join('')+'</tbody></table></div>';
  }catch(err){status.textContent='دریافت جدول انجام نشد. ابتدا باید دستور SQL بخش مقایسه را در Supabase اجرا کنی. جزئیات: '+(err.message||'خطای ارتباط')}
 }
 document.getElementById('openMenu').onclick=openDrawer;document.getElementById('drawerBackdrop').onclick=closeDrawer;document.getElementById('openStudyRoom').onclick=()=>{setPage('studyroom');closeDrawer();window.scrollTo({top:0,behavior:'smooth'})};
