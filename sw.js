@@ -1,4 +1,4 @@
-const CACHE_NAME = "study-planner-shell-v1";
+const CACHE_NAME = "study-planner-shell-v2";
 const BASE_PATH = "/study-planner-/";
 const APP_FILES = [
   BASE_PATH,
