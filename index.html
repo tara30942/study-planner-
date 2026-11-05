@@ -185,6 +185,7 @@ th{font-weight:bold;color:#77758b}
 <div class="nav-label">ابزارهای کمکی</div>
 <button data-page="reminders"><span class="nav-icon">♧</span>یادآوری مطالعه</button>
 <button data-page="countdowns"><span class="nav-icon">◷</span>روزشمارها</button>
+<button data-page="userhome" id="userHomeNav" hidden><span class="nav-icon">♙</span>صفحه کاربری من</button>
 <button data-page="profile"><span class="nav-icon">♙</span>پروفایل و مقایسه</button>
 <button data-page="smart"><span class="nav-icon">✦</span>دستیار هوشمند</button>
 </nav><p class="muted" style="padding:12px 8px 0;line-height:2">اطلاعاتت به‌صورت خودکار در همین مرورگر ذخیره می‌شود.</p></aside>
@@ -330,6 +331,7 @@ function updateAuthUI(user){
  document.getElementById("authForm").hidden=!!user;
  document.getElementById("authSignOut").hidden=!user;
  document.getElementById("authTitle").textContent=user?"حساب کاربری":"ورود به حساب";
+ document.getElementById("userHomeNav").hidden=!user;
  if(!user)document.getElementById("authNote").textContent="ورود و ثبت‌نام با Supabase فعال است. برای ثبت‌نام ممکن است لازم باشد ایمیل خود را تأیید کنید.";
 }
 
@@ -402,7 +404,7 @@ async function handleAuthSession(user){
    localStorage.setItem('studyPlannerAdvanced',JSON.stringify(db));
    renderAfterCloudLoad();
   }
-  updateAuthUI(null);return;
+  updateAuthUI(null);setPage('dashboard');return;
  }
  updateAuthUI(user);
  if(cloudSyncReady&&cloudSyncUserId===user.id)return;
@@ -481,7 +483,7 @@ function sum(a,f){return a.reduce((s,x)=>s+f(x),0)}
 function group(a,key,val){let o={};a.forEach(x=>{let k=x[key]||'بدون نام';o[k]=(o[k]||0)+val(x)});return o}
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function monthLabel(y,m){let names=['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];return `${names[m-1]} ${fa(y)}`}
-function setPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));if(id==='analytics'||id==='dashboard')drawAll();if(id==='reports')renderReports();if(id==='reminders')renderReminders();if(id==='countdowns')renderCountdowns();if(id==='profile')renderProfile();if(id==='userhome')renderUserHome();if(id==='studyroom')renderStudyRoom();if(id==='todo')renderTodo();if(id==='smart'){renderSmartCountdowns();renderReviewQueue()}}
+function setPage(id){if(id==='userhome'&&!currentAuthUser)id='dashboard';document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));if(id==='analytics'||id==='dashboard')drawAll();if(id==='reports')renderReports();if(id==='reminders')renderReminders();if(id==='countdowns')renderCountdowns();if(id==='profile')renderProfile();if(id==='userhome')renderUserHome();if(id==='studyroom')renderStudyRoom();if(id==='todo')renderTodo();if(id==='smart'){renderSmartCountdowns();renderReviewQueue()}}
 document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>{setPage(b.dataset.page);closeDrawer()});
 const drawer=document.querySelector('.sidebar');drawer.classList.add('drawer');
 function openDrawer(){drawer.classList.add('open');document.getElementById('drawerBackdrop').classList.add('open')}
@@ -490,7 +492,7 @@ document.getElementById('openMenu').onclick=openDrawer;document.getElementById('
 let authMode='login';
 function setAuthMode(mode){authMode=mode;document.querySelectorAll('[data-auth-tab]').forEach(b=>b.classList.toggle('active',b.dataset.authTab===mode));document.getElementById('authNameField').hidden=mode!=='register';document.getElementById('authPassword').autocomplete=mode==='login'?'current-password':'new-password';document.getElementById('authSubmit').textContent=mode==='login'?'ورود':'ساخت حساب کاربری';document.getElementById('authTitle').textContent=mode==='login'?'ورود به حساب':'ثبت‌نام در پلنر';document.getElementById('authMessage').textContent=''}
 function closeAuth(){document.getElementById('authBackdrop').classList.remove('open')}
-document.getElementById('openAuth').onclick=()=>{document.getElementById('authBackdrop').classList.add('open');if(!currentAuthUser)setAuthMode('login')};
+document.getElementById('openAuth').onclick=()=>{if(currentAuthUser){setPage('userhome');return}document.getElementById('authBackdrop').classList.add('open');setAuthMode('login')};
 document.getElementById('closeAuth').onclick=closeAuth;
 document.getElementById('authBackdrop').onclick=e=>{if(e.target.id==='authBackdrop')closeAuth()};
 document.querySelectorAll('[data-auth-tab]').forEach(b=>b.onclick=()=>setAuthMode(b.dataset.authTab));
