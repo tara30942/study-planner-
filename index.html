@@ -707,7 +707,7 @@ function setupRoomPanels(){
  document.getElementById('roomChatTab').onclick=()=>setRoomTab('chat');document.getElementById('roomProfileTab').onclick=()=>setRoomTab('profile');document.getElementById('roomOpenProfile').onclick=()=>setRoomTab('profile');
 }
 function setRoomTab(tab){const p=tab==='profile';document.getElementById('roomChatPanel').classList.toggle('active',!p);document.getElementById('roomProfilePanel').classList.toggle('active',p);document.getElementById('roomChatTab').classList.toggle('active',!p);document.getElementById('roomProfileTab').classList.toggle('active',p)}
-async function openStudyRoom(room){
+async function openStudyRoom(room,initialTab='chat'){
  if(!room)return;
  activeStudyRoom=room;
  if(studyRoomChannel){await supabaseClient.removeChannel(studyRoomChannel);studyRoomChannel=null}
