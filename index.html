@@ -165,6 +165,8 @@ th{font-weight:bold;color:#77758b}
 @media(max-width:700px){.todo-item{gap:8px!important}.todo-item button{font-size:10px;padding:8px 10px}}
 
 #offlineNotice{position:fixed;z-index:9999;top:12px;left:50%;transform:translateX(-50%);background:#30265b;color:#fff;padding:9px 14px;border-radius:24px;font-size:12px;box-shadow:0 6px 22px #0002;max-width:calc(100vw - 24px);text-align:center}#offlineNotice[hidden]{display:none}
+
+.room-feature-bar{height:12px;border-radius:20px;background:#f0eef8;overflow:hidden;flex:1}.room-feature-bar>i{display:block;height:100%;border-radius:20px;background:linear-gradient(90deg,#7666d5,#9c8be9)}.room-day-row{display:flex;align-items:center;gap:10px;margin:8px 0;font-size:11px}.room-day-row b{width:64px;font-weight:normal;color:var(--muted)}.room-day-row strong{width:52px;text-align:left;font-size:11px}.room-timer-running{color:#2c9876!important}
 </style></head>
 <body>
 <div id="offlineNotice" role="status" aria-live="polite" hidden>حالت آفلاین: تغییرات روی همین دستگاه ذخیره می‌شوند و پس از اتصال اینترنت همگام‌سازی خواهند شد.</div>
@@ -256,6 +258,12 @@ th{font-weight:bold;color:#77758b}
 <section class="page" id="studyroomdetail">
  <div class="pagehead"><div><h2 id="roomDetailTitle">اتاق مطالعه</h2><div class="sub">فضای اختصاصی اعضای اتاق</div></div><button class="btn light" id="roomDetailBack">← بازگشت به اتاق‌ها</button></div>
  <div class="card"><div class="cardhead"><h3>اطلاعات اتاق</h3></div><div id="roomDetailInfo" class="muted"></div></div>
+ <div class="grid two" style="margin-top:14px">
+  <div class="card"><div class="cardhead"><h3>⏱️ تایمر مطالعه مشترک</h3><span class="badge" id="roomTimerStatus">آماده</span></div><div id="roomTimerDisplay" style="font-size:34px;font-weight:900;text-align:center;padding:16px;color:#6558bd">۲۵:۰۰</div><div class="formgrid"><div class="field"><label for="roomTimerMinutes">مدت مطالعه (دقیقه)</label><input id="roomTimerMinutes" type="number" min="1" max="240" value="25"></div><div class="field" style="display:flex;align-items:end"><button class="btn primary" id="roomTimerStart" type="button" style="width:100%">شروع تایمر گروه</button></div></div><div class="toolbar" style="margin-top:9px"><button class="btn light" id="roomTimerStop" type="button">پایان و ثبت مطالعه</button></div><div class="toast" id="roomTimerToast"></div></div>
+  <div class="card"><div class="cardhead"><h3>🏆 چالش هفتگی</h3><span class="badge">این هفته</span></div><div id="roomChallengeView" class="muted">در حال دریافت چالش…</div><div class="formgrid" style="margin-top:12px"><div class="field"><label for="roomChallengeTitle">عنوان چالش</label><input id="roomChallengeTitle" maxlength="80" placeholder="مثلاً هفته طلایی مطالعه"></div><div class="field"><label for="roomChallengeGoal">هدف گروه (ساعت)</label><input id="roomChallengeGoal" type="number" min="1" max="500" value="30"></div></div><button class="btn primary" id="roomChallengeCreate" type="button" style="margin-top:9px">ثبت چالش این هفته</button><div class="toast" id="roomChallengeToast"></div></div>
+ </div>
+ <div class="card" style="margin-top:14px"><div class="cardhead"><h3>📈 پیشرفت هفتگی گروه</h3><span class="muted">بر اساس زمان‌های ثبت‌شده</span></div><div id="roomProgressChart" class="stack"><div class="empty">در حال دریافت آمار…</div></div></div>
+ <div class="card" style="margin-top:14px"><div class="cardhead"><h3>🔐 حریم خصوصی آمار</h3></div><label style="display:flex;align-items:center;gap:10px;font-size:12px"><input id="roomShowStats" type="checkbox" style="width:auto"> نمایش آمار مطالعه من برای اعضای اتاق</label><div class="muted" id="roomPrivacyNote" style="margin-top:8px">با خاموش‌کردن این گزینه، زمان‌های مطالعه‌ات از نمودار گروه پنهان می‌شود؛ خودت همچنان آمار خودت را می‌بینی.</div></div>
  <div class="grid two" style="margin-top:14px">
   <div class="card"><h3>💬 گفت‌وگوی گروهی</h3><div id="roomMessages" class="stack" style="max-height:420px;overflow:auto;margin:12px 0"><div class="empty">پیامی وجود ندارد.</div></div><form id="roomMessageForm"><div class="field"><label for="roomMessageInput">پیام جدید</label><textarea id="roomMessageInput" rows="2" maxlength="1000" placeholder="پیامت را بنویس…"></textarea></div><button class="btn primary" type="submit" style="margin-top:8px">ارسال پیام</button><div class="toast" id="roomMessageToast"></div></form></div>
   <div class="card"><h3>👥 اعضای اتاق</h3><div id="roomMembers" class="stack"><div class="empty">در حال دریافت اعضا…</div></div></div>
@@ -688,8 +696,8 @@ async function openStudyRoom(room){
  activeStudyRoom=room;
  if(studyRoomChannel){await supabaseClient.removeChannel(studyRoomChannel);studyRoomChannel=null}
  renderStudyRoomDetail();setPage('studyroomdetail');window.scrollTo({top:0,behavior:'smooth'});
- await loadStudyRoomContent();
- studyRoomChannel=supabaseClient.channel('study-room-'+room.id).on('postgres_changes',{event:'INSERT',schema:'public',table:'study_room_messages',filter:'room_id=eq.'+room.id},payload=>appendStudyRoomMessage(payload.new)).subscribe();
+ await Promise.all([loadStudyRoomContent(),loadRoomFeatures()]);
+ studyRoomChannel=supabaseClient.channel('study-room-'+room.id).on('postgres_changes',{event:'INSERT',schema:'public',table:'study_room_messages',filter:'room_id=eq.'+room.id},payload=>appendStudyRoomMessage(payload.new)).on('postgres_changes',{event:'*',schema:'public',table:'study_room_timer',filter:'room_id=eq.'+room.id},()=>loadRoomFeatures()).on('postgres_changes',{event:'INSERT',schema:'public',table:'study_room_study_logs',filter:'room_id=eq.'+room.id},()=>loadRoomFeatures()).on('postgres_changes',{event:'INSERT',schema:'public',table:'study_room_challenges',filter:'room_id=eq.'+room.id},()=>loadRoomFeatures()).subscribe();
 }
 function renderStudyRoomDetail(){
  const room=activeStudyRoom;if(!room)return;
@@ -712,6 +720,45 @@ function renderStudyRoomDetail(){
  if(copy)copy.onclick=async()=>{try{await navigator.clipboard.writeText(code);feedback.textContent='کد دعوت کپی شد؛ برای دوستانت بفرست.'}catch(e){feedback.textContent='کپی خودکار در این مرورگر در دسترس نیست؛ کد را انتخاب و کپی کن.'}};
  if(share)share.onclick=async()=>{const payload={title:'دعوت به اتاق مطالعه '+room.name,text:'برای پیوستن به اتاق مطالعه «'+room.name+'» این کد دعوت را وارد کن: '+code};try{if(navigator.share)await navigator.share(payload);else{await navigator.clipboard.writeText(payload.text);feedback.textContent='متن دعوت کپی شد؛ آن را برای دوستانت بفرست.'}}catch(e){if(e?.name!=='AbortError')feedback.textContent='اشتراک‌گذاری انجام نشد؛ می‌توانی کد را با دکمه کپی بفرستی.'}};
 }
+let roomTimerState=null,roomTimerTick=null;
+function roomWeekStart(){const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-((d.getDay()+6)%7));return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function roomFmtClock(seconds){seconds=Math.max(0,seconds|0);return String(Math.floor(seconds/60)).padStart(2,'0')+':'+String(seconds%60).padStart(2,'0')}
+function paintRoomTimer(){const el=document.getElementById('roomTimerDisplay'),status=document.getElementById('roomTimerStatus');if(!el||!status)return;if(!roomTimerState?.is_running){el.textContent='۲۵:۰۰';status.textContent='آماده';el.classList.remove('room-timer-running');return}const elapsed=Math.max(0,Math.floor((Date.now()-new Date(roomTimerState.started_at).getTime())/1000)),remaining=Math.max(0,(roomTimerState.planned_minutes*60)-elapsed);el.textContent=roomFmtClock(remaining);status.textContent='در حال مطالعه گروهی';el.classList.add('room-timer-running');}
+async function loadRoomFeatures(){
+ if(!activeStudyRoom||!supabaseClient)return;
+ const roomId=activeStudyRoom.id;
+ const [timer,membership,logs,challenges]=await Promise.all([
+  supabaseClient.from('study_room_timer').select('*').eq('room_id',roomId).maybeSingle(),
+  supabaseClient.from('study_room_members').select('show_stats').eq('room_id',roomId).eq('user_id',currentAuthUser.id).maybeSingle(),
+  supabaseClient.from('study_room_study_logs').select('user_id,minutes,logged_at').eq('room_id',roomId).gte('logged_at',new Date(Date.now()-7*86400000).toISOString()).order('logged_at',{ascending:true}),
+  supabaseClient.from('study_room_challenges').select('*').eq('room_id',roomId).eq('week_start',roomWeekStart()).maybeSingle()
+ ]);
+ if(timer.error)document.getElementById('roomTimerToast').textContent=roomErrorMessage(timer.error);
+ roomTimerState=timer.data||null;paintRoomTimer();if(roomTimerTick)clearInterval(roomTimerTick);roomTimerTick=setInterval(paintRoomTimer,1000);
+ const privacy=document.getElementById('roomShowStats');if(privacy)privacy.checked=membership.data?.show_stats!==false;
+ const challengeEl=document.getElementById('roomChallengeView');
+ if(challenges.error)challengeEl.textContent=roomErrorMessage(challenges.error);
+ else if(challenges.data){const total=(logs.data||[]).reduce((n,x)=>n+x.minutes,0)/60,goal=challenges.data.target_hours,pct=Math.min(100,Math.round(total/goal*100));challengeEl.innerHTML='<b>'+esc(challenges.data.title)+'</b><div class="muted" style="margin:6px 0">هدف: '+fa(goal)+' ساعت · ثبت‌شده: '+fa(total.toFixed(1))+' ساعت</div><div class="room-feature-bar"><i style="width:'+pct+'%"></i></div><div class="muted" style="margin-top:6px">'+fa(pct)+'٪ از هدف هفتگی</div>'}
+ else challengeEl.innerHTML='<div class="empty">هنوز چالشی برای این هفته ثبت نشده؛ می‌توانی اولین چالش را بسازی.</div>';
+ const chart=document.getElementById('roomProgressChart');
+ if(logs.error)chart.innerHTML='<div class="empty">'+esc(roomErrorMessage(logs.error))+'</div>';
+ else{const days=[];for(let i=6;i>=0;i--){const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-i);const key=d.toISOString().slice(0,10);const mins=(logs.data||[]).filter(x=>new Date(x.logged_at).toDateString()===d.toDateString()).reduce((n,x)=>n+x.minutes,0);days.push({label:d.toLocaleDateString('fa-IR',{weekday:'short'}),mins})}const max=Math.max(60,...days.map(x=>x.mins));chart.innerHTML=days.map(x=>'<div class="room-day-row"><b>'+x.label+'</b><div class="room-feature-bar"><i style="width:'+Math.round(x.mins/max*100)+'%"></i></div><strong>'+fa((x.mins/60).toFixed(1))+' س</strong></div>').join('')+'<div class="muted">مجموع زمان قابل‌نمایش: '+fa(((logs.data||[]).reduce((n,x)=>n+x.minutes,0)/60).toFixed(1))+' ساعت</div>'}
+}
+document.getElementById('roomTimerStart').onclick=async()=>{
+ if(!activeStudyRoom)return;const minutes=Math.max(1,Math.min(240,Number(document.getElementById('roomTimerMinutes').value)||25)),toast=document.getElementById('roomTimerToast');if(roomTimerState?.is_running){toast.textContent='یک تایمر گروهی در حال اجراست.';return}
+ const {error}=await supabaseClient.from('study_room_timer').upsert({room_id:activeStudyRoom.id,started_by:currentAuthUser.id,started_at:new Date().toISOString(),planned_minutes:minutes,is_running:true,updated_at:new Date().toISOString()},{onConflict:'room_id'});if(error){toast.textContent=roomErrorMessage(error);return}toast.textContent='تایمر برای همه اعضا شروع شد.';await loadRoomFeatures();
+};
+document.getElementById('roomTimerStop').onclick=async()=>{
+ if(!activeStudyRoom||!roomTimerState?.is_running)return;const toast=document.getElementById('roomTimerToast'),minutes=Math.max(1,Math.floor((Date.now()-new Date(roomTimerState.started_at).getTime())/60000));const {error}=await supabaseClient.from('study_room_timer').update({is_running:false,updated_at:new Date().toISOString()}).eq('room_id',activeStudyRoom.id);if(error){toast.textContent=roomErrorMessage(error);return}
+ const {error:logError}=await supabaseClient.from('study_room_study_logs').insert({room_id:activeStudyRoom.id,user_id:currentAuthUser.id,minutes});toast.textContent=logError?'تایمر متوقف شد، اما ثبت آمار انجام نشد: '+roomErrorMessage(logError):'مطالعه گروهی متوقف و '+fa(minutes)+' دقیقه برای حساب تو ثبت شد.';await loadRoomFeatures();
+};
+document.getElementById('roomChallengeCreate').onclick=async()=>{
+ if(!activeStudyRoom)return;const title=document.getElementById('roomChallengeTitle').value.trim(),goal=Math.max(1,Math.min(500,Number(document.getElementById('roomChallengeGoal').value)||30)),toast=document.getElementById('roomChallengeToast');if(!title){toast.textContent='عنوان چالش را وارد کن.';return}
+ const {error}=await supabaseClient.from('study_room_challenges').insert({room_id:activeStudyRoom.id,title,target_hours:goal,week_start:roomWeekStart(),created_by:currentAuthUser.id});toast.textContent=error?roomErrorMessage(error):'چالش هفتگی ثبت شد.';if(!error){document.getElementById('roomChallengeTitle').value='';await loadRoomFeatures()}
+};
+document.getElementById('roomShowStats').onchange=async e=>{
+ if(!activeStudyRoom)return;const {error}=await supabaseClient.from('study_room_members').update({show_stats:e.target.checked}).eq('room_id',activeStudyRoom.id).eq('user_id',currentAuthUser.id);document.getElementById('roomPrivacyNote').textContent=error?roomErrorMessage(error):(e.target.checked?'آمار مطالعه‌ات برای اعضای اتاق قابل مشاهده است.':'آمار مطالعه‌ات از نمودار گروه پنهان شد.');if(!error)await loadRoomFeatures();
+};
 async function loadStudyRoomContent(){
  if(!activeStudyRoom)return;
  const roomId=activeStudyRoom.id;
@@ -740,7 +787,7 @@ document.getElementById('roomMessageForm').onsubmit=async e=>{
  try{const {error}=await supabaseClient.from('study_room_messages').insert({room_id:activeStudyRoom.id,user_id:currentAuthUser.id,sender_name:senderName,body});if(error)throw error;input.value='';toast.textContent='پیام ارسال شد.'}
  catch(err){toast.textContent=roomErrorMessage(err)}finally{if(btn){btn.disabled=false;btn.textContent='ارسال پیام'}}
 };
-document.getElementById('roomDetailBack').onclick=async()=>{if(studyRoomChannel){await supabaseClient.removeChannel(studyRoomChannel);studyRoomChannel=null}activeStudyRoom=null;setPage('studyroom')};
+document.getElementById('roomDetailBack').onclick=async()=>{if(studyRoomChannel){await supabaseClient.removeChannel(studyRoomChannel);studyRoomChannel=null}activeStudyRoom=null;if(roomTimerTick){clearInterval(roomTimerTick);roomTimerTick=null}roomTimerState=null;setPage('studyroom')};
 document.getElementById('saveRoomDraft').onclick=createStudyRoom;
 document.getElementById('joinRoom').onclick=joinStudyRoom;
 function renderUserHome(){
