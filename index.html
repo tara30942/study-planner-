@@ -198,7 +198,18 @@ th{font-weight:bold;color:#77758b}
 .smart-chat-shell{border:1px solid #e7e1f7;border-radius:20px;background:linear-gradient(145deg,#fbfaff,#f4f8ff);padding:14px}.smart-chat-intro{display:flex;align-items:center;gap:11px;padding:7px 5px 14px;border-bottom:1px solid #e9e4f4}.smart-chat-avatar{width:42px;height:42px;display:grid;place-items:center;border-radius:15px;background:linear-gradient(135deg,#7162d2,#d98fb0);color:#fff;font-size:22px}.smart-chat-intro small{display:block;color:#77718d;margin-top:4px}.smart-chat-state{margin-right:auto;font-size:11px;color:#6759bd;background:#eeebff;padding:6px 9px;border-radius:20px}.smart-chat-messages{height:310px;overflow:auto;padding:14px 3px;display:flex;flex-direction:column;gap:10px}.smart-chat-bubble{max-width:88%;padding:11px 14px;border-radius:16px;line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere}.smart-chat-bubble.assistant{align-self:flex-start;background:#fff;border:1px solid #ebe7f4;border-bottom-right-radius:5px;color:#38334b}.smart-chat-bubble.user{align-self:flex-end;background:linear-gradient(120deg,#7162d2,#8878e2);color:#fff;border-bottom-left-radius:5px}.smart-chat-compose{display:flex;gap:9px;align-items:stretch}.smart-chat-compose textarea{flex:1;min-width:0;border:1px solid #e4def2;border-radius:14px;padding:11px;background:#fff;resize:vertical;line-height:1.8}.smart-chat-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px}.smart-chat-note{font-size:11px;color:#77718d;line-height:1.8;margin:10px 2px 0}.smart-hidden-prefs{display:none!important}@media(max-width:600px){.smart-chat-messages{height:280px}.smart-chat-bubble{max-width:94%}.smart-chat-state{display:none}.smart-chat-compose{flex-direction:column}.smart-chat-compose .btn{width:100%}}
 
 #smart .smart-home{margin-top:18px}.smart-home-title{margin:10px 2px 16px}.smart-home-title h3{margin:0 0 5px}.smart-home-title p{margin:0;color:var(--muted);font-size:13px}.smart-icon-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:14px}.smart-icon-tile{min-height:154px;border:1px solid #e8e3f5;border-radius:21px;background:linear-gradient(145deg,#fff,#f7f5ff);box-shadow:0 9px 25px #30265b0b;padding:17px 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;text-align:center;color:var(--text);cursor:pointer;transition:transform .2s,box-shadow .2s,border-color .2s}.smart-icon-tile:hover{transform:translateY(-4px);box-shadow:0 15px 30px #6655ba20;border-color:#cfc5f2}.smart-tile-icon{width:58px;height:58px;border-radius:18px;display:grid;place-items:center;background:linear-gradient(135deg,#ece8ff,#fcecf3);font-size:28px}.smart-icon-tile b{font-size:14px}.smart-icon-tile small{font-size:11px;color:var(--muted);line-height:1.7}.smart-subview{margin-top:16px}.smart-back{margin-bottom:12px;border:1px solid #e6e1f1!important;background:#fff!important;color:#6156a6!important}@media(max-width:520px){.smart-icon-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.smart-icon-tile{min-height:140px;padding:12px 8px}.smart-tile-icon{width:52px;height:52px}}
-</style></head>
+</style><style>
+/* هم‌ترازی نهایی دو میان‌بر شناور */
+.room-fab,.compare-fab{position:fixed!important;top:68px!important;width:44px!important;height:44px!important;left:auto!important}
+.room-fab{right:16px!important}
+.compare-fab{right:68px!important}
+@media(max-width:560px){
+ .room-fab,.compare-fab{top:58px!important;width:40px!important;height:40px!important}
+ .room-fab{right:10px!important}
+ .compare-fab{right:56px!important}
+}
+</style>
+</head>
 <body>
 <div id="offlineNotice" role="status" aria-live="polite" hidden>حالت آفلاین: تغییرات روی همین دستگاه ذخیره می‌شوند و پس از اتصال اینترنت همگام‌سازی خواهند شد.</div>
 <button class="smart-fab" id="openSmartPanel" type="button">✦ دستیار هوشمند</button>
