@@ -293,6 +293,7 @@ th{font-weight:bold;color:#77758b}
 <div class="nav-label">خانه و برنامه‌ریزی</div>
 <button class="active" data-page="dashboard"><span class="nav-icon">▦</span>داشبورد اصلی</button>
 <button data-page="calendar"><span class="nav-icon">▣</span>تقویم و برنامه</button>
+<button data-page="dailyplan"><span class="nav-icon">◷</span>برنامه روزانه من</button>
 <div class="nav-label">مدیریت کارها</div>
 <button data-page="todo"><span class="nav-icon">☑</span>فهرست کارها (To‑Do)</button>
 <div class="nav-label">ثبت فعالیت‌ها</div>
@@ -535,6 +536,30 @@ th{font-weight:bold;color:#77758b}
  </div>
  <p class="muted" style="line-height:1.9;margin-top:12px">این فهرست‌ها فعلاً فقط در مرورگر و دستگاه فعلی ذخیره می‌شوند. پس از اتصال حساب کاربری و پایگاه داده، می‌توانیم همگام‌سازی آنلاین را اضافه کنیم.</p>
 </section>
+
+<section class="page" id="dailyplan">
+ <div class="pagehead"><div><h2>برنامه روزانه من</h2><div class="sub">برنامه قابل ویرایش مطالعه، تست و تحلیل تست‌ها</div></div><span class="hero-tag">هدف: ۳ تا ۴ ساعت مطالعه مفید</span></div>
+ <div class="card" style="margin-bottom:14px;background:linear-gradient(120deg,#f0edff,#e8f7f0)">
+  <h3>قواعد ثابت برنامه</h3>
+  <div class="grid three">
+   <div><b>۰۷:۰۰</b><div class="muted">بیداری هدف</div></div>
+   <div><b>۱۲ تا ۱۵</b><div class="muted">ناهار و استراحت؛ بدون مطالعه</div></div>
+   <div><b>۲۰ تا ۲۱</b><div class="muted">زمان آزاد؛ بدون مطالعه</div></div>
+  </div>
+  <p class="muted" style="margin:12px 0 0">هدف خواب: ساعت ۲۲. اگر دیر بیدار شدی، برنامه را جابه‌جا کن؛ برای جبران، استراحت‌ها را حذف نکن.</p>
+ </div>
+ <div class="card">
+  <div class="cardhead"><h3>زمان‌بندی روزانه</h3><div class="toolbar"><button class="btn" id="dailyPlanReset" type="button">بازگردانی برنامه اولیه</button><button class="btn primary" id="dailyPlanAdd" type="button">＋ افزودن فعالیت</button></div></div>
+  <p class="muted">ساعت، درس، فعالیت و مدت هر ردیف را هر زمان خواستی ویرایش کن. تغییرات به‌صورت خودکار ذخیره می‌شوند.</p>
+  <div id="dailyPlanRows" class="stack"></div>
+  <div class="card" style="margin-top:14px;background:#faf9fd">
+   <div class="cardhead"><b>جمع‌بندی برنامه</b><span id="dailyPlanTotal" class="smart-pill">۰ دقیقه</span></div>
+   <p class="muted" id="dailyPlanStatus" style="margin:8px 0 0">وضعیت فعالیت‌ها اینجا نمایش داده می‌شود.</p>
+  </div>
+  <p id="dailyPlanToast" class="toast" aria-live="polite"></p>
+ </div>
+</section>
+
 </main></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -568,7 +593,16 @@ if(!Array.isArray(db.reminders))db.reminders=[];if(!Array.isArray(db.todoLists))
 let vy=today.year,vm=today.month,selected=todayStr;
 const colors=['#7968d8','#ee8fac','#54b99b','#6b9ce8','#e9ad61','#9b83c9','#58aeb5','#d77e73'];
 let cloudSyncReady=false,cloudSyncUserId=null,cloudSyncTimer=null,cloudSyncBusy=false,cloudSyncPending=false;
-function emptyPlannerData(){return {tasks:{},tests:[],study:[],topics:[],reminders:[],todoLists:[{id:'todo-default',name:'کارهای من',items:[]}],countdowns:[],profile:{name:"",goal:5,konkurDate:""}}}
+function emptyPlannerData(){return {tasks:{},tests:[],study:[],topics:[],reminders:[],dailyPlan:defaultDailyPlan(),todoLists:[{id:'todo-default',name:'کارهای من',items:[]}],countdowns:[],profile:{name:"",goal:5,konkurDate:""}}}
+function defaultDailyPlan(){return [
+ {time:'۰۷:۳۰–۰۸:۱۰',subject:'درس اول',activity:'مطالعه و یادگیری مبحث',minutes:40,done:false},
+ {time:'۰۹:۰۰–۰۹:۲۵',subject:'درس اول',activity:'تست آموزشی',minutes:25,done:false},
+ {time:'۰۹:۲۵–۱۰:۰۰',subject:'درس اول',activity:'تحلیل تست‌ها و ثبت اشکالات',minutes:35,done:false},
+ {time:'۱۰:۱۵–۱۰:۵۵',subject:'درس دوم',activity:'مطالعه و یادگیری مبحث',minutes:40,done:false},
+ {time:'۱۰:۵۵–۱۱:۲۰',subject:'درس دوم',activity:'تست آموزشی',minutes:25,done:false},
+ {time:'۱۱:۲۰–۱۱:۵۵',subject:'درس دوم',activity:'تحلیل تست‌ها و ثبت اشکالات',minutes:35,done:false},
+ {time:'۱۵:۳۰–۱۶:۰۰',subject:'مرور',activity:'مرور تست‌های نشان‌دار و اشتباهات',minutes:30,done:false}
+]}
 function normalizePlannerData(value){
  let d=value&&typeof value==='object'&&!Array.isArray(value)?value:emptyPlannerData();
  if(!d.tasks||typeof d.tasks!=='object'||Array.isArray(d.tasks))d.tasks={};
@@ -576,6 +610,7 @@ function normalizePlannerData(value){
  if(!Array.isArray(d.study))d.study=[];
  if(!Array.isArray(d.topics))d.topics=[];
  if(!Array.isArray(d.reminders))d.reminders=[];
+ if(!Array.isArray(d.dailyPlan))d.dailyPlan=defaultDailyPlan();
  if(!Array.isArray(d.todoLists))d.todoLists=[];
  if(!d.todoLists.length)d.todoLists=[{id:'todo-default',name:'کارهای من',items:[]}];
  d.todoLists.forEach(l=>{if(!Array.isArray(l.items))l.items=[]});
@@ -682,6 +717,18 @@ async function handleAuthSession(user){
   setPage('dashboard');
  }
 }
+
+function renderDailyPlan(){
+ const host=document.getElementById('dailyPlanRows');if(!host)return;
+ if(!Array.isArray(db.dailyPlan))db.dailyPlan=defaultDailyPlan();
+ const rows=db.dailyPlan;
+ host.innerHTML=rows.length?rows.map((x,i)=>'<div class="card daily-plan-row" data-index="'+i+'" style="margin-top:10px;padding:13px;border-radius:15px"><div class="formgrid"><div class="field"><label>ساعت</label><input data-field="time" value="'+esc(x.time)+'" placeholder="مثلاً ۰۹:۰۰–۰۹:۴۵"></div><div class="field"><label>درس / بخش</label><input data-field="subject" value="'+esc(x.subject)+'" placeholder="مثلاً زیست‌شناسی"></div><div class="field full"><label>شرح فعالیت</label><input data-field="activity" value="'+esc(x.activity)+'" placeholder="مثلاً مطالعه گفتار اول و بررسی شکل‌ها"></div><div class="field"><label>مدت (دقیقه)</label><input data-field="minutes" type="number" min="0" max="600" value="'+Math.max(0,Number(x.minutes)||0)+'"></div><div class="field" style="display:flex;align-items:end;gap:8px"><label style="display:flex;align-items:center;gap:7px;margin:0"><input data-field="done" type="checkbox" '+(x.done?'checked':'')+' style="width:auto"> انجام شد</label><button class="btn danger" data-action="delete" type="button">حذف فعالیت</button></div></div></div>').join(''):'<div class="empty">هنوز فعالیتی ثبت نشده؛ از دکمه افزودن فعالیت استفاده کن.</div>';
+ const total=rows.reduce((n,x)=>n+(Math.max(0,Number(x.minutes)||0)),0),done=rows.filter(x=>x.done).length;
+ document.getElementById('dailyPlanTotal').textContent=fa(total)+' دقیقه · '+fa(Math.floor(total/60))+' ساعت و '+fa(total%60)+' دقیقه';
+ document.getElementById('dailyPlanStatus').textContent=fa(done)+' از '+fa(rows.length)+' فعالیت انجام شده است.';
+}
+function saveDailyPlan(){save();const t=document.getElementById('dailyPlanToast');if(t)t.textContent='تغییرات برنامه ذخیره شد.';renderDailyPlan()}
+
 function save(){
  const raw=JSON.stringify(db);
  localStorage.setItem('studyPlannerAdvanced',raw);
@@ -710,8 +757,17 @@ function sum(a,f){return a.reduce((s,x)=>s+f(x),0)}
 function group(a,key,val){let o={};a.forEach(x=>{let k=x[key]||'بدون نام';o[k]=(o[k]||0)+val(x)});return o}
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function monthLabel(y,m){let names=['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];return `${names[m-1]} ${fa(y)}`}
-function setPage(id){if(id==='userhome'&&!currentAuthUser)id='dashboard';document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));if(id==='analytics'||id==='dashboard')drawAll();if(id==='reports')renderReports();if(id==='reminders')renderReminders();if(id==='countdowns')renderCountdowns();if(id==='profile')renderProfile();if(id==='studycompare')renderStudyCompare();if(id==='userhome')renderUserHome();if(id==='studyroom')renderStudyRoom();if(id==='studyroomdetail')renderStudyRoomDetail();if(id==='todo')renderTodo();if(id==='smart'){renderSmartCountdowns();renderReviewQueue()}}
+function setPage(id){if(id==='userhome'&&!currentAuthUser)id='dashboard';document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));if(id==='analytics'||id==='dashboard')drawAll();if(id==='reports')renderReports();if(id==='reminders')renderReminders();if(id==='countdowns')renderCountdowns();if(id==='profile')renderProfile();if(id==='studycompare')renderStudyCompare();if(id==='userhome')renderUserHome();if(id==='studyroom')renderStudyRoom();if(id==='studyroomdetail')renderStudyRoomDetail();if(id==='todo')renderTodo();if(id==='dailyplan')renderDailyPlan();if(id==='smart'){renderSmartCountdowns();renderReviewQueue()}}
 document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>{setPage(b.dataset.page);closeDrawer()});
+document.getElementById('dailyPlanAdd').onclick=()=>{db.dailyPlan.push({time:'',subject:'',activity:'فعالیت جدید',minutes:30,done:false});save();renderDailyPlan();};
+document.getElementById('dailyPlanReset').onclick=()=>{if(confirm('برنامه روزانه به زمان‌بندی اولیه برگردد؟')){db.dailyPlan=defaultDailyPlan();save();renderDailyPlan();document.getElementById('dailyPlanToast').textContent='برنامه اولیه بازگردانی شد.'}};
+document.getElementById('dailyPlanRows').addEventListener('change',e=>{
+ const row=e.target.closest('.daily-plan-row');if(!row)return;const i=Number(row.dataset.index),field=e.target.dataset.field;if(!db.dailyPlan[i]||!field)return;
+ db.dailyPlan[i][field]=field==='done'?e.target.checked:field==='minutes'?Math.max(0,Math.min(600,Number(e.target.value)||0)):e.target.value;save();renderDailyPlan();
+});
+document.getElementById('dailyPlanRows').addEventListener('click',e=>{
+ const b=e.target.closest('[data-action="delete"]');if(!b)return;const row=b.closest('.daily-plan-row');if(!row)return;db.dailyPlan.splice(Number(row.dataset.index),1);save();renderDailyPlan();
+});
 const drawer=document.querySelector('.sidebar');drawer.classList.add('drawer');
 function openDrawer(){drawer.classList.add('open');document.getElementById('drawerBackdrop').classList.add('open')}
 function closeDrawer(){drawer.classList.remove('open');document.getElementById('drawerBackdrop').classList.remove('open')}
