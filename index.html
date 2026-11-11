@@ -525,7 +525,7 @@ th{font-weight:bold;color:#77758b}
  <div class="grid two" style="align-items:start">
   <div class="card">
    <div class="cardhead"><h3>فهرست‌های من</h3></div>
-   <div class="field"><label for="todoListSelect">انتخاب فهرست</label><select id="todoListSelect"></select></div>
+   <div class="field"><label for="todoListSelect">انتخاب فهرست</label><select id="todoListSelect"></select></div><button class="btn" id="todoRenameList" type="button" style="margin-top:9px">ویرایش عنوان فهرست انتخابی</button>
    <div class="formgrid" style="margin-top:12px"><div class="field"><label for="todoNewList">ساخت فهرست جدید</label><input id="todoNewList" maxlength="50" placeholder="مثلاً کارهای مدرسه"></div><button class="btn primary" id="todoCreateList" type="button">＋ ساخت فهرست</button></div>
    <p class="muted" id="todoListMessage" style="margin:10px 0 0"></p>
   </div>
@@ -1231,6 +1231,7 @@ function renderTodo(){
  document.querySelectorAll('[data-todo-edit]').forEach(el=>el.onclick=()=>{const t=list.items.find(x=>x.id===el.dataset.todoEdit);if(!t)return;const v=prompt('عنوان جدید کار:',t.title);if(v===null)return;if(!v.trim())return; t.title=v.trim().slice(0,120);save();renderTodo()});
 }
 document.getElementById('todoListSelect').onchange=renderTodo;
+document.getElementById('todoRenameList').onclick=()=>{const list=currentTodoList();if(!list)return;const name=prompt('عنوان جدید فهرست:',list.name);if(name===null||!name.trim())return;const clean=name.trim().slice(0,50);if(db.todoLists.some(x=>x.id!==list.id&&x.name.toLowerCase()===clean.toLowerCase())){document.getElementById('todoListMessage').textContent='این عنوان قبلاً استفاده شده است.';return}list.name=clean;save();renderTodo();document.getElementById('todoListMessage').textContent='عنوان فهرست ویرایش شد.'};
 document.getElementById('todoFilter').onchange=renderTodo;
 document.getElementById('todoCreateList').onclick=()=>{const input=document.getElementById('todoNewList'),name=input.value.trim();if(!name){document.getElementById('todoListMessage').textContent='نام فهرست را وارد کن.';return}if(db.todoLists.some(x=>x.name.toLowerCase()===name.toLowerCase())){document.getElementById('todoListMessage').textContent='این نام قبلاً استفاده شده است.';return}const id='list-'+Date.now().toString(36);db.todoLists.push({id,name:name.slice(0,50),items:[]});input.value='';save();renderTodo();document.getElementById('todoListSelect').value=id;renderTodo();document.getElementById('todoListMessage').textContent='فهرست جدید ساخته شد.'};
 document.getElementById('todoAddTask').onclick=()=>{const title=document.getElementById('todoTaskTitle').value.trim();if(!title){document.getElementById('todoTaskMessage').textContent='عنوان کار را وارد کن.';return}const list=currentTodoList();list.items.push({id:'task-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,6),title:title.slice(0,120),due:document.getElementById('todoDue').value.trim(),priority:document.getElementById('todoPriority').value,done:false});document.getElementById('todoTaskTitle').value='';document.getElementById('todoDue').value='';document.getElementById('todoTaskMessage').textContent='کار اضافه شد.';save();renderTodo()};
@@ -1341,6 +1342,7 @@ function renderStudyRoomDetail(){
  document.getElementById('roomDetailInfo').innerHTML=
   '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">'+
    '<div><b style="font-size:17px">'+esc(room.name)+'</b><div class="muted" style="margin-top:6px">هدف هفتگی گروه: '+fa(room.goal_hours||30)+' ساعت</div></div>'+
+   (room.owner_id===currentAuthUser?.id?'<button type="button" class="btn light" id="renameStudyRoom">ویرایش عنوان اتاق</button>':'')+
    '<span class="badge">اتاق آنلاین</span>'+
   '</div>'+
   '<div style="margin-top:16px;padding:16px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(135deg,rgba(121,104,216,.10),rgba(238,143,172,.12))">'+
@@ -1352,6 +1354,8 @@ function renderStudyRoomDetail(){
    '</div><div id="roomCodeFeedback" class="muted" style="margin-top:9px;font-size:13px"></div>'+
   '</div>';
  const copy=document.getElementById('copyRoomCode'),share=document.getElementById('shareRoomCode'),feedback=document.getElementById('roomCodeFeedback');
+ const rename=document.getElementById('renameStudyRoom');
+ if(rename)rename.onclick=async()=>{const name=prompt('عنوان جدید اتاق:',room.name);if(name===null||!name.trim())return;const clean=name.trim().slice(0,40);rename.disabled=true;try{const {data,error}=await supabaseClient.from('study_rooms').update({name:clean}).eq('id',room.id).eq('owner_id',currentAuthUser.id).select('id,name,invite_code,goal_hours,visibility,owner_id').single();if(error)throw error;activeStudyRoom={...activeStudyRoom,...data};await renderStudyRoom();renderStudyRoomDetail();document.getElementById('roomToast')?.textContent&&(document.getElementById('roomToast').textContent='عنوان اتاق تغییر کرد.')}catch(err){alert('ویرایش عنوان اتاق انجام نشد: '+roomErrorMessage(err))}finally{rename.disabled=false}};
  if(copy)copy.onclick=async()=>{try{await navigator.clipboard.writeText(code);feedback.textContent='کد دعوت کپی شد؛ برای دوستانت بفرست.'}catch(e){feedback.textContent='کپی خودکار در این مرورگر در دسترس نیست؛ کد را انتخاب و کپی کن.'}};
  if(share)share.onclick=async()=>{const payload={title:'دعوت به اتاق مطالعه '+room.name,text:'برای پیوستن به اتاق مطالعه «'+room.name+'» این کد دعوت را وارد کن: '+code};try{if(navigator.share)await navigator.share(payload);else{await navigator.clipboard.writeText(payload.text);feedback.textContent='متن دعوت کپی شد؛ آن را برای دوستانت بفرست.'}}catch(e){if(e?.name!=='AbortError')feedback.textContent='اشتراک‌گذاری انجام نشد؛ می‌توانی کد را با دکمه کپی بفرستی.'}};
 }
