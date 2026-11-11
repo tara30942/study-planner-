@@ -294,6 +294,12 @@ th{font-weight:bold;color:#77758b}
 <button class="active" data-page="dashboard"><span class="nav-icon">▦</span>داشبورد اصلی</button>
 <button data-page="calendar"><span class="nav-icon">▣</span>تقویم و برنامه</button>
 <button data-page="dailyplan"><span class="nav-icon">◷</span>برنامه روزانه من</button>
+<div class="nav-label">آمار تست به تفکیک درس</div>
+<button data-page="subject-bio"><span class="nav-icon">🧬</span>زیست‌شناسی</button>
+<button data-page="subject-chem"><span class="nav-icon">⚗️</span>شیمی</button>
+<button data-page="subject-physics"><span class="nav-icon">⚡</span>فیزیک</button>
+<button data-page="subject-math"><span class="nav-icon">📐</span>ریاضی</button>
+<button data-page="subject-geo"><span class="nav-icon">🌍</span>زمین‌شناسی</button>
 <div class="nav-label">مدیریت کارها</div>
 <button data-page="todo"><span class="nav-icon">☑</span>فهرست کارها (To‑Do)</button>
 <div class="nav-label">ثبت فعالیت‌ها</div>
@@ -560,6 +566,12 @@ th{font-weight:bold;color:#77758b}
  </div>
 </section>
 
+<section class="page" id="subject-bio"><div class="pagehead"><div><h2>آمار تست زیست‌شناسی</h2><div class="sub">نمودار خطی تعداد تست‌های ثبت‌شده برای هر فصل یا مبحث</div></div><button class="btn primary" type="button" onclick="setPage('tests')">＋ ثبت تست</button></div><div class="card"><h3>تعداد تست به تفکیک فصل</h3><div class="chartbox"><canvas id="subjectChartBio"></canvas></div><div class="chart-note" id="subjectNoteBio">محور افقی: فصل یا مبحث · محور عمودی: تعداد تست</div></div><div class="card" style="margin-top:14px"><h3>جزئیات فصل‌ها</h3><div class="tablewrap" id="subjectTableBio"></div></div></section>
+<section class="page" id="subject-chem"><div class="pagehead"><div><h2>آمار تست شیمی</h2><div class="sub">نمودار خطی تعداد تست‌های ثبت‌شده برای هر فصل یا مبحث</div></div><button class="btn primary" type="button" onclick="setPage('tests')">＋ ثبت تست</button></div><div class="card"><h3>تعداد تست به تفکیک فصل</h3><div class="chartbox"><canvas id="subjectChartChem"></canvas></div><div class="chart-note" id="subjectNoteChem">محور افقی: فصل یا مبحث · محور عمودی: تعداد تست</div></div><div class="card" style="margin-top:14px"><h3>جزئیات فصل‌ها</h3><div class="tablewrap" id="subjectTableChem"></div></div></section>
+<section class="page" id="subject-physics"><div class="pagehead"><div><h2>آمار تست فیزیک</h2><div class="sub">نمودار خطی تعداد تست‌های ثبت‌شده برای هر فصل یا مبحث</div></div><button class="btn primary" type="button" onclick="setPage('tests')">＋ ثبت تست</button></div><div class="card"><h3>تعداد تست به تفکیک فصل</h3><div class="chartbox"><canvas id="subjectChartPhysics"></canvas></div><div class="chart-note" id="subjectNotePhysics">محور افقی: فصل یا مبحث · محور عمودی: تعداد تست</div></div><div class="card" style="margin-top:14px"><h3>جزئیات فصل‌ها</h3><div class="tablewrap" id="subjectTablePhysics"></div></div></section>
+<section class="page" id="subject-math"><div class="pagehead"><div><h2>آمار تست ریاضی</h2><div class="sub">نمودار خطی تعداد تست‌های ثبت‌شده برای هر فصل یا مبحث</div></div><button class="btn primary" type="button" onclick="setPage('tests')">＋ ثبت تست</button></div><div class="card"><h3>تعداد تست به تفکیک فصل</h3><div class="chartbox"><canvas id="subjectChartMath"></canvas></div><div class="chart-note" id="subjectNoteMath">محور افقی: فصل یا مبحث · محور عمودی: تعداد تست</div></div><div class="card" style="margin-top:14px"><h3>جزئیات فصل‌ها</h3><div class="tablewrap" id="subjectTableMath"></div></div></section>
+<section class="page" id="subject-geo"><div class="pagehead"><div><h2>آمار تست زمین‌شناسی</h2><div class="sub">نمودار خطی تعداد تست‌های ثبت‌شده برای هر فصل یا مبحث</div></div><button class="btn primary" type="button" onclick="setPage('tests')">＋ ثبت تست</button></div><div class="card"><h3>تعداد تست به تفکیک فصل</h3><div class="chartbox"><canvas id="subjectChartGeo"></canvas></div><div class="chart-note" id="subjectNoteGeo">محور افقی: فصل یا مبحث · محور عمودی: تعداد تست</div></div><div class="card" style="margin-top:14px"><h3>جزئیات فصل‌ها</h3><div class="tablewrap" id="subjectTableGeo"></div></div></section>
+
 </main></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -625,6 +637,7 @@ function setCloudMessage(message,color){
 }
 function renderAfterCloudLoad(){
  renderCalendar();renderTasks();renderAll();initReportControls();renderReminders();renderCountdowns();renderProfile();
+setInterval(()=>{if(document.getElementById('countdowns')?.classList.contains('active'))renderCountdowns()},60000);
 }
 function scheduleCloudSave(){
  if(!cloudSyncReady||!cloudSyncUserId)return;
@@ -757,7 +770,7 @@ function sum(a,f){return a.reduce((s,x)=>s+f(x),0)}
 function group(a,key,val){let o={};a.forEach(x=>{let k=x[key]||'بدون نام';o[k]=(o[k]||0)+val(x)});return o}
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function monthLabel(y,m){let names=['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];return `${names[m-1]} ${fa(y)}`}
-function setPage(id){if(id==='userhome'&&!currentAuthUser)id='dashboard';document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));if(id==='analytics'||id==='dashboard')drawAll();if(id==='reports')renderReports();if(id==='reminders')renderReminders();if(id==='countdowns')renderCountdowns();if(id==='profile')renderProfile();if(id==='studycompare')renderStudyCompare();if(id==='userhome')renderUserHome();if(id==='studyroom')renderStudyRoom();if(id==='studyroomdetail')renderStudyRoomDetail();if(id==='todo')renderTodo();if(id==='dailyplan')renderDailyPlan();if(id==='smart'){renderSmartCountdowns();renderReviewQueue()}}
+function setPage(id){if(id==='userhome'&&!currentAuthUser)id='dashboard';document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===id));document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===id));if(id==='analytics'||id==='dashboard')drawAll();if(id.startsWith('subject-'))renderSubjectTestPages(id);if(id==='reports')renderReports();if(id==='reminders')renderReminders();if(id==='countdowns')renderCountdowns();if(id==='profile')renderProfile();if(id==='studycompare')renderStudyCompare();if(id==='userhome')renderUserHome();if(id==='studyroom')renderStudyRoom();if(id==='studyroomdetail')renderStudyRoomDetail();if(id==='todo')renderTodo();if(id==='dailyplan')renderDailyPlan();if(id==='smart'){renderSmartCountdowns();renderReviewQueue()}}
 document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>{setPage(b.dataset.page);closeDrawer()});
 document.getElementById('dailyPlanAdd').onclick=()=>{db.dailyPlan.push({time:'',subject:'',activity:'فعالیت جدید',minutes:30,done:false});save();renderDailyPlan();};
 document.getElementById('dailyPlanReset').onclick=()=>{if(confirm('برنامه روزانه به زمان‌بندی اولیه برگردد؟')){db.dailyPlan=defaultDailyPlan();save();renderDailyPlan();document.getElementById('dailyPlanToast').textContent='برنامه اولیه بازگردانی شد.'}};
@@ -818,6 +831,27 @@ document.getElementById('saveTest').onclick=()=>{let qty=+document.getElementByI
 document.getElementById('clearTest').onclick=()=>document.querySelectorAll('#tests input').forEach(x=>x.value='');
 document.getElementById('saveStudy').onclick=()=>{let h=+document.getElementById('studyHours').value||0;if(!h){document.getElementById('studyToast').textContent='مدت مطالعه را وارد کن.';return}db.study.push({subject:document.getElementById('studySubject').value,book:document.getElementById('studyBook').value.trim()||'بدون نام',hours:h,date:normDate(document.getElementById('studyDate').value),note:document.getElementById('studyNote').value.trim()});save();document.getElementById('studyToast').textContent='ساعت مطالعه ثبت شد.';renderAll()};
 document.getElementById('saveTopic').onclick=()=>{let name=document.getElementById('topicName').value.trim();if(!name){document.getElementById('topicToast').textContent='نام مبحث را وارد کن.';return}const examRaw=document.getElementById('topicExamDate').value.trim();const examDate=examRaw?normDate(examRaw):'';db.topics.push({id:'topic-'+Date.now(),subject:document.getElementById('topicSubject').value,book:document.getElementById('topicBook').value.trim()||'بدون نام',name,status:document.getElementById('topicStatus').value,examDate,volume:Math.max(0,+document.getElementById('topicVolume').value||0),mastery:document.getElementById('topicMastery').value,reviewStage:0,lastReviewed:null,nextReviewDate:addJalaliDays(todayStr,1),reviewHistory:[]});save();document.getElementById('topicToast').textContent='مبحث ثبت شد.';renderAll()};
+function renderSubjectTestPages(onlyPage){
+ const defs=[
+  {id:'subject-bio',key:'زیست‌شناسی',suffix:'Bio'},
+  {id:'subject-chem',key:'شیمی',suffix:'Chem'},
+  {id:'subject-physics',key:'فیزیک',suffix:'Physics'},
+  {id:'subject-math',key:'ریاضی',suffix:'Math'},
+  {id:'subject-geo',key:'زمین‌شناسی',suffix:'Geo'}
+ ];
+ defs.filter(d=>!onlyPage||d.id===onlyPage).forEach(d=>{
+  const rows=db.tests.filter(t=>String(t.subject||'').trim()===d.key);
+  const counts={};
+  rows.forEach(t=>{const label=String(t.topic||'').trim()||'بدون فصل / مبحث';counts[label]=(counts[label]||0)+Number(t.qty||0)});
+  const labels=Object.keys(counts).sort((a,b)=>a.localeCompare(b,'fa',{numeric:true}));
+  const values=labels.map(k=>counts[k]);
+  const canvas=document.getElementById('subjectChart'+d.suffix);
+  if(canvas){if(labels.length)drawLine(canvas,labels,values);else{const c=canvas,ctx=c.getContext('2d'),w=c.clientWidth,h=c.clientHeight,dpr=devicePixelRatio||1;c.width=w*dpr;c.height=h*dpr;ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);ctx.fillStyle='#999';ctx.textAlign='center';ctx.font='12px Tahoma';ctx.fillText('هنوز تستی برای این درس ثبت نشده است',w/2,h/2)}}
+  const tableEl=document.getElementById('subjectTable'+d.suffix);
+  if(tableEl)tableEl.innerHTML=table(['فصل / مبحث','تعداد تست'],labels.map(k=>[esc(k),fa(counts[k])]));
+  const note=document.getElementById('subjectNote'+d.suffix);if(note)note.textContent='مجموع تست‌های ثبت‌شده: '+fa(sum(rows,t=>t.qty))+' · هر نقطه نشان‌دهنده مجموع تست‌های همان فصل یا مبحث است.';
+ });
+}
 function drawLine(canvas,labels,values){let c=canvas,ctx=c.getContext('2d'),w=c.clientWidth,h=c.clientHeight,dpr=window.devicePixelRatio||1;c.width=w*dpr;c.height=h*dpr;ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);let pad={l:30,r:10,t:15,b:30},max=Math.max(5,...values)*1.15,iw=w-pad.l-pad.r,ih=h-pad.t-pad.b;ctx.font='10px Tahoma';ctx.strokeStyle='#efedf5';ctx.fillStyle='#9995aa';for(let i=0;i<5;i++){let y=pad.t+ih*i/4;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();ctx.fillText(fa(Math.round(max*(4-i)/4)),2,y+3)}ctx.strokeStyle='#7968d8';ctx.lineWidth=2.5;ctx.beginPath();values.forEach((v,i)=>{let x=pad.l+(values.length<=1?0:i*iw/(values.length-1)),y=pad.t+ih-(v/max)*ih;i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke();values.forEach((v,i)=>{let x=pad.l+(values.length<=1?0:i*iw/(values.length-1)),y=pad.t+ih-(v/max)*ih;ctx.fillStyle='#7968d8';ctx.beginPath();ctx.arc(x,y,3.5,0,Math.PI*2);ctx.fill();if(values.length<15||i%Math.ceil(values.length/10)===0){ctx.fillStyle='#85829a';ctx.textAlign='center';ctx.fillText(labels[i]||'',x,h-8)}})}
 function drawBars(canvas,obj){let labels=Object.keys(obj),vals=Object.values(obj),c=canvas,ctx=c.getContext('2d'),w=c.clientWidth,h=c.clientHeight,dpr=devicePixelRatio||1;c.width=w*dpr;c.height=h*dpr;ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);if(!labels.length){ctx.fillStyle='#999';ctx.textAlign='center';ctx.font='12px Tahoma';ctx.fillText('هنوز داده‌ای ثبت نشده است',w/2,h/2);return}let max=Math.max(1,...vals),left=34,bottom=35,top=12,iw=w-left-8,slot=iw/labels.length,bw=Math.min(35,slot*.58);ctx.font='10px Tahoma';labels.forEach((s,i)=>{let x=left+i*slot+(slot-bw)/2,bh=(h-top-bottom)*vals[i]/max;ctx.fillStyle=colors[i%colors.length];ctx.beginPath();ctx.roundRect(x,h-bottom-bh,bw,bh,6);ctx.fill();ctx.fillStyle='#85829a';ctx.textAlign='center';ctx.fillText(fa(vals[i]),x+bw/2,h-bottom-bh-5);let label=s.length>9?s.slice(0,8)+'…':s;ctx.fillText(label,x+bw/2,h-12)})}
 function drawDonut(canvas,legendId,obj){let labels=Object.keys(obj),vals=Object.values(obj),total=sum(vals,x=>x),c=canvas,ctx=c.getContext('2d'),w=c.clientWidth||180,h=c.clientHeight||180,dpr=devicePixelRatio||1;c.width=w*dpr;c.height=h*dpr;ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);let cx=w/2,cy=h/2,r=Math.min(w,h)*.42,inner=r*.62,start=-Math.PI/2;if(!total){ctx.strokeStyle='#efedf5';ctx.lineWidth=r-inner;ctx.beginPath();ctx.arc(cx,cy,(r+inner)/2,0,Math.PI*2);ctx.stroke()}else vals.forEach((v,i)=>{let end=start+v/total*Math.PI*2;ctx.strokeStyle=colors[i%colors.length];ctx.lineWidth=r-inner;ctx.beginPath();ctx.arc(cx,cy,(r+inner)/2,start,end);ctx.stroke();start=end});ctx.fillStyle='#37334e';ctx.textAlign='center';ctx.font='bold 17px Tahoma';ctx.fillText(fa(total),cx,cy+5);ctx.font='9px Tahoma';ctx.fillStyle='#89859b';ctx.fillText('تست',cx,cy+21);document.getElementById(legendId).innerHTML=labels.length?labels.map((s,i)=>`<div class="legendrow"><i style="background:${colors[i%colors.length]}"></i><span>${esc(s)}</span><b>${fa(vals[i])}</b></div>`).join(''):'<span class="muted">داده‌ای نیست</span>'}
@@ -1124,12 +1158,36 @@ document.getElementById('todoCreateList').onclick=()=>{const input=document.getE
 document.getElementById('todoAddTask').onclick=()=>{const title=document.getElementById('todoTaskTitle').value.trim();if(!title){document.getElementById('todoTaskMessage').textContent='عنوان کار را وارد کن.';return}const list=currentTodoList();list.items.push({id:'task-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,6),title:title.slice(0,120),due:document.getElementById('todoDue').value.trim(),priority:document.getElementById('todoPriority').value,done:false});document.getElementById('todoTaskTitle').value='';document.getElementById('todoDue').value='';document.getElementById('todoTaskMessage').textContent='کار اضافه شد.';save();renderTodo()};
 document.getElementById('todoDeleteList').onclick=()=>{if(db.todoLists.length<=1){document.getElementById('todoListMessage').textContent='حداقل یک فهرست باید باقی بماند.';return}const list=currentTodoList();if(!confirm('فهرست «'+list.name+'» و همه کارهای داخل آن حذف شود؟'))return;db.todoLists=db.todoLists.filter(x=>x.id!==list.id);save();renderTodo()};
 
-function renderAll(){renderDash();renderTables();drawAll()}
+function renderAll(){renderDash();renderTables();drawAll();renderSubjectTestPages()}
 
 function jalaliDayNumber(key){let a=jPartsKey(key);return Math.floor(jstart(a[0],a[1]).getTime()/86400000)+a[2]-1}
 function daysUntil(key){return jalaliDayNumber(key)-jalaliDayNumber(todayStr)}
 function renderSmartCountdowns(){let all=[];if(db.profile.konkurDate)all.push({title:'کنکور',date:db.profile.konkurDate});(db.countdowns||[]).forEach(x=>all.push(x));let el=document.getElementById('smartCountdowns');if(!el)return;el.innerHTML=all.length?all.slice(0,6).map(x=>{let d=daysUntil(normDate(x.date));return '<div class="profile-stat"><span>'+esc(x.title)+'</span><b>'+fa(Math.abs(d))+' روز</b><small class="muted">'+(d>0?'باقی‌مانده':d===0?'امروز':'گذشته')+'</small></div>'}).join(''):'<div class="muted">هنوز روزشماری ثبت نشده؛ از بخش روزشمارها تاریخ کنکور یا رویداد دلخواهت را اضافه کن.</div>'}
-function renderCountdowns(){let kd=db.profile.konkurDate||'';document.getElementById('konkurDate').value=kd;if(kd){let d=daysUntil(normDate(kd));document.getElementById('konkurCountdown').textContent=d>0?fa(d):d===0?'امروز!':'برگزار شده';}else document.getElementById('konkurCountdown').textContent='تاریخ تعیین نشده';let el=document.getElementById('countdownList');el.innerHTML=db.countdowns.length?db.countdowns.map((x,i)=>{let d=daysUntil(x.date);return '<div class="reminder-row"><div><b>'+esc(x.title)+'</b><small>'+fa(x.date)+' · '+(d>0?' '+fa(d)+' روز باقی‌مانده':d===0?'امروز':'گذشته')+'</small></div><button class="btn danger" data-delcount="'+i+'">حذف</button></div>'}).join(''):'<div class="empty">هنوز روزشمار دلخواهی نساخته‌ای.</div>';document.querySelectorAll('[data-delcount]').forEach(b=>b.onclick=()=>{db.countdowns.splice(+b.dataset.delcount,1);save();renderCountdowns()})}
+function countdownParts(dateKey){
+ const a=jPartsKey(normDate(dateKey)),now=new Date(),nowJ=jPartsKey(todayStr),dayMs=86400000;
+ const nowStamp=jstart(nowJ[0],nowJ[1]).getTime()+(nowJ[2]-1)*dayMs+now.getHours()*3600000+now.getMinutes()*60000+now.getSeconds()*1000;
+ const targetStamp=jstart(a[0],a[1]).getTime()+(a[2]-1)*dayMs+dayMs-1000;
+ if(targetStamp<=nowStamp)return null;
+ let months=(a[0]-nowJ[0])*12+(a[1]-nowJ[1]);
+ const anchorFor=(m)=>{let y=nowJ[0]+Math.floor((nowJ[1]-1+m)/12),mo=((nowJ[1]-1+m)%12+12)%12+1,day=Math.min(nowJ[2],jmonth(y,mo));return jstart(y,mo).getTime()+(day-1)*dayMs+now.getHours()*3600000+now.getMinutes()*60000+now.getSeconds()*1000};
+ while(months>0&&anchorFor(months)>targetStamp)months--;
+ let cursor=anchorFor(Math.max(0,months)),left=Math.max(0,targetStamp-cursor);
+ let days=Math.floor(left/dayMs);left-=days*dayMs;
+ let hours=Math.floor(left/3600000);left-=hours*3600000;
+ let minutes=Math.floor(left/60000);
+ return {years:Math.floor(months/12),months:months%12,days,hours,minutes};
+}
+function countdownText(dateKey){
+ const p=countdownParts(dateKey);if(!p)return 'به پایان رسیده';
+ return fa(p.years)+' سال · '+fa(p.months)+' ماه · '+fa(p.days)+' روز · '+fa(p.hours)+' ساعت · '+fa(p.minutes)+' دقیقه';
+}
+function renderCountdowns(){
+ let kd=db.profile.konkurDate||'';document.getElementById('konkurDate').value=kd;
+ document.getElementById('konkurCountdown').textContent=kd?countdownText(kd):'تاریخ تعیین نشده';
+ let el=document.getElementById('countdownList');
+ el.innerHTML=db.countdowns.length?db.countdowns.map((x,i)=>'<div class="reminder-row"><div><b>'+esc(x.title)+'</b><small>'+fa(x.date)+' · '+countdownText(x.date)+'</small></div><button class="btn danger" data-delcount="'+i+'">حذف</button></div>').join(''):'<div class="empty">هنوز روزشمار دلخواهی نساخته‌ای.</div>';
+ document.querySelectorAll('[data-delcount]').forEach(b=>b.onclick=()=>{db.countdowns.splice(+b.dataset.delcount,1);save();renderCountdowns()});
+}
 document.getElementById('saveKonkurDate').onclick=()=>{let v=document.getElementById('konkurDate').value.trim();if(!v){document.getElementById('konkurCountdown').textContent='لطفاً تاریخ را وارد کن';return}db.profile.konkurDate=normDate(v);save();renderCountdowns()};
 document.getElementById('addCountdown').onclick=()=>{let title=document.getElementById('countdownTitle').value.trim(),date=document.getElementById('countdownDate').value.trim();if(!title||!date)return;db.countdowns.push({title,date:normDate(date)});save();document.getElementById('countdownTitle').value='';document.getElementById('countdownDate').value='';renderCountdowns()};
 let activeStudyRoom=null,studyRoomChannel=null;
@@ -1351,7 +1409,7 @@ function renderProfile(){document.getElementById('profileUsername').value=db.pro
 document.getElementById('saveProfile').onclick=async()=>{const username=document.getElementById('profileUsername').value.trim().toLowerCase();if(!/^[a-z0-9_]{3,20}$/.test(username)){document.getElementById('profileToast').textContent='نام کاربری باید ۳ تا ۲۰ نویسه و شامل حروف انگلیسی کوچک، عدد یا زیرخط باشد.';return}if(!currentAuthUser){document.getElementById('profileToast').textContent='برای ثبت نام کاربری یکتا، ابتدا وارد حساب کاربری شو.';return}const btn=document.getElementById('saveProfile');btn.disabled=true;try{const result=await supabaseClient.rpc('set_my_public_username',{p_username:username});if(result.error)throw result.error;db.profile.username=username;db.profile.name=document.getElementById('profileName').value.trim();db.profile.goal=Math.max(1,Math.min(16,+document.getElementById('profileGoal').value||5));db.profile.compareName=document.getElementById('profileCompareName').value.trim().slice(0,24);db.profile.compareOptIn=document.getElementById('profileCompareOptIn').checked;save();renderProfile();renderUserHome();updateAuthUI(currentAuthUser);document.getElementById('profileToast').textContent='پروفایل و نام کاربری ذخیره شدند.'}catch(e){const msg=String(e.message||'');document.getElementById('profileToast').textContent=msg.includes('already taken')?'این نام کاربری قبلاً انتخاب شده؛ نام دیگری امتحان کن.':msg}finally{btn.disabled=false}};
 document.getElementById('copyProfileStats').onclick=()=>{let msg='خلاصه عملکرد پلنر\\nنام: '+(db.profile.name||'بدون نام')+'\\nساعت مطالعه: '+sum(db.study,x=>x.hours)+'\\nتعداد تست: '+sum(db.tests,x=>x.qty)+'\\nمباحث خوانده‌شده: '+db.topics.filter(x=>x.status==='خوانده‌شده').length; if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(msg).then(()=>document.getElementById('profileToast').textContent='خلاصه کپی شد.').catch(()=>document.getElementById('profileToast').textContent=msg);else document.getElementById('profileToast').textContent=msg};
 
-window.addEventListener('resize',()=>{if(document.querySelector('.page.active').id==='dashboard'||document.querySelector('.page.active').id==='analytics')drawAll()});
+window.addEventListener('resize',()=>{if(document.querySelector('.page.active').id==='dashboard'||document.querySelector('.page.active').id==='analytics')drawAll();else if(document.querySelector('.page.active').id.startsWith('subject-'))renderSubjectTestPages(document.querySelector('.page.active').id)});
 document.getElementById('testDate').value=todayStr;document.getElementById('studyDate').value=todayStr;
 renderCalendar();renderTasks();renderAll();initReportControls();renderReminders();renderCountdowns();renderProfile();
 if(supabaseClient){supabaseClient.auth.onAuthStateChange((_event,session)=>{const user=session?.user||null;setTimeout(()=>handleAuthSession(user),0)});}
