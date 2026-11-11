@@ -1243,11 +1243,11 @@ function jalaliDayNumber(key){let a=jPartsKey(key);return Math.floor(jstart(a[0]
 function daysUntil(key){return jalaliDayNumber(key)-jalaliDayNumber(todayStr)}
 function renderSmartCountdowns(){let all=[];if(db.profile.konkurDate)all.push({title:'کنکور',date:db.profile.konkurDate});(db.countdowns||[]).forEach(x=>all.push(x));let el=document.getElementById('smartCountdowns');if(!el)return;el.innerHTML=all.length?all.slice(0,6).map(x=>'<div class="card" style="padding:12px;margin:8px 0"><b>'+esc(x.title)+'</b>'+countdownUnitsHtml(x.date)+'</div>').join(''):'<div class="muted">هنوز روزشماری ثبت نشده؛ از بخش روزشمارها تاریخ کنکور یا رویداد دلخواهت را اضافه کن.</div>'}
 function countdownParts(dateKey){
-  const raw=String(dateKey||'').trim(),a=jPartsKey(normDate(raw));
-  if(!raw||a.length!==3||!a.every(Number.isFinite)||a[1]<1||a[1]>12||a[2]<1||a[2]>jmonth(a[0],a[1]))return {invalid:true};
+  const raw=String(dateKey||'').trim(),partsRaw=latin(raw).replaceAll('-','/').split('/').map(Number),a=partsRaw.length===3?partsRaw:[];
+  if(!raw||a.length!==3||!a.every(Number.isFinite)||!Number.isInteger(a[0])||!Number.isInteger(a[1])||!Number.isInteger(a[2])||a[1]<1||a[1]>12||a[2]<1||a[2]>jmonth(a[0],a[1]))return {invalid:true};
   const now=new Date(),nowJ=parts(now),dayMs=86400000;
   const nowStamp=jstart(nowJ.year,nowJ.month).getTime()+(nowJ.day-1)*dayMs+now.getUTCHours()*3600000+now.getUTCMinutes()*60000+now.getUTCSeconds()*1000+now.getUTCMilliseconds();
-  const targetStamp=jstart(a[0],a[1]).getTime()+(a[2]-1)*dayMs+dayMs;
+  const targetStamp=jstart(a[0],a[1]).getTime()+(a[2]-1)*dayMs+dayMs-1;
   let left=targetStamp-nowStamp;
   if(left<=0)return null;
   let months=Math.max(0,(a[0]-nowJ.year)*12+(a[1]-nowJ.month));
