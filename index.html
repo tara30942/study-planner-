@@ -853,7 +853,36 @@ function renderSubjectTestPages(onlyPage){
   const note=document.getElementById('subjectNote'+d.suffix);if(note)note.textContent='مجموع تست‌های ثبت‌شده: '+fa(sum(rows,t=>t.qty))+' · هر نقطه نشان‌دهنده مجموع تست‌های همان فصل یا مبحث است.';
  });
 }
-function drawLine(canvas,labels,values){let c=canvas,ctx=c.getContext('2d'),w=c.clientWidth,h=c.clientHeight,dpr=window.devicePixelRatio||1;c.width=w*dpr;c.height=h*dpr;ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);let pad={l:30,r:10,t:15,b:30},max=Math.max(5,...values)*1.15,iw=w-pad.l-pad.r,ih=h-pad.t-pad.b;ctx.font='10px Tahoma';ctx.strokeStyle='#efedf5';ctx.fillStyle='#9995aa';for(let i=0;i<5;i++){let y=pad.t+ih*i/4;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();ctx.fillText(fa(Math.round(max*(4-i)/4)),2,y+3)}ctx.strokeStyle='#7968d8';ctx.lineWidth=2.5;ctx.beginPath();values.forEach((v,i)=>{let x=pad.l+(values.length<=1?0:i*iw/(values.length-1)),y=pad.t+ih-(v/max)*ih;i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke();values.forEach((v,i)=>{let x=pad.l+(values.length<=1?0:i*iw/(values.length-1)),y=pad.t+ih-(v/max)*ih;ctx.fillStyle='#7968d8';ctx.beginPath();ctx.arc(x,y,3.5,0,Math.PI*2);ctx.fill();if(values.length<15||i%Math.ceil(values.length/10)===0){ctx.fillStyle='#85829a';ctx.textAlign='center';ctx.fillText(labels[i]||'',x,h-8)}})}
+function drawLine(canvas,labels,values){
+ let c=canvas,ctx=c.getContext('2d'),w=c.clientWidth,h=c.clientHeight,dpr=window.devicePixelRatio||1;
+ c.width=w*dpr;c.height=h*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
+ if(!values.length)return;
+ const maxVal=Math.max(0,...values),step=Math.max(1,Math.ceil(maxVal/4)),axisMax=step*4;
+ const pad={l:46,r:16,t:28,b:48},iw=Math.max(1,w-pad.l-pad.r),ih=Math.max(1,h-pad.t-pad.b);
+ ctx.font='11px Tahoma';ctx.textBaseline='middle';ctx.textAlign='right';
+ for(let i=0;i<=4;i++){
+  const val=axisMax-i*step,y=pad.t+ih*i/4;
+  ctx.strokeStyle='#e8e5f0';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();
+  ctx.fillStyle='#514b68';ctx.fillText(fa(val),pad.l-9,y);
+ }
+ const xAt=i=>pad.l+(values.length<=1?iw/2:i*iw/(values.length-1));
+ const yAt=v=>pad.t+ih-(v/axisMax)*ih;
+ ctx.strokeStyle='#7968d8';ctx.lineWidth=2.8;ctx.lineJoin='round';ctx.lineCap='round';ctx.beginPath();
+ values.forEach((v,i)=>{const x=xAt(i),y=yAt(v);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke();
+ const showEvery=Math.max(1,Math.ceil(values.length/9));
+ values.forEach((v,i)=>{
+  const x=xAt(i),y=yAt(v);
+  ctx.fillStyle='#7968d8';ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);ctx.fill();
+  if(values.length<=12||i%showEvery===0||i===values.length-1){
+   ctx.fillStyle='#30294a';ctx.font='bold 11px Tahoma';ctx.textAlign='center';ctx.textBaseline='bottom';
+   const labelY=Math.max(13,y-7);ctx.fillText(fa(v),x,labelY);
+   ctx.fillStyle='#625d72';ctx.font='10px Tahoma';ctx.textBaseline='top';
+   let label=String(labels[i]||'');if(label.length>11)label=label.slice(0,10)+'…';
+   ctx.fillText(label,x,pad.t+ih+9);
+  }
+ });
+ ctx.fillStyle='#777187';ctx.font='10px Tahoma';ctx.textAlign='left';ctx.textBaseline='bottom';ctx.fillText('تعداد تست',pad.l,h-2);
+}
 function drawBars(canvas,obj){let labels=Object.keys(obj),vals=Object.values(obj),c=canvas,ctx=c.getContext('2d'),w=c.clientWidth,h=c.clientHeight,dpr=devicePixelRatio||1;c.width=w*dpr;c.height=h*dpr;ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);if(!labels.length){ctx.fillStyle='#999';ctx.textAlign='center';ctx.font='12px Tahoma';ctx.fillText('هنوز داده‌ای ثبت نشده است',w/2,h/2);return}let max=Math.max(1,...vals),left=34,bottom=35,top=12,iw=w-left-8,slot=iw/labels.length,bw=Math.min(35,slot*.58);ctx.font='10px Tahoma';labels.forEach((s,i)=>{let x=left+i*slot+(slot-bw)/2,bh=(h-top-bottom)*vals[i]/max;ctx.fillStyle=colors[i%colors.length];ctx.beginPath();ctx.roundRect(x,h-bottom-bh,bw,bh,6);ctx.fill();ctx.fillStyle='#85829a';ctx.textAlign='center';ctx.fillText(fa(vals[i]),x+bw/2,h-bottom-bh-5);let label=s.length>9?s.slice(0,8)+'…':s;ctx.fillText(label,x+bw/2,h-12)})}
 function drawDonut(canvas,legendId,obj){let labels=Object.keys(obj),vals=Object.values(obj),total=sum(vals,x=>x),c=canvas,ctx=c.getContext('2d'),w=c.clientWidth||180,h=c.clientHeight||180,dpr=devicePixelRatio||1;c.width=w*dpr;c.height=h*dpr;ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);let cx=w/2,cy=h/2,r=Math.min(w,h)*.42,inner=r*.62,start=-Math.PI/2;if(!total){ctx.strokeStyle='#efedf5';ctx.lineWidth=r-inner;ctx.beginPath();ctx.arc(cx,cy,(r+inner)/2,0,Math.PI*2);ctx.stroke()}else vals.forEach((v,i)=>{let end=start+v/total*Math.PI*2;ctx.strokeStyle=colors[i%colors.length];ctx.lineWidth=r-inner;ctx.beginPath();ctx.arc(cx,cy,(r+inner)/2,start,end);ctx.stroke();start=end});ctx.fillStyle='#37334e';ctx.textAlign='center';ctx.font='bold 17px Tahoma';ctx.fillText(fa(total),cx,cy+5);ctx.font='9px Tahoma';ctx.fillStyle='#89859b';ctx.fillText('تست',cx,cy+21);document.getElementById(legendId).innerHTML=labels.length?labels.map((s,i)=>`<div class="legendrow"><i style="background:${colors[i%colors.length]}"></i><span>${esc(s)}</span><b>${fa(vals[i])}</b></div>`).join(''):'<span class="muted">داده‌ای نیست</span>'}
 function monthKey(date){return date.slice(0,7)}function monthTotals(y,m){let k=dateKey(y,m,1).slice(0,7);return {tests:sum(db.tests.filter(x=>monthKey(x.date)===k),x=>x.qty),hours:sum(db.study.filter(x=>monthKey(x.date)===k),x=>x.hours)}}
